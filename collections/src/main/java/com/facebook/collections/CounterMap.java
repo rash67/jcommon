@@ -16,8 +16,8 @@
 package com.facebook.collections;
 
 import com.google.common.collect.Iterators;
-
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -182,6 +182,10 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     } finally {
       removalLock.writeLock().unlock();
     }
+  }
+
+  public Map<K, Long> toMap() {
+    return new HashMap(counters);
   }
 
   @Override
