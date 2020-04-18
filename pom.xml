@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-Copyright (C) 2012 Facebook, Inc.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,9 +18,9 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook</groupId>
-    <artifactId>facebook-oss-pom</artifactId>
-    <version>12</version>
+    <groupId>io.airlift</groupId>
+    <artifactId>airbase</artifactId>
+    <version>99</version>
   </parent>
 
   <groupId>com.samrash.jcommon</groupId>
@@ -365,8 +363,24 @@ limitations under the License.
         <artifactId>joda-time</artifactId>
         <version>2.9.4</version>
       </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
+      </dependency>
+
 
       <!--test-->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.27</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+      </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>

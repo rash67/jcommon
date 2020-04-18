@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-Copyright (C) 2012 Facebook, Inc.
+Copyright(C) 2012
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook.jcommon</groupId>
+    <groupId>com.samrash.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
     <version>0.1.32-SNAPSHOT</version>
   </parent>
@@ -35,7 +35,7 @@ limitations under the License.
 
   <dependencies>
     <dependency>
-      <groupId>com.facebook.jcommon</groupId>
+      <groupId>com.samrash.jcommon</groupId>
       <artifactId>logging</artifactId>
     </dependency>
     <dependency>

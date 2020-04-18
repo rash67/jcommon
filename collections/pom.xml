@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-Copyright (C) 2012 Facebook, Inc.
+Copyright(C) 2012
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook.jcommon</groupId>
+    <groupId>com.samrash.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
     <version>0.1.32-SNAPSHOT</version>
   </parent>
@@ -35,11 +35,11 @@ limitations under the License.
 
   <dependencies>
     <dependency>
-      <groupId>com.facebook.jcommon</groupId>
+      <groupId>com.samrash.jcommon</groupId>
       <artifactId>collections-foundation</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.facebook.jcommon</groupId>
+      <groupId>com.samrash.jcommon</groupId>
       <artifactId>util</artifactId>
     </dependency>
     <!--3rd party-->
@@ -56,17 +56,15 @@ limitations under the License.
       <artifactId>trove4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>annotations</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.27</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
       <scope>test</scope>
     </dependency>
     <dependency>

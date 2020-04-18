@@ -48,7 +48,7 @@ but need pre-Java-7 compatibility or prefer less opinionated / more configurable
 
 ## Overview
 
-The [com.facebook.tools] package contains the [CommandRunner] class. Your commands implement the
+The [com.samrash.tools] package contains the [CommandRunner] class. Your commands implement the
 [CommandBuilder] interface, which has two methods
 
 * `public CliCommand defineCommand()` to tell the runner what the command-line usage is
@@ -57,20 +57,20 @@ The [com.facebook.tools] package contains the [CommandRunner] class. Your comman
 Since command-line arguments are all strings, `defineCommand()` only concerns itself with what the
 valid sets of strings you can pass are. The [CliParser] instance passed to `runCommand()` makes it
 easy to convert the strings into other types when it comes time to actually run the command. See the
-`com.facebook.tools.parser` section below for more details.
+`com.samrash.tools.parser` section below for more details.
 
-[com.facebook.tools]: (src/main/java/com/facebook/tools)
+[com.samrash.tools]: (src/main/java/com/facebook/tools)
 [CommandRunner]: (src/main/java/com/facebook/tools/CommandRunner.java)
 [CommandBuilder]: (src/main/java/com/facebook/tools/CommandBuilder.java)
 [CliParser]: (src/main/java/com/facebook/tools/parser/CliParser.java)
 
 ## Example Usage
 
-There are a number of examples in the [com.facebook.tools.example] package in the test directory.
+There are a number of examples in the [com.samrash.tools.example] package in the test directory.
 
-[com.facebook.tools.example]: (src/main/java/com/facebook/tools/example)
+[com.samrash.tools.example]: (src/main/java/com/facebook/tools/example)
 
-### com.facebook.tools.parser
+### com.samrash.tools.parser
 
 The parser package contains all the classes for defining your command-line and extracting values
 from it. There are four different types of parameter:
@@ -154,11 +154,11 @@ See the included example [Converters] for more examples.
 
 [Converters]: (src/test/java/com/facebook/tools/example/Converters.java)
 
-### com.facebook.tools.io
+### com.samrash.tools.io
 
 The `io` package replaces `System.out`/`err`/`in` for tools. The `IO` class offers replacements
 for each one of these public fields, as well as a `subprocess` field (see
-com.facebook.tools.subprocess below), and `ask()` methods that can be used to to easily prompt for
+com.samrash.tools.subprocess below), and `ask()` methods that can be used to to easily prompt for
 decisions.
 
 Some behavior depends on whether Java is being run on an interactive terminal or spawned from /
@@ -178,7 +178,7 @@ See [ExportCheckpoints] for an example.
 
 [ExportCheckpoints]: (src/test/java/com/facebook/tools/example/ExportCheckpoints.java)
 
-### com.facebook.tools.subprocess
+### com.samrash.tools.subprocess
 
 The `subprocess` package makes calling other programs easier. `SubprocessBuilder` creates
 `Subprocess` instances. There are two modes a process can be in:
