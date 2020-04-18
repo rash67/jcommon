@@ -25,14 +25,14 @@ limitations under the License.
     <version>12</version>
   </parent>
 
-  <groupId>com.facebook.jcommon</groupId>
+  <groupId>com.samrash.jcommon</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
   <version>0.1.32-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
 
-  <url>https://facebook.github.com/${project.artifactId}</url>
+  <url>https://github.com/${project.artifactId}</url>
   <inceptionYear>2012</inceptionYear>
 
   <properties>
@@ -48,16 +48,16 @@ limitations under the License.
   </properties>
 
   <scm>
-    <connection>scm:git:git@github.com/facebook/jcommon.git</connection>
-    <developerConnection>scm:git:git@github.com:facebook/jcommon.git</developerConnection>
-    <url>https://github.com/facebook/jcommon</url>
+    <connection>scm:git:git@github.com/samrash/jcommon.git</connection>
+    <developerConnection>scm:git:git@github.com:samrash/jcommon.git</developerConnection>
+    <url>https://github.com/samrash/jcommon</url>
     <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
     <site>
       <id>github-project-site</id>
-      <url>gitsite:git@github.com/facebook/jcommon.git</url>
+      <url>gitsite:git@github.com/samrash/jcommon.git</url>
     </site>
   </distributionManagement>
 
@@ -202,82 +202,82 @@ limitations under the License.
     <dependencies>
       <!--jcommon internal-->
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>collections</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>collections-foundation</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>concurrency</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>config</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>data</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>lifecycle</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>logging</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>logging-log4j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>logging-util</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>memory</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>stats</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>tools</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>util</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>zookeeper</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>testing</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.facebook.jcommon</groupId>
+        <groupId>com.samrash.jcommon</groupId>
         <artifactId>jcommon-all</artifactId>
         <version>${project.version}</version>
       </dependency>
