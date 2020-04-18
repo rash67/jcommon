@@ -128,6 +128,7 @@ public class StringDatum implements Datum {
 
   @Override
   public boolean equals(Object obj) {
+    System.err.println(Float.toString(100.0f));
     return obj != null && obj instanceof Datum &&
       value.equals(((Datum) obj).asString());
   }

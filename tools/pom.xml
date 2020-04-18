@@ -45,29 +45,29 @@ limitations under the License.
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.samrash.nifty</groupId>
+      <groupId>com.facebook.nifty</groupId>
       <artifactId>nifty-client</artifactId>
       <version>0.10.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.samrash.swift</groupId>
+      <groupId>com.facebook.swift</groupId>
       <artifactId>swift-service</artifactId>
       <version>0.10.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.samrash.swift</groupId>
+      <groupId>com.facebook.swift</groupId>
       <artifactId>swift-annotations</artifactId>
       <version>0.10.0</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.thrift</groupId>
-      <artifactId>libthrift</artifactId>
-      <version>0.9.1</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.facebook.thrift</groupId>-->
+<!--      <artifactId>libthrift</artifactId>-->
+<!--      <version>0.9.1</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
   </dependencies>
 
   <build>

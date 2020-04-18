@@ -15,25 +15,26 @@
  */
 package com.samrash.tools.example;
 
+import com.google.common.collect.ImmutableMap;
 import com.samrash.tools.CommandBuilder;
 import com.samrash.tools.CommandRunner;
 import com.samrash.tools.io.IO;
-import com.samrash.tools.io.YesNo;
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParser;
-import com.samrash.tools.parser.OneOfConverter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.net.HostAndPort;
 
 import java.util.Map;
-
-import static com.google.common.collect.Iterables.concat;
 
 public class ExportCheckpoints implements CommandBuilder {
   private final IO io;
 
   public ExportCheckpoints(IO io) {
     this.io = io;
+  }
+
+  @Override
+  public void runCommand(CliParser parser)
+  {
+    //no op; TBD
   }
 
   @Override
@@ -61,45 +62,47 @@ public class ExportCheckpoints implements CommandBuilder {
       .withDefault(null);
     builder.addFlag("--delete")
       .withDescription("Whether to delete the checkpoints.");
-    ThriftService.mixin(builder);
+//    ThriftService.mixin(builder);
+//
+//    return builder.build();
 
     return builder.build();
   }
 
-  @Override
-  public void runCommand(CliParser parser) {
-    String application = parser.get("--application");
-    String environment = parser.get("--environment", OneOfConverter.oneOf("prod", "test"));
-    Iterable<Integer> shards = concat(parser.getMulti("--microshards", Converters.INT_LIST));
-    boolean delete = parser.get("--delete", Converters.BOOLEAN);
-    HostAndPort host = parser.get("--host", Converters.HOST_PORT);
-    ThriftService<CheckpointManager> managerService =
-      new ThriftService<>(CheckpointManager.class, parser);
-
-    try (CheckpointManager manager = managerService.openService(host)) {
-      Map<Integer, String> checkpoints = listCheckpoints(manager, application, environment, shards);
-
-      if (delete) {
-        if (checkpoints.isEmpty()) {
-          io.out.println("No checkpoints found to delete.");
-        } else {
-          YesNo proceed = io.ask(
-            YesNo.NO,
-            "WARNING: Delete %,d checkpoints for %s %s (this operation is NOT reversible)",
-            checkpoints.size(),
-            application,
-            environment
-          );
-
-          if (proceed.isYes()) {
-            deleteCheckpoints(manager, application, environment, checkpoints.keySet());
-          } else {
-            io.out.println("Delete cancelled.");
-          }
-        }
-      }
-    }
-  }
+//  @Override
+//  public void runCommand(CliParser parser) {
+//    String application = parser.get("--application");
+//    String environment = parser.get("--environment", OneOfConverter.oneOf("prod", "test"));
+//    Iterable<Integer> shards = concat(parser.getMulti("--microshards", Converters.INT_LIST));
+//    boolean delete = parser.get("--delete", Converters.BOOLEAN);
+//    HostAndPort host = parser.get("--host", Converters.HOST_PORT);
+//    ThriftService<CheckpointManager> managerService =
+//      new ThriftService<>(CheckpointManager.class, parser);
+//
+//    try (CheckpointManager manager = managerService.openService(host)) {
+//      Map<Integer, String> checkpoints = listCheckpoints(manager, application, environment, shards);
+//
+//      if (delete) {
+//        if (checkpoints.isEmpty()) {
+//          io.out.println("No checkpoints found to delete.");
+//        } else {
+//          YesNo proceed = io.ask(
+//            YesNo.NO,
+//            "WARNING: Delete %,d checkpoints for %s %s (this operation is NOT reversible)",
+//            checkpoints.size(),
+//            application,
+//            environment
+//          );
+//
+//          if (proceed.isYes()) {
+//            deleteCheckpoints(manager, application, environment, checkpoints.keySet());
+//          } else {
+//            io.out.println("Delete cancelled.");
+//          }
+//        }
+//      }
+//    }
+//  }
 
   public Map<Integer, String> listCheckpoints(
     CheckpointManager manager, String application, String environment, Iterable<Integer> shards

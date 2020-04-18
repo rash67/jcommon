@@ -26,6 +26,7 @@ limitations under the License.
   </parent>
 
   <artifactId>collections-foundation</artifactId>
+  <groupId>com.samrash.jcommon</groupId>
   <packaging>jar</packaging>
   <name>jcommon collections foundation package</name>
 

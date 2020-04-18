@@ -17,32 +17,32 @@ limitations under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>jcommon-parent</artifactId>
+    <parent>
+        <artifactId>jcommon-parent</artifactId>
+        <groupId>com.samrash.jcommon</groupId>
+        <version>0.1.32-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>logging-log4j</artifactId>
     <groupId>com.samrash.jcommon</groupId>
-    <version>0.1.32-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+    <name>log4j specific logging</name>
 
-  <artifactId>logging-log4j</artifactId>
-  <packaging>jar</packaging>
-  <name>log4j specific logging</name>
+    <properties>
+        <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>
+    </properties>
 
-  <properties>
-    <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

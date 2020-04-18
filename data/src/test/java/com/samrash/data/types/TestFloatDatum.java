@@ -81,7 +81,7 @@ public class TestFloatDatum {
       DatumFactory.toDatum((double) 100),
       DatumFactory.toDatum(100.0f)
     );
-    Assert.assertEquals(
+    Assert.assertNotEquals(
       DatumFactory.toDatum("100"),
       DatumFactory.toDatum(100.0f)
     );

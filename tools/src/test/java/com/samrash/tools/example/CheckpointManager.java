@@ -15,12 +15,12 @@
  */
 package com.samrash.tools.example;
 
-import com.samrash.swift.service.ThriftMethod;
+import com.facebook.swift.service.ThriftMethod;
 
 @SuppressWarnings("InterfaceNeverImplemented")
-@com.samrash.swift.service.ThriftService
+@com.facebook.swift.service.ThriftService
 public interface CheckpointManager extends AutoCloseable {
-  @ThriftMethod
+
   public String getCheckpoint(String application, String environment, int shard);
 
   @ThriftMethod
