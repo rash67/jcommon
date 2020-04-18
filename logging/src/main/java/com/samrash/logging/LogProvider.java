@@ -16,5 +16,5 @@
 package com.samrash.logging;
 
 public interface LogProvider {
-  public Logger get();
+  Logger get();
 }
