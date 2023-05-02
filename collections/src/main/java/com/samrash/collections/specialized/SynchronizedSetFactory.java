@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SetFactory;
@@ -20,15 +21,18 @@ import com.samrash.collections.SetFactory;
 import java.util.Collections;
 import java.util.Set;
 
-public class SynchronizedSetFactory<T> implements SetFactory<T, Set<T>> {
+public class SynchronizedSetFactory<T> implements SetFactory<T, Set<T>>
+{
   private final SetFactory<T, Set<T>> factory;
 
-  public SynchronizedSetFactory(SetFactory<T, Set<T>> factory) {
+  public SynchronizedSetFactory(SetFactory<T, Set<T>> factory)
+  {
     this.factory = factory;
   }
 
   @Override
-  public Set<T> create() {
+  public Set<T> create()
+  {
     return Collections.<T>synchronizedSet(factory.create());
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.samrash.util.serialization.SerDe;
@@ -23,11 +24,13 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 @SuppressWarnings({"NumericCastThatLosesPrecision"})
-public class StringDatum implements Datum {
+public class StringDatum implements Datum
+{
   private final String value;
   private volatile byte[] bytesValue;
 
-  public StringDatum( String value) {
+  public StringDatum(String value)
+  {
     if (value == null) {
       throw new NullPointerException("null value not allowed");
     }
@@ -36,7 +39,8 @@ public class StringDatum implements Datum {
   }
 
   @Override
-  public boolean asBoolean() {
+  public boolean asBoolean()
+  {
     if (value.isEmpty() || "0".equals(value) || "false".equalsIgnoreCase(value)) {
       return false;
     }
@@ -48,8 +52,9 @@ public class StringDatum implements Datum {
     try {
       // treat all values that are effectively 0 as false. This includes +/- 0, +/-0.0, any
       // sequence of +/- 0s ("0000"), and so on
-      return (int)(asDouble()) != 0;
-    } catch (NumberFormatException e) {
+      return (int) (asDouble()) != 0;
+    }
+    catch (NumberFormatException e) {
       // a value that isn't a number, but isn't "" or "false" is still
       // considered true, so ignore this
     }
@@ -58,37 +63,44 @@ public class StringDatum implements Datum {
   }
 
   @Override
-  public byte asByte() {
+  public byte asByte()
+  {
     return Byte.valueOf(value);
   }
 
   @Override
-  public short asShort() {
+  public short asShort()
+  {
     return Short.valueOf(value);
   }
 
   @Override
-  public int asInteger() {
+  public int asInteger()
+  {
     return Integer.valueOf(value);
   }
 
   @Override
-  public long asLong() {
+  public long asLong()
+  {
     return Long.valueOf(value);
   }
 
   @Override
-  public float asFloat() {
+  public float asFloat()
+  {
     return Float.valueOf(value);
   }
 
   @Override
-  public double asDouble() {
+  public double asDouble()
+  {
     return Double.valueOf(value);
   }
 
   @Override
-  public byte[] asBytes() {
+  public byte[] asBytes()
+  {
     if (bytesValue == null) {
       bytesValue = value.getBytes();
     }
@@ -97,44 +109,52 @@ public class StringDatum implements Datum {
   }
 
   @Override
-  public String asString() {
+  public String asString()
+  {
     return String.valueOf(value);
   }
 
   @Override
-  public boolean isNull() {
+  public boolean isNull()
+  {
     return false;
   }
 
   @Override
-  public DatumType getType() {
+  public DatumType getType()
+  {
     return DatumType.STRING;
   }
 
   @Override
-  public Object asRaw() {
+  public Object asRaw()
+  {
     return value;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return asString();
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     return value.hashCode();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(Object obj)
+  {
     System.err.println(Float.toString(100.0f));
     return obj != null && obj instanceof Datum &&
-      value.equals(((Datum) obj).asString());
+           value.equals(((Datum) obj).asString());
   }
 
   @Override
-  public int compareTo(Datum o) {
+  public int compareTo(Datum o)
+  {
     if (o == null) {
       return 1;
     }
@@ -142,23 +162,28 @@ public class StringDatum implements Datum {
     return value.compareTo(o.asString());
   }
 
-  public static class SerDeImpl implements SerDe<Datum> {
+  public static class SerDeImpl implements SerDe<Datum>
+  {
     @Override
-    public Datum deserialize(DataInput in) throws SerDeException {
+    public Datum deserialize(DataInput in) throws SerDeException
+    {
       try {
         // TODO: should we write the bytes ourselves?  get around 32k limit?
         return new StringDatum(in.readUTF());
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(Datum value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       try {
         out.writeUTF(value.asString());
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }

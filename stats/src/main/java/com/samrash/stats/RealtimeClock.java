@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
-class RealtimeClock implements Clock {
+class RealtimeClock implements Clock
+{
   @Override
-  public long getMillis() {
+  public long getMillis()
+  {
     return System.currentTimeMillis();
   }
 }

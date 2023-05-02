@@ -13,30 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
-class CharArraySequence implements CharSequence {
+class CharArraySequence implements CharSequence
+{
   private final char[] array;
   private final int offset;
   private final int length;
 
-  CharArraySequence(char[] array) {
+  CharArraySequence(char[] array)
+  {
     this(array, 0, array.length);
   }
 
-  CharArraySequence(char[] array, int offset, int length) {
+  CharArraySequence(char[] array, int offset, int length)
+  {
     this.array = array;
     this.offset = offset;
     this.length = length;
   }
 
   @Override
-  public int length() {
+  public int length()
+  {
     return length;
   }
 
   @Override
-  public char charAt(int index) {
+  public char charAt(int index)
+  {
     if (index < 0 || index > length) {
       throw new IndexOutOfBoundsException();
     }
@@ -45,7 +51,8 @@ class CharArraySequence implements CharSequence {
   }
 
   @Override
-  public CharSequence subSequence(int start, int end) {
+  public CharSequence subSequence(int start, int end)
+  {
     if (start < 0 || end < 0 || start > end || end > length) {
       throw new IndexOutOfBoundsException();
     }
@@ -54,7 +61,8 @@ class CharArraySequence implements CharSequence {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return new String(array, offset, length);
   }
 }

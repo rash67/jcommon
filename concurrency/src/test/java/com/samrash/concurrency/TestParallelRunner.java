@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
+import com.samrash.testing.ThreadHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,50 +28,55 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.samrash.testing.ThreadHelper;
-
-public class TestParallelRunner {
+public class TestParallelRunner
+{
 
   private ParallelRunner parallelRunner;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     parallelRunner = new ParallelRunner(Executors.newFixedThreadPool(10), "test-");
   }
 
   @Test(groups = {"fast", "local"})
-  public void testThreadName() throws Exception {
+  public void testThreadName() throws Exception
+  {
     final String threadNamePrefix = "sloth";
     final AtomicBoolean hasNextRef = new AtomicBoolean(true);
     final AtomicReference<String> errorMessage = new AtomicReference<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final BlockingQueue<Runnable> taskQueue = new LinkedBlockingDeque<>();
     taskQueue.add(
-      new Runnable() {
-        @Override
-        public void run() {
-          String threadName = Thread.currentThread().getName();
-          if (!threadName.contains(threadNamePrefix)) {
-            errorMessage.set(
-              String.format(
-                "threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName
-              )
-            );
+        new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            String threadName = Thread.currentThread().getName();
+            if (!threadName.contains(threadNamePrefix)) {
+              errorMessage.set(
+                  String.format(
+                      "threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName
+                  )
+              );
+            }
+            latch.countDown();
           }
-          latch.countDown();
         }
-      }
     );
 
     ThreadHelper threadHelper = new ThreadHelper();
     final Thread slothThread = threadHelper.doInThread(
-      new Runnable() {
-        @Override
-        public void run() {
+        new Runnable()
+        {
+          @Override
+          public void run()
+          {
 
-          parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix);
-        }
-      }, "parallel-runner-sheppard"
+            parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix);
+          }
+        }, "parallel-runner-sheppard"
     );
 
     latch.await();

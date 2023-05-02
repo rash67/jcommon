@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import org.testng.annotations.Test;
@@ -21,9 +22,11 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-public class TestAdaptiveHyperLogLog {
+public class TestAdaptiveHyperLogLog
+{
   @Test
-  public void testConsistencyWithFixedHyperLogLog() {
+  public void testConsistencyWithFixedHyperLogLog()
+  {
     HyperLogLog simple = new HyperLogLog(1024);
     AdaptiveHyperLogLog adaptive = new AdaptiveHyperLogLog(1024);
 
@@ -37,7 +40,8 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testRoundtripLowCardinality() {
+  public void testRoundtripLowCardinality()
+  {
     AdaptiveHyperLogLog expected = new AdaptiveHyperLogLog(1024);
     for (int i = 0; i < 10; ++i) {
       expected.add(i);
@@ -50,7 +54,8 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testRoundtripHighCardinality() {
+  public void testRoundtripHighCardinality()
+  {
     AdaptiveHyperLogLog expected = new AdaptiveHyperLogLog(1024);
     for (int i = 0; i < 30000; ++i) {
       expected.add(i);
@@ -63,7 +68,8 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testMergeNoOverlap() {
+  public void testMergeNoOverlap()
+  {
     int buckets = 1024;
     AdaptiveHyperLogLog first = new AdaptiveHyperLogLog(buckets);
     AdaptiveHyperLogLog second = new AdaptiveHyperLogLog(buckets);
@@ -103,7 +109,8 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testMergeInPlace() {
+  public void testMergeInPlace()
+  {
     int buckets = 1024;
     AdaptiveHyperLogLog first = new AdaptiveHyperLogLog(buckets);
     AdaptiveHyperLogLog second = new AdaptiveHyperLogLog(buckets);
@@ -140,7 +147,8 @@ public class TestAdaptiveHyperLogLog {
     assertEquals(estimator.estimate(), expectedEstimate);
   }
 
-  private void assertEstimate(long actual, int expected, int numberOfBuckets) {
+  private void assertEstimate(long actual, int expected, int numberOfBuckets)
+  {
     // this is actually the standard deviation of the expected error, but it provides a
     // good bound for our deterministic test
     double expectedError = 1.04 / Math.sqrt(numberOfBuckets);

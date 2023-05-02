@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.util.exceptions.ExceptionHandler;
@@ -28,16 +29,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 3. returns the result
  */
 
-public class FutureHelper<T, E extends Exception> extends FutureTask<T> {
+public class FutureHelper<T, E extends Exception> extends FutureTask<T>
+{
   private final AtomicBoolean hasRun = new AtomicBoolean(false);
   private final ExceptionHandler<E> exceptionHandler;
   private volatile boolean generated = false;
   private volatile boolean error = false;
 
   public FutureHelper(
-    Callable<T> callable,
-    ExceptionHandler<E> exceptionHandler
-  ) {
+      Callable<T> callable,
+      ExceptionHandler<E> exceptionHandler
+  )
+  {
     super(callable);
     this.exceptionHandler = exceptionHandler;
   }
@@ -49,7 +52,8 @@ public class FutureHelper<T, E extends Exception> extends FutureTask<T> {
    * @return result of computation
    * @throws generic E
    */
-  public T safeGet() throws E {
+  public T safeGet() throws E
+  {
     if (hasRun.compareAndSet(false, true)) {
       run();
     }
@@ -60,17 +64,20 @@ public class FutureHelper<T, E extends Exception> extends FutureTask<T> {
       T t = get();
       generated = true;
       return t;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       error = true;
       throw exceptionHandler.handle(e);
     }
   }
 
-  public boolean isGenerated() {
+  public boolean isGenerated()
+  {
     return generated;
   }
 
-  public boolean isError() {
+  public boolean isError()
+  {
     return error;
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTime;
@@ -22,12 +23,14 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestEventRate {
+public class TestEventRate
+{
   private EventRate rate;
   private CompositeSum eventCounter;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     DateTimeUtils.setCurrentMillisFixed(new DateTime("2010-01-01").getMillis());
 
     eventCounter = new CompositeSum(Duration.standardSeconds(60));
@@ -35,7 +38,8 @@ public class TestEventRate {
   }
 
   @Test(groups = "fast")
-  public void testSanity1() throws Exception {
+  public void testSanity1() throws Exception
+  {
     rate.add(300);
     advanceNowSeconds(30);
     Assert.assertEquals(rate.getValue(), 10);
@@ -47,9 +51,10 @@ public class TestEventRate {
     Assert.assertEquals(rate.getValue(), 1);
   }
 
-  private void advanceNowSeconds(int seconds) {
+  private void advanceNowSeconds(int seconds)
+  {
     DateTimeUtils.setCurrentMillisFixed(
-      DateTimeUtils.currentTimeMillis() + seconds * 1000
+        DateTimeUtils.currentTimeMillis() + seconds * 1000
     );
   }
 }

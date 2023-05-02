@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestLoggerImpl {
+public class TestLoggerImpl
+{
   private static final Logger LOG = LoggerImpl.getClassLogger();
 
   @Test(groups = "fast")
-  public void testMagicSanity() throws Exception {
+  public void testMagicSanity() throws Exception
+  {
     LOG.info("logger created from static scope");
 
     Assert.assertEquals(LOG.getName(), getClass().getName());
   }
 
   @Test(groups = "fast")
-  public void testLocalLoggerGetsClass() throws Exception {
+  public void testLocalLoggerGetsClass() throws Exception
+  {
     Logger privateLogger = LoggerImpl.getClassLogger();
 
     privateLogger.info("private logger");
@@ -38,7 +42,8 @@ public class TestLoggerImpl {
   }
 
   @Test(groups = "fast")
-  public void testMessageWithPercentChar() throws Exception {
+  public void testMessageWithPercentChar() throws Exception
+  {
     // A random message with % in it
     String message = "A: 50%, B: 80%";
     Logger privateLogger = LoggerImpl.getClassLogger();

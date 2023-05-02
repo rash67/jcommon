@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import org.joda.time.DateTimeZone;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestTimeUtil {
+public class TestTimeUtil
+{
 
   @Test(groups = "fast")
-  public void testGetDateTimeZone() throws Exception {
+  public void testGetDateTimeZone() throws Exception
+  {
     Assert.assertEquals(TimeUtil.getDateTimeZone(null), DateTimeZone.UTC);
     Assert.assertEquals(TimeUtil.getDateTimeZone(""), DateTimeZone.UTC);
   }

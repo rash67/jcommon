@@ -13,42 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 
 import com.google.common.collect.ImmutableList;
 
-public class ImmutableListDatumBuilder {
+public class ImmutableListDatumBuilder
+{
   private final ImmutableList.Builder<Datum> builder =
-    new ImmutableList.Builder<>();
+      new ImmutableList.Builder<>();
 
-  public ImmutableListDatumBuilder add(ListDatum datum) {
+  public ImmutableListDatumBuilder add(ListDatum datum)
+  {
     builder.add(datum);
 
     return this;
 
   }
 
-  public ImmutableListDatumBuilder add(long value) {
+  public ImmutableListDatumBuilder add(long value)
+  {
     builder.add(new LongDatum(value));
 
     return this;
 
   }
 
-  public ImmutableListDatumBuilder add(int value) {
+  public ImmutableListDatumBuilder add(int value)
+  {
     builder.add(new IntegerDatum(value));
 
     return this;
 
   }
-  public ImmutableListDatumBuilder add(String value) {
+
+  public ImmutableListDatumBuilder add(String value)
+  {
     builder.add(new StringDatum(value));
 
     return this;
   }
 
-  public ListDatum build() {
+  public ListDatum build()
+  {
     return new ListDatum(builder.build());
   }
 }

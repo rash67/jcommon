@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,32 +21,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * used only with ThreadHelper
  */
-public class LoopThread {
+public class LoopThread
+{
   private final Thread thread;
   private final AtomicBoolean condition;
 
   /**
    * @param thread
    * @param condition serves as simple Observer.  Will be set to false
-   * when someone tries to calls join()
-   *
-   * often used by the underlying Runnable to know that someone may
-   * be ready for this to terminate
+   *                  when someone tries to calls join()
+   *                  <p>
+   *                  often used by the underlying Runnable to know that someone may
+   *                  be ready for this to terminate
    */
-  LoopThread(Thread thread, AtomicBoolean condition) {
+  LoopThread(Thread thread, AtomicBoolean condition)
+  {
     this.thread = thread;
     this.condition = condition;
   }
 
-  public void start() {
+  public void start()
+  {
     thread.start();
   }
 
-  public String getName() {
+  public String getName()
+  {
     return thread.getName();
   }
 
-  public void join() throws InterruptedException {
+  public void join() throws InterruptedException
+  {
     condition.set(false);
     thread.join();
   }

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.example;
 
 import com.facebook.swift.service.ThriftMethod;
 
 @SuppressWarnings("InterfaceNeverImplemented")
 @com.facebook.swift.service.ThriftService
-public interface CheckpointManager extends AutoCloseable {
+public interface CheckpointManager extends AutoCloseable
+{
 
   public String getCheckpoint(String application, String environment, int shard);
 

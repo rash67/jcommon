@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SetFactory;
@@ -23,22 +24,26 @@ import java.util.Set;
 /**
  * basic utility class that converts a Set<T> and the appropriate SetFactory
  * into a SnapshotableSet
+ *
  * @param <T>
  */
 public class SnapshotableSetImpl<T>
-  extends WrappedSet<T> implements SnapshotableSet<T> {
+    extends WrappedSet<T> implements SnapshotableSet<T>
+{
 
   private final SetFactory<T, SnapshotableSet<T>> setFactory;
 
   public SnapshotableSetImpl(
-    Set<T> delegate, SetFactory<T, SnapshotableSet<T>> setFactory
-  ) {
+      Set<T> delegate, SetFactory<T, SnapshotableSet<T>> setFactory
+  )
+  {
     super(delegate);
     this.setFactory = setFactory;
   }
 
   @Override
-  public SnapshotableSet<T> makeSnapshot() {
+  public SnapshotableSet<T> makeSnapshot()
+  {
     SnapshotableSet<T> setCopy = setFactory.create();
 
     // assumes that delegate is either already thread-safe (and therefore
@@ -53,7 +58,8 @@ public class SnapshotableSetImpl<T>
   }
 
   @Override
-  public SnapshotableSet<T> makeTransientSnapshot() {
+  public SnapshotableSet<T> makeTransientSnapshot()
+  {
     return makeSnapshot();
   }
 }

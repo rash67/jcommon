@@ -13,42 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
-public class ErrorMessage extends RuntimeException {
+public class ErrorMessage extends RuntimeException
+{
   private final int errorCode;
 
-  public ErrorMessage(int errorCode, Exception cause, String message) {
+  public ErrorMessage(int errorCode, Exception cause, String message)
+  {
     super(message, cause);
     this.errorCode = errorCode;
   }
 
-  public ErrorMessage(int errorCode, Exception cause, String format, Object... args) {
+  public ErrorMessage(int errorCode, Exception cause, String format, Object... args)
+  {
     this(errorCode, cause, String.format(format, args));
   }
 
-  public ErrorMessage(int errorCode, String format, Object... args) {
+  public ErrorMessage(int errorCode, String format, Object... args)
+  {
     this(errorCode, String.format(format, args));
   }
 
-  public ErrorMessage(int errorCode, String message) {
+  public ErrorMessage(int errorCode, String message)
+  {
     super(message);
     this.errorCode = errorCode;
   }
 
-  public ErrorMessage(Exception cause, String message) {
+  public ErrorMessage(Exception cause, String message)
+  {
     this(-1, cause, message);
   }
 
-  public ErrorMessage(Exception cause, String format, Object... args) {
+  public ErrorMessage(Exception cause, String format, Object... args)
+  {
     this(-1, cause, format, args);
   }
 
-  public ErrorMessage(String format, Object... args) {
+  public ErrorMessage(String format, Object... args)
+  {
     this(-1, format, args);
   }
 
-  public int getErrorCode() {
+  public int getErrorCode()
+  {
     return errorCode;
   }
 }

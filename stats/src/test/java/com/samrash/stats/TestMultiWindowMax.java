@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTimeUtils;
@@ -20,10 +21,12 @@ import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestMultiWindowMax {
+public class TestMultiWindowMax
+{
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     DateTimeUtils.setCurrentMillisFixed(0);
 
     MultiWindowMax multiWindowMax = new MultiWindowMax();
@@ -37,7 +40,7 @@ public class TestMultiWindowMax {
 
     // Clear 1 minute window
     DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardMinutes(5).getMillis()
+        Duration.standardMinutes(5).getMillis()
     );
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), 3);
@@ -46,7 +49,7 @@ public class TestMultiWindowMax {
 
     // Clear 10 minute window
     DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardMinutes(15).getMillis()
+        Duration.standardMinutes(15).getMillis()
     );
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), Long.MIN_VALUE);
@@ -55,7 +58,7 @@ public class TestMultiWindowMax {
 
     // Clear hour window window
     DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardHours(2).getMillis()
+        Duration.standardHours(2).getMillis()
     );
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), Long.MIN_VALUE);

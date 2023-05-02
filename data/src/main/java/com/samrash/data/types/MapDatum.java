@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.samrash.collectionsbase.Lists;
@@ -36,31 +37,36 @@ import java.util.Map;
  * Datum is a very generic class that encapsulates actual data as well
  * as methods to inspect what it is.
  */
-public class MapDatum implements Datum {
+public class MapDatum implements Datum
+{
   private static final Comparator<Map.Entry<Datum, Datum>> ENTRY_COMPARATOR =
-    new Comparator<Map.Entry<Datum, Datum>>() {
-      @Override
-      public int compare(
-        Map.Entry<Datum, Datum> o1, Map.Entry<Datum, Datum> o2
-      ) {
-        int keyResult = o1.getKey().compareTo(o2.getKey());
+      new Comparator<Map.Entry<Datum, Datum>>()
+      {
+        @Override
+        public int compare(
+            Map.Entry<Datum, Datum> o1, Map.Entry<Datum, Datum> o2
+        )
+        {
+          int keyResult = o1.getKey().compareTo(o2.getKey());
 
-        if (keyResult == 0) {
-          return o1.getValue().compareTo(o2.getValue());
+          if (keyResult == 0) {
+            return o1.getValue().compareTo(o2.getValue());
+          }
+
+          return keyResult;
         }
-
-        return keyResult;
-      }
-    };
+      };
   private final static DatumSerDe DATUM_SER_DE = new DatumSerDe();
 
   private final Map<Datum, Datum> map;
 
-  public MapDatum(Map<Datum, Datum> map) {
+  public MapDatum(Map<Datum, Datum> map)
+  {
     this.map = map;
   }
 
-  public MapDatum() {
+  public MapDatum()
+  {
     this(new HashMap<Datum, Datum>());
   }
 
@@ -68,7 +74,8 @@ public class MapDatum implements Datum {
    * @return true if the hash is non-empty
    */
   @Override
-  public boolean asBoolean() {
+  public boolean asBoolean()
+  {
     return !map.isEmpty();
   }
 
@@ -78,7 +85,8 @@ public class MapDatum implements Datum {
    * @return
    */
   @Override
-  public byte asByte() {
+  public byte asByte()
+  {
     return (byte) map.size();
   }
 
@@ -88,7 +96,8 @@ public class MapDatum implements Datum {
    * @return
    */
   @Override
-  public short asShort() {
+  public short asShort()
+  {
     return (short) map.size();
   }
 
@@ -98,7 +107,8 @@ public class MapDatum implements Datum {
    * @return
    */
   @Override
-  public int asInteger() {
+  public int asInteger()
+  {
     return map.size();
   }
 
@@ -108,17 +118,20 @@ public class MapDatum implements Datum {
    * @return
    */
   @Override
-  public long asLong() {
+  public long asLong()
+  {
     return map.size();
   }
 
   @Override
-  public float asFloat() {
+  public float asFloat()
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public double asDouble() {
+  public double asDouble()
+  {
     throw new UnsupportedOperationException();
 
   }
@@ -129,7 +142,8 @@ public class MapDatum implements Datum {
    * @return JSON representation of map { k1 : v1, k2 : v2, ...}
    */
   @Override
-  public String asString() {
+  public String asString()
+  {
     JSONObject jsonObject = new JSONObject();
 
     try {
@@ -141,50 +155,59 @@ public class MapDatum implements Datum {
       }
 
       return jsonObject.toString(2);
-    } catch (JSONException e) {
+    }
+    catch (JSONException e) {
       throw new RuntimeException("error converting json object to string");
     }
   }
 
   @Override
-  public byte[] asBytes() {
+  public byte[] asBytes()
+  {
     try {
       // todo: use jackson to to JSON encoding, or can we somehow just
       // call asBytes() on each key/value and concatenate?
       // (also, as this is used for unique counts, who does a unique
       // on Map?  watch a use cometh...)
       return asString().getBytes("UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e) {
       throw new RuntimeException("failed to encode as UTF-8");
     }
   }
 
   @Override
-  public boolean isNull() {
+  public boolean isNull()
+  {
     return false;
   }
 
   @Override
-  public DatumType getType() {
+  public DatumType getType()
+  {
     return DatumType.MAP;
   }
 
   @Override
-  public Object asRaw() {
+  public Object asRaw()
+  {
     return map;
   }
 
-  public Map<Datum, Datum> getMap() {
+  public Map<Datum, Datum> getMap()
+  {
     return map;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return asString();
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -202,12 +225,14 @@ public class MapDatum implements Datum {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     return map != null ? map.hashCode() : 0;
   }
 
   @Override
-  public int compareTo(Datum o) {
+  public int compareTo(Datum o)
+  {
     if (!(o instanceof MapDatum)) {
       throw new IllegalArgumentException("need MapDatum");
     }
@@ -218,9 +243,9 @@ public class MapDatum implements Datum {
     // some way to comapre maps :)
 
     List<Map.Entry<Datum, Datum>> entryList1 =
-      new ArrayList<>(map.entrySet());
+        new ArrayList<>(map.entrySet());
     List<Map.Entry<Datum, Datum>> entryList2 =
-      new ArrayList<>(otherMapDatum.map.entrySet());
+        new ArrayList<>(otherMapDatum.map.entrySet());
 
     Collections.sort(entryList1, ENTRY_COMPARATOR);
     Collections.sort(entryList2, ENTRY_COMPARATOR);
@@ -228,9 +253,11 @@ public class MapDatum implements Datum {
     return Lists.compareLists(entryList1, entryList2, ENTRY_COMPARATOR);
   }
 
-  public static class SerDeImpl implements SerDe<Datum> {
+  public static class SerDeImpl implements SerDe<Datum>
+  {
     @Override
-    public Datum deserialize(DataInput in) throws SerDeException {
+    public Datum deserialize(DataInput in) throws SerDeException
+    {
       try {
         int numEntires = in.readInt();
         Map<Datum, Datum> map = new HashMap<>(numEntires);
@@ -245,14 +272,16 @@ public class MapDatum implements Datum {
         MapDatum result = new MapDatum(map);
 
         return result;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(Datum value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       if (value instanceof MapDatum) {
         MapDatum mapDatum = (MapDatum) value;
         Map<Datum, Datum> map = mapDatum.getMap();
@@ -263,12 +292,13 @@ public class MapDatum implements Datum {
             DATUM_SER_DE.serialize(entry.getKey(), out);
             DATUM_SER_DE.serialize(entry.getValue(), out);
           }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           throw new SerDeException(e);
         }
       } else {
         throw new IllegalArgumentException(
-          "MapDatum.SerDe serializer requires MapDatum"
+            "MapDatum.SerDe serializer requires MapDatum"
         );
       }
     }

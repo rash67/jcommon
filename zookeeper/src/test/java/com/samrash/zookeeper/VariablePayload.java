@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper;
 
-public class VariablePayload implements Encodable {
+public class VariablePayload implements Encodable
+{
   private String strData;
 
-  public VariablePayload(String strData) {
+  public VariablePayload(String strData)
+  {
     this.strData = strData;
   }
 
-  public void setPayload(String strData) {
+  public void setPayload(String strData)
+  {
     this.strData = strData;
   }
 
   @Override
-  public byte[] encode() {
+  public byte[] encode()
+  {
     return ZkUtil.stringToBytes(strData);
   }
 
-  public static String decode(byte[] byteData) {
+  public static String decode(byte[] byteData)
+  {
     return ZkUtil.bytesToString(byteData);
   }
 }

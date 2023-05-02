@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.subprocess;
 
 import com.samrash.tools.ErrorMessage;
@@ -39,7 +40,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-class SubprocessImpl implements Subprocess {
+class SubprocessImpl implements Subprocess
+{
   private final List<String> command;
   private final Process process;
   private final ExecutorService stdoutExecutorService;
@@ -53,8 +55,9 @@ class SubprocessImpl implements Subprocess {
   private final Thread shutdownHook;
 
   SubprocessImpl(
-    List<String> command, Process process, IO echo, int outputBytesLimit, boolean streaming
-  ) {
+      List<String> command, Process process, IO echo, int outputBytesLimit, boolean streaming
+  )
+  {
     this.command = new ArrayList<>(command);
     this.process = process;
 
@@ -82,28 +85,31 @@ class SubprocessImpl implements Subprocess {
     stdout = new Output(processInputStream, outputBytesLimit, streaming);
     stderr = new Output(processErrorStream, outputBytesLimit, false);
     stdoutExecutorService =
-      Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stdout"));
+        Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stdout"));
     stderrExecutorService =
-      Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stderr"));
+        Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stderr"));
     stdoutFuture = stdoutExecutorService.submit(stdout);
     stderrFuture = stderrExecutorService.submit(stderr);
 
     shutdownHook = new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          //noinspection EmptyTryBlock,UnusedDeclaration
-          try (
-            InputStream inputStream = process.getInputStream();
-            OutputStream outputStream = process.getOutputStream();
-            InputStream errorStream = process.getErrorStream()
-          ) {
-          } catch (IOException | RuntimeException ignored) {
-          }
+        new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            //noinspection EmptyTryBlock,UnusedDeclaration
+            try (
+                InputStream inputStream = process.getInputStream();
+                OutputStream outputStream = process.getOutputStream();
+                InputStream errorStream = process.getErrorStream()
+            ) {
+            }
+            catch (IOException | RuntimeException ignored) {
+            }
 
-          process.destroy();
+            process.destroy();
+          }
         }
-      }
     );
 
     Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -111,12 +117,14 @@ class SubprocessImpl implements Subprocess {
 
 
   @Override
-  public List<String> command() {
+  public List<String> command()
+  {
     return command;
   }
 
   @Override
-  public int waitFor() {
+  public int waitFor()
+  {
     stdout.background();
 
     try {
@@ -126,17 +134,21 @@ class SubprocessImpl implements Subprocess {
       stderrFuture.get();
 
       return result;
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new ErrorMessage(e, "Interrupted while waiting for: %s", name);
-    } catch (ExecutionException e) {
+    }
+    catch (ExecutionException e) {
       throw new ErrorMessage(e, "Error while waiting for: %s", name);
-    } finally {
+    }
+    finally {
       close();
     }
   }
 
   @Override
-  public int waitFor(OutputStream out) {
+  public int waitFor(OutputStream out)
+  {
     try {
       InputStream in = getStdOut();
       byte[] buffer = new byte[4096];
@@ -145,39 +157,46 @@ class SubprocessImpl implements Subprocess {
       while ((read = in.read(buffer)) != -1) {
         out.write(buffer, 0, read);
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error while waiting for %s", name);
     }
 
     try {
       return process.waitFor();
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new ErrorMessage(e, "Interrupted while waiting for %s", name);
-    } finally {
+    }
+    finally {
       close();
     }
   }
 
   @Override
-  public int waitFor(File outFile) {
+  public int waitFor(File outFile)
+  {
     try (OutputStream out = new FileOutputStream(outFile)) {
       return waitFor(out);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error saving to %s", outFile);
     }
   }
 
   @Override
-  public void kill() {
+  public void kill()
+  {
     //noinspection EmptyTryBlock,UnusedDeclaration
     try (
-      Output stdout = this.stdout;
-      Output stderr = this.stderr;
-      InputStream inputStream = process.getInputStream();
-      OutputStream outputStream = process.getOutputStream();
-      InputStream errorStream = process.getErrorStream()
+        Output stdout = this.stdout;
+        Output stderr = this.stderr;
+        InputStream inputStream = process.getInputStream();
+        OutputStream outputStream = process.getOutputStream();
+        InputStream errorStream = process.getErrorStream()
     ) {
-    } catch (IOException | RuntimeException ignored) {
+    }
+    catch (IOException | RuntimeException ignored) {
     }
 
     process.destroy();
@@ -189,85 +208,100 @@ class SubprocessImpl implements Subprocess {
   }
 
   @Override
-  public void close() {
+  public void close()
+  {
     kill();
   }
 
   @Override
-  public String getOutput() {
+  public String getOutput()
+  {
     waitFor();
 
     return new String(stdout.getContent(), StandardCharsets.UTF_8);
   }
 
   @Override
-  public String getError() {
+  public String getError()
+  {
     waitFor();
 
     return new String(stderr.getContent(), StandardCharsets.UTF_8);
   }
 
   @Override
-  public BufferedInputStream getStream() {
+  public BufferedInputStream getStream()
+  {
     return new BufferedInputStream(getStdOut());
   }
 
   @Override
-  public BufferedReader getReader() {
+  public BufferedReader getReader()
+  {
     return new BufferedReader(new InputStreamReader(getStdOut(), StandardCharsets.UTF_8));
   }
 
   @Override
-  public void background() {
+  public void background()
+  {
     stdout.background();
   }
 
   @Override
-  public void send(String content) {
+  public void send(String content)
+  {
     OutputStream outputStream = process.getOutputStream();
 
     try {
       outputStream.write(content.getBytes(StandardCharsets.UTF_8));
       outputStream.flush();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error while sending content to %s", name);
     }
   }
 
   @Override
-  public int returnCode() {
+  public int returnCode()
+  {
     waitFor();
 
     return process.exitValue();
   }
 
   @Override
-  public boolean succeeded() {
+  public boolean succeeded()
+  {
     return returnCode() == 0;
   }
 
   @Override
-  public boolean failed() {
+  public boolean failed()
+  {
     return returnCode() != 0;
   }
 
   @Override
-  public Iterator<String> iterator() {
+  public Iterator<String> iterator()
+  {
     final BufferedReader reader = getReader();
 
-    return new Iterator<String>() {
+    return new Iterator<String>()
+    {
       private String line;
       private boolean pending = false;
 
       @Override
-      public boolean hasNext() {
+      public boolean hasNext()
+      {
         if (pending) {
           return true;
         }
 
         try {
           line = reader.readLine();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           throw new ErrorMessage(e, "Error while running %s", name);
         }
 
@@ -277,7 +311,8 @@ class SubprocessImpl implements Subprocess {
       }
 
       @Override
-      public String next() {
+      public String next()
+      {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
@@ -288,21 +323,24 @@ class SubprocessImpl implements Subprocess {
       }
 
       @Override
-      public void remove() {
+      public void remove()
+      {
         throw new UnsupportedOperationException();
       }
     };
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return "SubprocessImpl{" +
-      "name='" + name + '\'' +
-      ", consumedStdout=" + consumedStdout +
-      '}';
+           "name='" + name + '\'' +
+           ", consumedStdout=" + consumedStdout +
+           '}';
   }
 
-  private InputStream getStdOut() {
+  private InputStream getStdOut()
+  {
     if (!consumedStdout.compareAndSet(false, true)) {
       throw new IllegalStateException("Already consumed stdout: " + name);
     }
@@ -310,15 +348,18 @@ class SubprocessImpl implements Subprocess {
     return stdout;
   }
 
-  private static class NamedDaemonThreadFactory implements ThreadFactory {
+  private static class NamedDaemonThreadFactory implements ThreadFactory
+  {
     private final String name;
 
-    private NamedDaemonThreadFactory(String name) {
+    private NamedDaemonThreadFactory(String name)
+    {
       this.name = name;
     }
 
     @Override
-    public Thread newThread(Runnable task) {
+    public Thread newThread(Runnable task)
+    {
       Thread thread = Executors.defaultThreadFactory().newThread(task);
 
       thread.setName(name);
@@ -328,16 +369,19 @@ class SubprocessImpl implements Subprocess {
     }
   }
 
-  private static class EchoInputStream extends FilterInputStream {
+  private static class EchoInputStream extends FilterInputStream
+  {
     private final OutputStream echo;
 
-    private EchoInputStream(InputStream in, OutputStream echo) {
+    private EchoInputStream(InputStream in, OutputStream echo)
+    {
       super(in);
       this.echo = echo;
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() throws IOException
+    {
       int read = in.read();
 
       if (read != -1) {
@@ -348,7 +392,8 @@ class SubprocessImpl implements Subprocess {
     }
 
     @Override
-    public int read(byte[] result) throws IOException {
+    public int read(byte[] result) throws IOException
+    {
       int read = in.read(result);
 
       if (read != -1) {
@@ -359,7 +404,8 @@ class SubprocessImpl implements Subprocess {
     }
 
     @Override
-    public int read(byte[] result, int offset, int length) throws IOException {
+    public int read(byte[] result, int offset, int length) throws IOException
+    {
       int read = in.read(result, offset, length);
 
       if (read != -1) {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency.linearization;
 
 import org.slf4j.Logger;
@@ -30,7 +31,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestLinearizer {
+public class TestLinearizer
+{
   private static final Logger LOG = LoggerFactory.getLogger(TestLinearizer.class);
 
   private Linearizer linearizer;
@@ -39,7 +41,8 @@ public class TestLinearizer {
   private List<Integer> results;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     linearizer = new Linearizer();
     nextTaskId = new AtomicInteger(0);
     taskList = new ArrayList<SerialStartTask>();
@@ -47,7 +50,8 @@ public class TestLinearizer {
   }
 
   @Test(groups = "fast")
-  public void testSanity1() throws Exception {
+  public void testSanity1() throws Exception
+  {
     // equivalent partial ordering: 1,1,2
     nextConcurrentTask();
     nextConcurrentTask();
@@ -57,7 +61,8 @@ public class TestLinearizer {
   }
 
   @Test(groups = "fast")
-  public void testSanity2() throws Exception {
+  public void testSanity2() throws Exception
+  {
     // equivalent partial ordering: 1,1,2,3,4,5,5,6
     nextConcurrentTask();
     nextConcurrentTask();
@@ -71,7 +76,8 @@ public class TestLinearizer {
     verifyResults();
   }
 
-  private void executeTasks() throws InterruptedException {
+  private void executeTasks() throws InterruptedException
+  {
     ExecutorService executor = Executors.newCachedThreadPool();
 
     Collections.shuffle(taskList);
@@ -88,23 +94,28 @@ public class TestLinearizer {
     }
   }
 
-  private void verifyResults() {
+  private void verifyResults()
+  {
     for (int i = 1; i < results.size(); i++) {
-      Assert.assertTrue(results.get(i-1) <= results.get(i));
+      Assert.assertTrue(results.get(i - 1) <= results.get(i));
     }
   }
 
-  private void nextConcurrentTask() {
+  private void nextConcurrentTask()
+  {
     final ConcurrentPoint concurrentPoint = linearizer.createConcurrentPoint();
     final int taskId = nextTaskId.get();
-    SerialStartTask task = new SerialStartTask(new Runnable() {
+    SerialStartTask task = new SerialStartTask(new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         concurrentPoint.start();
 
         try {
           results.add(taskId);
-        } finally {
+        }
+        finally {
           concurrentPoint.complete();
         }
       }
@@ -113,21 +124,25 @@ public class TestLinearizer {
     taskList.add(task);
   }
 
-  private void nextLinearizationTask() {
+  private void nextLinearizationTask()
+  {
     final LinearizationPoint linearizationPoint =
-      linearizer.createLinearizationPoint();
+        linearizer.createLinearizationPoint();
     final int taskId = nextTaskId.incrementAndGet();
 
     nextTaskId.incrementAndGet();
 
-    SerialStartTask task = new SerialStartTask(new Runnable() {
+    SerialStartTask task = new SerialStartTask(new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         linearizationPoint.start();
 
         try {
           results.add(taskId);
-        } finally {
+        }
+        finally {
           linearizationPoint.complete();
         }
       }
@@ -136,21 +151,25 @@ public class TestLinearizer {
     taskList.add(task);
   }
 
-  private static class SerialStartTask implements Runnable {
+  private static class SerialStartTask implements Runnable
+  {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final Runnable task;
 
-    private SerialStartTask(Runnable task) {
+    private SerialStartTask(Runnable task)
+    {
       this.task = task;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
       latch.countDown();
       task.run();
     }
 
-    public void waitForStart() throws InterruptedException {
+    public void waitForStart() throws InterruptedException
+    {
       latch.await();
     }
   }

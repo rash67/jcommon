@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 public class ComparablePair
-  <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
-  extends Pair<T1, T2> implements Comparable<ComparablePair<T1, T2>> {
+    <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
+    extends Pair<T1, T2> implements Comparable<ComparablePair<T1, T2>>
+{
 
-  public ComparablePair(T1 t1, T2 t2) {
+  public ComparablePair(T1 t1, T2 t2)
+  {
     super(t1, t2);
   }
 
   public static <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
-  Pair<T1, T2> of(T1 first, T2 second) {
+  Pair<T1, T2> of(T1 first, T2 second)
+  {
     return new ComparablePair<>(first, second);
   }
 
   @Override
-  public int compareTo(ComparablePair<T1, T2> o) {
+  public int compareTo(ComparablePair<T1, T2> o)
+  {
     int firstCompareTo = getFirst().compareTo(o.getFirst());
 
     if (firstCompareTo == 0) {

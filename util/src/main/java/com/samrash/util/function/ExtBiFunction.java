@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtSupplier;
+
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-public interface ExtBiFunction<T, U, R, E extends Throwable> {
+public interface ExtBiFunction<T, U, R, E extends Throwable>
+{
   R apply(T t, U u) throws E;
 
-  default <V> ExtBiFunction<T, U, V, E> andThen(ExtFunction<? super R, ? extends V, E> after) {
+  default <V> ExtBiFunction<T, U, V, E> andThen(ExtFunction<? super R, ? extends V, E> after)
+  {
     Objects.requireNonNull(after);
     return (t, u) -> after.apply(apply(t, u));
   }
 
-  static <T, U, R> BiFunction<T, U, R> quiet(ExtBiFunction<T, U, R, ?> biFunction) {
+  static <T, U, R> BiFunction<T, U, R> quiet(ExtBiFunction<T, U, R, ?> biFunction)
+  {
     return (t, u) -> ExtSupplier.quiet(() -> biFunction.apply(t, u)).get();
   }
 }

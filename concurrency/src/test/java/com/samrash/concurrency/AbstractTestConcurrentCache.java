@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import org.testng.Assert;
@@ -24,7 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.samrash.testing.TestUtils.waitUntilThreadBlocks;
 
-public abstract class AbstractTestConcurrentCache {
+public abstract class AbstractTestConcurrentCache
+{
   private static final String STD_KEY = "std";
   private static final String BLOCKING_KEY = "blocking";
   private static final String EXCEPTION_KEY = "exception";
@@ -36,36 +38,38 @@ public abstract class AbstractTestConcurrentCache {
   private ConcurrentCache<String, String, RuntimeException> cache;
 
   protected abstract ConcurrentCache<String, String, RuntimeException> createCache(
-    ValueFactory<String, String, RuntimeException> valueFactory
+      ValueFactory<String, String, RuntimeException> valueFactory
   );
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     stdProducer = new BlockingValueProducer<>(VALUE);
     blockingProducer = new BlockingValueProducer<>(VALUE, true);
     exceptionThrowingProducer =
-      new BlockingValueProducer<>(
-        VALUE, true, new RuntimeException("I take exception to this")
-      );
+        new BlockingValueProducer<>(
+            VALUE, true, new RuntimeException("I take exception to this")
+        );
     cache = createCache(
-      input -> {
-        switch (input) {
-          case STD_KEY:
-            return stdProducer.call();
-          case BLOCKING_KEY:
-            return blockingProducer.call();
-          case EXCEPTION_KEY:
-            return exceptionThrowingProducer.call();
-          default:
-            return input;
+        input -> {
+          switch (input) {
+            case STD_KEY:
+              return stdProducer.call();
+            case BLOCKING_KEY:
+              return blockingProducer.call();
+            case EXCEPTION_KEY:
+              return exceptionThrowingProducer.call();
+            default:
+              return input;
+          }
         }
-      }
     );
     testHelper = new ConcurrentCacheTestHelper<>(cache);
   }
 
   @Test
-  public void testProducerThrowsException() throws Exception {
+  public void testProducerThrowsException() throws Exception
+  {
     // exception should be seen by all who try to do a get
     Thread t1 = testHelper.getInThread(EXCEPTION_KEY, VALUE);
     Thread t2 = testHelper.getInThread(EXCEPTION_KEY, VALUE);
@@ -78,9 +82,10 @@ public abstract class AbstractTestConcurrentCache {
     try {
       cache.get(EXCEPTION_KEY);
       Assert.fail("expected exception");
-    } catch (RuntimeException e) {
+    }
+    catch (RuntimeException e) {
       Assert.assertEquals(
-        testHelper.getExceptionList().size(), 2, "all threads did not see exceptions"
+          testHelper.getExceptionList().size(), 2, "all threads did not see exceptions"
       );
       Assert.assertTrue(cache.getIfPresent(EXCEPTION_KEY) != null, "task not inserted");
     }
@@ -91,7 +96,8 @@ public abstract class AbstractTestConcurrentCache {
    * Since remove blocks on
    */
   @Test
-  public void testConcurrentGetAndRemove() throws Exception {
+  public void testConcurrentGetAndRemove() throws Exception
+  {
     Thread getThread = testHelper.getInThread(BLOCKING_KEY, VALUE);
     // wait until the task is inserted
     waitUntilThreadBlocks(getThread);
@@ -108,7 +114,8 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   //  @Test
-  public void testConcurrentGetAndClear() throws Exception {
+  public void testConcurrentGetAndClear() throws Exception
+  {
     // TOOD: see if we can fix this test;  we need a way to block
     // *after* we do the value insert; or we can do various tryAcquire on
     //  locks...
@@ -129,7 +136,8 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   @Test
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     // sanity check that our iterator works as expected
     cache.get("fuu");
     cache.get("bar");
@@ -139,7 +147,7 @@ public abstract class AbstractTestConcurrentCache {
     int i = 0;
 
     for (Map.Entry<String, CallableSnapshot<String, RuntimeException>> entry :
-      cache) {
+        cache) {
       // the value producer used returns the key as the value
       Assert.assertEquals(entry.getKey(), entry.getValue().get());
       i++;
@@ -149,7 +157,8 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   @Test
-  public void testCacheFlow() throws Exception {
+  public void testCacheFlow() throws Exception
+  {
     // not called yet
     Assert.assertEquals(stdProducer.getCalledCount(), 0);
     // we should get the expected value on a cache-miss
@@ -173,7 +182,8 @@ public abstract class AbstractTestConcurrentCache {
    * to block and then asserts we only saw one factory.call()
    */
   @Test
-  public void testConcurrentCacheHit() throws Throwable {
+  public void testConcurrentCacheHit() throws Throwable
+  {
     // run each get in a separate thread
     Thread t1 = testHelper.getInThread(STD_KEY, VALUE);
     Thread t2 = testHelper.getInThread(STD_KEY, VALUE);
@@ -199,13 +209,15 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   @Test
-  public void testRemoveIfError() throws Exception {
+  public void testRemoveIfError() throws Exception
+  {
     // allow the cache.get() to proceed below
     exceptionThrowingProducer.signal();
     try {
       cache.get(EXCEPTION_KEY);
       Assert.fail("expected exception");
-    } catch (RuntimeException e) {
+    }
+    catch (RuntimeException e) {
       // expected
     }
     // now call removeIfError() twice, with the first one
@@ -230,7 +242,8 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   @Test
-  public void testRemoveBeforeValueSwap() throws Exception {
+  public void testRemoveBeforeValueSwap() throws Exception
+  {
     // Initiate a value fetch
     Thread t1 = testHelper.getInThread(BLOCKING_KEY, VALUE);
     waitUntilThreadBlocks(t1);

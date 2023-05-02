@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import com.samrash.tools.subprocess.SubprocessBuilder;
@@ -21,43 +22,51 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class MockIO extends IO {
+public class MockIO extends IO
+{
   private final ByteArrayOutputStream out;
   private final ByteArrayOutputStream err;
 
-  public MockIO(String input, SubprocessBuilder subprocess) {
+  public MockIO(String input, SubprocessBuilder subprocess)
+  {
     this(new ByteArrayOutputStream(), new ByteArrayOutputStream(), input, subprocess);
   }
 
-  public MockIO(SubprocessBuilder subprocess) {
+  public MockIO(SubprocessBuilder subprocess)
+  {
     this("", subprocess);
   }
 
-  public MockIO(String input) {
+  public MockIO(String input)
+  {
     this(input, null);
   }
 
 
-  public MockIO() {
+  public MockIO()
+  {
     this("", null);
   }
 
-  public String getOut() {
+  public String getOut()
+  {
     return out.toString();
   }
 
-  public String getErr() {
+  public String getErr()
+  {
     return err.toString();
   }
 
   private MockIO(
-    ByteArrayOutputStream out, ByteArrayOutputStream err, String input, SubprocessBuilder subprocess
-  ) {
+      ByteArrayOutputStream out, ByteArrayOutputStream err, String input, SubprocessBuilder subprocess
+  )
+  {
     super(
-      new PrintStream(out),
-      new PrintStream(err),
-      new InputStreamInput(new ByteArrayInputStream(input.getBytes())),
-      subprocess
+        new PrintStream(out),
+        new PrintStream(err),
+        new InputStreamInput(new ByteArrayInputStream(input.getBytes())),
+        subprocess
     );
     this.out = out;
     this.err = err;

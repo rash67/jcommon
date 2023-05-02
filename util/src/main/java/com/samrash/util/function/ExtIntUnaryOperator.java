@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.IntUnaryOperator;
 
-public interface ExtIntUnaryOperator<E extends Throwable> {
+public interface ExtIntUnaryOperator<E extends Throwable>
+{
   int applyAsInt(int operand) throws E;
 
-  default ExtIntUnaryOperator<E> compose(ExtIntUnaryOperator<E> before) {
+  default ExtIntUnaryOperator<E> compose(ExtIntUnaryOperator<E> before)
+  {
     Objects.requireNonNull(before);
     return (operand) -> applyAsInt(before.applyAsInt(operand));
   }
 
-  default ExtIntUnaryOperator<E> andThen(ExtIntUnaryOperator<E> after) {
+  default ExtIntUnaryOperator<E> andThen(ExtIntUnaryOperator<E> after)
+  {
     Objects.requireNonNull(after);
     return (operand) -> after.applyAsInt(applyAsInt(operand));
   }
 
-  static IntUnaryOperator quiet(ExtIntUnaryOperator<?> intUnaryOperator) {
+  static IntUnaryOperator quiet(ExtIntUnaryOperator<?> intUnaryOperator)
+  {
     return (operand) -> ExtIntSupplier.quiet(() -> intUnaryOperator.applyAsInt(operand)).getAsInt();
   }
 }

@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import com.google.common.collect.Lists;
+import com.samrash.logging.Logger;
+import com.samrash.logging.LoggerImpl;
+import com.samrash.stats.mx.StatsUtil;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,15 +31,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import com.samrash.logging.Logger;
-import com.samrash.logging.LoggerImpl;
-import com.samrash.stats.mx.StatsUtil;
-
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class TestQuantileDigest {
+public class TestQuantileDigest
+{
   private final static Logger LOG = LoggerImpl.getLogger(TestQuantileDigest.class);
 
   /**
@@ -53,7 +54,7 @@ public class TestQuantileDigest {
    * addTestValuesForHistogram(multiWindowDistrobution);
    */
   private static final String HISTOGRAM_VALUE =
-    "-1:0:0,0:2:1,3:1:4,6:2:7,9:1:10,12:2:13,15:1:16,18:2:19,21:1:22,24:2:25,27:1:28,30:2:31," +
+      "-1:0:0,0:2:1,3:1:4,6:2:7,9:1:10,12:2:13,15:1:16,18:2:19,21:1:22,24:2:25,27:1:28,30:2:31," +
       "33:1:34,36:2:37,39:1:40,42:2:43,45:1:46,48:2:49,51:1:52,54:2:55,57:1:58,60:2:61,63:1:64," +
       "66:2:67,69:1:70,72:2:73,75:1:76,78:2:79,81:1:82,84:2:85,87:1:88,90:2:91,93:1:94,96:2:97," +
       "99:1:100,102:2:103,105:1:106,108:2:109,111:1:112,114:2:115,117:1:118,120:2:121,123:1:124," +
@@ -69,28 +70,30 @@ public class TestQuantileDigest {
   private MultiWindowDistribution multiWindowDistributionForHistogramTests;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     periodStringList = Arrays.asList(".60", ".600", ".3600", "");
 
     TestingClock testingClock = new TestingClock(System.currentTimeMillis());
     double maxError = 0.0001;
     multiWindowDistributionForCounterTests = new MultiWindowDistribution(
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false)
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false)
     );
     multiWindowDistributionForHistogramTests = new MultiWindowDistribution(
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false),
-      new QuantileDigest(maxError, 0.0, testingClock, false)
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false),
+        new QuantileDigest(maxError, 0.0, testingClock, false)
     );
     addTestValuesForCounters(multiWindowDistributionForCounterTests);
   }
 
   @Test(groups = "fast")
-  public void testSingleAdd() {
+  public void testSingleAdd()
+  {
     QuantileDigest digest = new QuantileDigest(1);
     digest.add(0);
 
@@ -105,7 +108,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testRepeatedValue() {
+  public void testRepeatedValue()
+  {
     QuantileDigest digest = new QuantileDigest(1);
     digest.add(0);
     digest.add(0);
@@ -121,7 +125,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testTwoDistinctValues() {
+  public void testTwoDistinctValues()
+  {
     QuantileDigest digest = new QuantileDigest(1);
     digest.add(0);
     digest.add(Long.MAX_VALUE);
@@ -137,7 +142,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testTreeBuilding() {
+  public void testTreeBuilding()
+  {
     QuantileDigest digest = new QuantileDigest(1);
 
     List<Integer> values = asList(0, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7);
@@ -153,7 +159,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testTreeBuildingReverse() {
+  public void testTreeBuildingReverse()
+  {
     QuantileDigest digest = new QuantileDigest(1);
 
     List<Integer> values = asList(0, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7);
@@ -169,7 +176,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testBasicCompression() {
+  public void testBasicCompression()
+  {
     // maxError = 0.8 so that we get compression factor = 5 with the data below
     QuantileDigest digest = new QuantileDigest(0.8, 0, new TestingClock(), false);
 
@@ -186,7 +194,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testCompression() throws Exception {
+  public void testCompression() throws Exception
+  {
     QuantileDigest digest = new QuantileDigest(1, 0, new TestingClock(), false);
 
     for (int loop = 0; loop < 2; ++loop) {
@@ -198,7 +207,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testQuantile() {
+  public void testQuantile()
+  {
     QuantileDigest digest = new QuantileDigest(1);
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -221,7 +231,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testBatchQuantileQuery() throws Exception {
+  public void testBatchQuantileQuery() throws Exception
+  {
     QuantileDigest digest = new QuantileDigest(1);
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -231,13 +242,14 @@ public class TestQuantileDigest {
     assertEquals(digest.getConfidenceFactor(), 0.0);
 
     assertEquals(
-      digest.getQuantiles(asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)),
-      asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 9L)
+        digest.getQuantiles(asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)),
+        asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 9L)
     );
   }
 
   @Test(groups = "fast")
-  public void testHistogramQuery() throws Exception {
+  public void testHistogramQuery() throws Exception
+  {
     QuantileDigest digest = new QuantileDigest(1);
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -247,28 +259,28 @@ public class TestQuantileDigest {
     assertEquals(digest.getConfidenceFactor(), 0.0);
 
     assertEquals(
-      digest.getHistogram(asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)),
-      asList(
-        new QuantileDigest.Bucket(0, Double.NaN),
-        new QuantileDigest.Bucket(1, 0),
-        new QuantileDigest.Bucket(1, 1),
-        new QuantileDigest.Bucket(1, 2),
-        new QuantileDigest.Bucket(1, 3),
-        new QuantileDigest.Bucket(1, 4),
-        new QuantileDigest.Bucket(1, 5),
-        new QuantileDigest.Bucket(1, 6),
-        new QuantileDigest.Bucket(1, 7),
-        new QuantileDigest.Bucket(1, 8),
-        new QuantileDigest.Bucket(1, 9)
-      )
+        digest.getHistogram(asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)),
+        asList(
+            new QuantileDigest.Bucket(0, Double.NaN),
+            new QuantileDigest.Bucket(1, 0),
+            new QuantileDigest.Bucket(1, 1),
+            new QuantileDigest.Bucket(1, 2),
+            new QuantileDigest.Bucket(1, 3),
+            new QuantileDigest.Bucket(1, 4),
+            new QuantileDigest.Bucket(1, 5),
+            new QuantileDigest.Bucket(1, 6),
+            new QuantileDigest.Bucket(1, 7),
+            new QuantileDigest.Bucket(1, 8),
+            new QuantileDigest.Bucket(1, 9)
+        )
     );
 
     assertEquals(
-      digest.getHistogram(asList(7L, 10L)),
-      asList(
-        new QuantileDigest.Bucket(7, 3),
-        new QuantileDigest.Bucket(3, 8)
-      )
+        digest.getHistogram(asList(7L, 10L)),
+        asList(
+            new QuantileDigest.Bucket(7, 3),
+            new QuantileDigest.Bucket(3, 8)
+        )
     );
 
     // test some edge conditions
@@ -276,13 +288,14 @@ public class TestQuantileDigest {
     assertEquals(digest.getHistogram(asList(9L)), asList(new QuantileDigest.Bucket(9, 4)));
     assertEquals(digest.getHistogram(asList(10L)), asList(new QuantileDigest.Bucket(10, 4.5)));
     assertEquals(
-      digest.getHistogram(asList(Long.MAX_VALUE)),
-      asList(new QuantileDigest.Bucket(10, 4.5))
+        digest.getHistogram(asList(Long.MAX_VALUE)),
+        asList(new QuantileDigest.Bucket(10, 4.5))
     );
   }
 
   @Test(groups = "fast")
-  public void testHistogramQueryAfterCompression() throws Exception {
+  public void testHistogramQueryAfterCompression() throws Exception
+  {
     QuantileDigest digest = new QuantileDigest(0.1);
 
     int total = 10000;
@@ -302,7 +315,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testQuantileQueryError() {
+  public void testQuantileQueryError()
+  {
     double maxError = 0.1;
 
     QuantileDigest digest = new QuantileDigest(maxError);
@@ -329,13 +343,14 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testDecayedQuantiles() throws Exception {
+  public void testDecayedQuantiles() throws Exception
+  {
     TestingClock clock = new TestingClock();
     QuantileDigest digest = new QuantileDigest(
-      1,
-      ExponentialDecay.computeAlpha(0.5, 60),
-      clock,
-      true
+        1,
+        ExponentialDecay.computeAlpha(0.5, 60),
+        clock,
+        true
     );
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -354,13 +369,14 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testDecayedCounts() throws Exception {
+  public void testDecayedCounts() throws Exception
+  {
     TestingClock clock = new TestingClock();
     QuantileDigest digest = new QuantileDigest(
-      1,
-      ExponentialDecay.computeAlpha(0.5, 60),
-      clock,
-      true
+        1,
+        ExponentialDecay.computeAlpha(0.5, 60),
+        clock,
+        true
     );
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -374,21 +390,22 @@ public class TestQuantileDigest {
 
     // The first 10 values only contribute 5 to the counts per the alpha factor
     assertEquals(
-      digest.getHistogram(asList(10L, 20L)),
-      asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5))
+        digest.getHistogram(asList(10L, 20L)),
+        asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5))
     );
 
     assertEquals(digest.getCount(), 15.0);
   }
 
   @Test(groups = "fast")
-  public void testDecayedCountsWithClockIncrementSmallerThanRescaleThreshold() throws Exception {
+  public void testDecayedCountsWithClockIncrementSmallerThanRescaleThreshold() throws Exception
+  {
     int targetAgeInSeconds = (int) (QuantileDigest.RESCALE_THRESHOLD_SECONDS - 1);
 
     TestingClock clock = new TestingClock();
     QuantileDigest digest = new QuantileDigest(
-      1,
-      ExponentialDecay.computeAlpha(0.5, targetAgeInSeconds), clock, false
+        1,
+        ExponentialDecay.computeAlpha(0.5, targetAgeInSeconds), clock, false
     );
 
     addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -397,15 +414,16 @@ public class TestQuantileDigest {
 
     // The first 10 values only contribute 5 to the counts per the alpha factor
     assertEquals(
-      digest.getHistogram(asList(10L, 20L)),
-      asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5))
+        digest.getHistogram(asList(10L, 20L)),
+        asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5))
     );
 
     assertEquals(digest.getCount(), 15.0);
   }
 
   @Test(groups = "fast")
-  public void testMinMax() throws Exception {
+  public void testMinMax() throws Exception
+  {
     QuantileDigest digest = new QuantileDigest(0.01, 0, new TestingClock(), false);
 
     int from = 500;
@@ -417,12 +435,13 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testMinMaxWithDecay() throws Exception {
+  public void testMinMaxWithDecay() throws Exception
+  {
     TestingClock clock = new TestingClock();
 
     QuantileDigest digest = new QuantileDigest(
-      0.01,
-      ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD, 60), clock, false
+        0.01,
+        ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD, 60), clock, false
     );
 
     addRange(digest, 1, 10);
@@ -440,14 +459,15 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testRescaleWithDecayKeepsCompactTree() throws Exception {
+  public void testRescaleWithDecayKeepsCompactTree() throws Exception
+  {
     TestingClock clock = new TestingClock();
     int targetAgeInSeconds = (int) (QuantileDigest.RESCALE_THRESHOLD_SECONDS);
 
     QuantileDigest digest = new QuantileDigest(
-      0.01,
-      ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD / 2, targetAgeInSeconds),
-      clock, true
+        0.01,
+        ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD / 2, targetAgeInSeconds),
+        clock, true
     );
 
     for (int i = 0; i < 10; ++i) {
@@ -462,7 +482,8 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "slow")
-  public void testTiming() {
+  public void testTiming()
+  {
     QuantileDigest digest = new QuantileDigest(0.01, 0, new TestingClock(), true);
 
     Random random = new Random();
@@ -484,20 +505,21 @@ public class TestQuantileDigest {
     digest.validate();
 
     LOG.info(
-      "Processed %d entries in %d ms. Insertion rate = %f entries/s",
-      count,
-      TimeUnit.NANOSECONDS.toMillis(totalTime),
-      count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
+        "Processed %d entries in %d ms. Insertion rate = %f entries/s",
+        count,
+        TimeUnit.NANOSECONDS.toMillis(totalTime),
+        count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
     );
 
     LOG.info(
-      "Compressions: %d, %f entries/compression", digest.getCompressions(),
-      digest.getCount() / digest.getCompressions()
+        "Compressions: %d, %f entries/compression", digest.getCompressions(),
+        digest.getCount() / digest.getCompressions()
     );
   }
 
   @Test(groups = "fast")
-  public void testQuantileDigestPercentileCounters() throws Exception {
+  public void testQuantileDigestPercentileCounters() throws Exception
+  {
 
     Map<String, Long> counterMap = new HashMap<>();
 
@@ -511,12 +533,13 @@ public class TestQuantileDigest {
   }
 
   @Test(groups = "fast")
-  public void testQuantileDigestHistogramExportedValue() throws Exception {
+  public void testQuantileDigestHistogramExportedValue() throws Exception
+  {
     Map<String, String> exportedValuesMap = new HashMap<>();
 
     addTestValuesForHistogram(multiWindowDistributionForHistogramTests);
     StatsUtil.addHistogramToExportedValues(
-      "baseKey", multiWindowDistributionForHistogramTests, exportedValuesMap
+        "baseKey", multiWindowDistributionForHistogramTests, exportedValuesMap
     );
 
     for (String timePeriod : periodStringList) {
@@ -524,14 +547,16 @@ public class TestQuantileDigest {
     }
   }
 
-  private <V> void assertKeyIsValue( Map<String, V> resultMap, String key, V value) {
+  private <V> void assertKeyIsValue(Map<String, V> resultMap, String key, V value)
+  {
     V computedValue = resultMap.get(key);
 
     Assert.assertNotNull(computedValue, String.format("key %s should not be null", key));
     Assert.assertEquals(computedValue, value);
   }
 
-  private void addTestValuesForCounters(MultiWindowDistribution multiWindowDistribution) {
+  private void addTestValuesForCounters(MultiWindowDistribution multiWindowDistribution)
+  {
     multiWindowDistribution.add(1);
     multiWindowDistribution.add(2);
     multiWindowDistribution.add(10);
@@ -543,20 +568,23 @@ public class TestQuantileDigest {
     multiWindowDistribution.add(2000);
   }
 
-  private void addTestValuesForHistogram(MultiWindowDistribution multiWindowDistribution) {
+  private void addTestValuesForHistogram(MultiWindowDistribution multiWindowDistribution)
+  {
     for (int i = 0; i <= 200; i += 2) {
       multiWindowDistribution.add(i);
     }
   }
 
-  private void addAll(QuantileDigest digest, List<Integer> values) {
+  private void addAll(QuantileDigest digest, List<Integer> values)
+  {
     for (int value : values) {
       digest.add(value);
     }
     digest.validate();
   }
 
-  private void addRange(QuantileDigest digest, int from, int to) {
+  private void addRange(QuantileDigest digest, int from, int to)
+  {
     for (int i = from; i < to; ++i) {
       digest.add(i);
     }

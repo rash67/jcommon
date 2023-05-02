@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.election;
 
 import com.samrash.testing.MockExecutor;
+import com.samrash.zookeeper.VariablePayload;
 import com.samrash.zookeeper.mock.MockWatcher;
 import com.samrash.zookeeper.mock.MockZkConnectionManager;
 import com.samrash.zookeeper.mock.MockZooKeeper;
 import com.samrash.zookeeper.mock.MockZooKeeperDataStore;
 import com.samrash.zookeeper.mock.MockZooKeeperFactory;
-import com.samrash.zookeeper.VariablePayload;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -32,7 +33,8 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-public class TestZkLeaderElection {
+public class TestZkLeaderElection
+{
   private static final String testData1 = "testData1";
   private static final String testData2 = "testData2";
   private static final String testData3 = "testData3";
@@ -60,7 +62,8 @@ public class TestZkLeaderElection {
   private MockZooKeeper zk3;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     dataStore = new MockZooKeeperDataStore();
     mockZooKeeperFactory = new MockZooKeeperFactory(dataStore);
     mockZkConnectionManager1 = new MockZkConnectionManager(mockZooKeeperFactory);
@@ -81,42 +84,42 @@ public class TestZkLeaderElection {
     variablePayload1 = new VariablePayload(testData1);
     mockLeaderElectionCallback1 = new MockLeaderElectionCallback();
     zkLeaderElection1 =
-      new ZkLeaderElection(
-        mockZkConnectionManager1,
-        electionRoot,
-        candidateBaseName,
-        variablePayload1,
-        mockLeaderElectionCallback1,
-        mockExecutor1
-      );
+        new ZkLeaderElection(
+            mockZkConnectionManager1,
+            electionRoot,
+            candidateBaseName,
+            variablePayload1,
+            mockLeaderElectionCallback1,
+            mockExecutor1
+        );
 
     // Create ZkLeaderElection2
     mockExecutor2 = new MockExecutor();
     variablePayload2 = new VariablePayload(testData2);
     mockLeaderElectionCallback2 = new MockLeaderElectionCallback();
     zkLeaderElection2 =
-      new ZkLeaderElection(
-        mockZkConnectionManager2,
-        electionRoot,
-        candidateBaseName,
-        variablePayload2,
-        mockLeaderElectionCallback2,
-        mockExecutor2
-      );
+        new ZkLeaderElection(
+            mockZkConnectionManager2,
+            electionRoot,
+            candidateBaseName,
+            variablePayload2,
+            mockLeaderElectionCallback2,
+            mockExecutor2
+        );
 
     // Create ZkLeaderElection3
     mockExecutor3 = new MockExecutor();
     variablePayload3 = new VariablePayload(testData3);
     mockLeaderElectionCallback3 = new MockLeaderElectionCallback();
     zkLeaderElection3 =
-      new ZkLeaderElection(
-        mockZkConnectionManager3,
-        electionRoot,
-        candidateBaseName,
-        variablePayload3,
-        mockLeaderElectionCallback3,
-        mockExecutor3
-      );
+        new ZkLeaderElection(
+            mockZkConnectionManager3,
+            electionRoot,
+            candidateBaseName,
+            variablePayload3,
+            mockLeaderElectionCallback3,
+            mockExecutor3
+        );
 
     // Set up election root
     zk1.create("/root", null, null, CreateMode.PERSISTENT);
@@ -125,19 +128,22 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast", expectedExceptions = KeeperException.ConnectionLossException.class)
-  public void testNoConnection() throws Exception {
+  public void testNoConnection() throws Exception
+  {
     zk1.triggerDisconnect();
     zkLeaderElection1.enter();
   }
 
   @Test(groups = "fast", expectedExceptions = KeeperException.NoNodeException.class)
-  public void testMissingRoot() throws Exception {
+  public void testMissingRoot() throws Exception
+  {
     zk1.delete(electionRoot, -1);
     zkLeaderElection1.enter();
   }
 
   @Test(groups = "fast")
-  public void testEnter() throws Exception {
+  public void testEnter() throws Exception
+  {
     // Verify no candidates
     MockWatcher mockWatcher = new MockWatcher();
     List<String> candidates = zk1.getChildren(electionRoot, mockWatcher);
@@ -158,7 +164,7 @@ public class TestZkLeaderElection {
 
     // Check data contents
     String data = VariablePayload.decode(
-      zk1.getData(electionRoot + "/" + candidates.get(0), null, null)
+        zk1.getData(electionRoot + "/" + candidates.get(0), null, null)
     );
     Assert.assertEquals(data, testData1);
 
@@ -170,7 +176,8 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testMultipleEnter() throws Exception {
+  public void testMultipleEnter() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate is elected
@@ -188,14 +195,16 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testPrematureWithdraw() throws Exception {
+  public void testPrematureWithdraw() throws Exception
+  {
     // No exception should be thrown if the candidate does not exist
     zkLeaderElection1.withdraw();
     mockExecutor1.drain();
   }
 
   @Test(groups = "fast")
-  public void testWithdraw() throws Exception {
+  public void testWithdraw() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
 
@@ -221,7 +230,8 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testMultipleWithdraw() throws Exception {
+  public void testMultipleWithdraw() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
 
@@ -237,7 +247,8 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testCycle() throws Exception {
+  public void testCycle() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate is elected
@@ -255,7 +266,8 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testEarlyCycle() throws Exception {
+  public void testEarlyCycle() throws Exception
+  {
     zkLeaderElection1.cycle();
     mockExecutor1.drain();
     // Check that candidate is elected
@@ -267,7 +279,8 @@ public class TestZkLeaderElection {
   }
 
   @Test(groups = "fast")
-  public void testMultiEnter() throws Exception {
+  public void testMultiEnter() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate1 is elected
@@ -285,15 +298,16 @@ public class TestZkLeaderElection {
     Assert.assertEquals(zkLeaderElection1.getLeader(), zkLeaderElection2.getLeader());
     // Check that the reported winner is candidate1
     Assert.assertEquals(
-      VariablePayload.decode(zk1.getData(
-        electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
-      )),
-      testData1
+        VariablePayload.decode(zk1.getData(
+            electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
+        )),
+        testData1
     );
   }
 
   @Test(groups = "fast")
-  public void testMultiCycle() throws Exception {
+  public void testMultiCycle() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate1 is elected
@@ -319,15 +333,16 @@ public class TestZkLeaderElection {
     Assert.assertEquals(zkLeaderElection1.getLeader(), zkLeaderElection2.getLeader());
     // Check that the reported winner is candidate2
     Assert.assertEquals(
-      VariablePayload.decode(zk1.getData(
-        electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
-      )),
-      testData2
+        VariablePayload.decode(zk1.getData(
+            electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
+        )),
+        testData2
     );
   }
 
   @Test(groups = "fast")
-  public void testMultiWithExpire() throws Exception {
+  public void testMultiWithExpire() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate1 is elected
@@ -350,15 +365,16 @@ public class TestZkLeaderElection {
     Assert.assertEquals(zk2.getChildren(electionRoot, null).size(), 1);
     // Check that the reported winner is candidate2
     Assert.assertEquals(
-      VariablePayload.decode(zk2.getData(
-        electionRoot + "/" + zkLeaderElection2.getLeader(), null, null
-      )),
-      testData2
+        VariablePayload.decode(zk2.getData(
+            electionRoot + "/" + zkLeaderElection2.getLeader(), null, null
+        )),
+        testData2
     );
   }
 
   @Test(groups = "fast")
-  public void testAdminRemove() throws Exception {
+  public void testAdminRemove() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate1 is elected
@@ -385,15 +401,16 @@ public class TestZkLeaderElection {
     Assert.assertEquals(zk2.getChildren(electionRoot, null).size(), 1);
     // Check that the reported winner is candidate2
     Assert.assertEquals(
-      VariablePayload.decode(zk2.getData(
-        electionRoot + "/" + zkLeaderElection2.getLeader(), null, null
-      )),
-      testData2
+        VariablePayload.decode(zk2.getData(
+            electionRoot + "/" + zkLeaderElection2.getLeader(), null, null
+        )),
+        testData2
     );
   }
 
   @Test(groups = "fast")
-  public void testMultiSuccession() throws Exception {
+  public void testMultiSuccession() throws Exception
+  {
     zkLeaderElection1.enter();
     mockExecutor1.drain();
     // Check that candidate1 is elected
@@ -436,10 +453,10 @@ public class TestZkLeaderElection {
 
     // Check that the reported winner is candidate3
     Assert.assertEquals(
-      VariablePayload.decode(zk1.getData(
-        electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
-      )),
-      testData3
+        VariablePayload.decode(zk1.getData(
+            electionRoot + "/" + zkLeaderElection1.getLeader(), null, null
+        )),
+        testData3
     );
   }
 }

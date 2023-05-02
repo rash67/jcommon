@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-import com.samrash.stats.cardinality.Model.SymbolInfo;
 import com.google.common.base.Preconditions;
+import com.samrash.stats.cardinality.Model.SymbolInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-class ArithmeticDecoder {
+class ArithmeticDecoder
+{
   private final Model model;
 
   private long low;
@@ -31,7 +33,8 @@ class ArithmeticDecoder {
 
   private final InputStream in;
 
-  public ArithmeticDecoder(Model model, InputStream in) throws IOException {
+  public ArithmeticDecoder(Model model, InputStream in) throws IOException
+  {
 
     Preconditions.checkNotNull(model, "model is null");
     Preconditions.checkNotNull(in, "in is null");
@@ -45,11 +48,13 @@ class ArithmeticDecoder {
     }
   }
 
-  public ArithmeticDecoder(Model model, byte[] bytes) throws IOException {
+  public ArithmeticDecoder(Model model, byte[] bytes) throws IOException
+  {
     this(model, new ByteArrayInputStream(Preconditions.checkNotNull(bytes, "bytes is null")));
   }
 
-  public int decode() throws IOException {
+  public int decode() throws IOException
+  {
     // determine next symbol
     // calculate the % of the value within the range
     long range = (high - low + 1) >>> model.log2MaxCount();
@@ -88,7 +93,8 @@ class ArithmeticDecoder {
     return symbolInfo.symbol();
   }
 
-  private void bufferByte() throws IOException {
+  private void bufferByte() throws IOException
+  {
     // shift over the high and low
     low <<= 8;
     high = (high << 8) | 0xFF;
@@ -104,7 +110,8 @@ class ArithmeticDecoder {
     }
   }
 
-  public static long removeUnderflowByte(long value) {
+  public static long removeUnderflowByte(long value)
+  {
     long highBits = (value & 0xFF0000000000L) >>> 8;
     long lowBits = value & 0x0000FFFFFFFFL;
     long newValue = highBits | lowBits;

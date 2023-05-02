@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
@@ -31,37 +32,42 @@ import java.util.Arrays;
  * Optimal for write-heavy counters
  */
 public class CompositeSum extends AbstractCompositeSum<EventCounter>
-  implements EventCounter {
+    implements EventCounter
+{
 
   public CompositeSum(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
-  ) {
+      ReadableDuration maxLength, ReadableDuration maxChunkLength
+  )
+  {
     super(maxLength, maxChunkLength);
   }
 
-  public CompositeSum(ReadableDuration maxLength) {
+  public CompositeSum(ReadableDuration maxLength)
+  {
     super(maxLength);
   }
 
   @Override
   protected EventCounter nextCounter(
-    ReadableDateTime start, ReadableDateTime end
-  ) {
+      ReadableDateTime start, ReadableDateTime end
+  )
+  {
     return new EventCounterImpl(start, end);
   }
 
   @Override
-  public EventCounter merge(EventCounter counter) {
+  public EventCounter merge(EventCounter counter)
+  {
     // special case to handle merging of 2 composite counters
     if (counter instanceof CompositeSum) {
       return internalMerge(
-        ((CompositeSum) counter).getEventCounters(),
-        new CompositeSum(getMaxLength(), getMaxChunkLength())
+          ((CompositeSum) counter).getEventCounters(),
+          new CompositeSum(getMaxLength(), getMaxChunkLength())
       );
     } else {
       return internalMerge(
-        Arrays.asList(counter),
-        new CompositeSum(getMaxLength(), getMaxChunkLength())
+          Arrays.asList(counter),
+          new CompositeSum(getMaxLength(), getMaxChunkLength())
       );
     }
   }

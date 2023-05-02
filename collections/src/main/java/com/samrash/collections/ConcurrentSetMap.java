@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Set;
 
-public class ConcurrentSetMap<K, V> extends SetMapImpl<K, V, Set<V>> {
-  public ConcurrentSetMap() {
+public class ConcurrentSetMap<K, V> extends SetMapImpl<K, V, Set<V>>
+{
+  public ConcurrentSetMap()
+  {
     super(new ConcurrentSetFactory<V>());
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import com.samrash.tools.ErrorMessage;
@@ -24,9 +25,11 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 // TODO add more tests...
-public class TestCliParser {
+public class TestCliParser
+{
   @Test(groups = "fast")
-  public void testSingleValue() {
+  public void testSingleValue()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-v");
@@ -35,25 +38,28 @@ public class TestCliParser {
   }
 
   @Test(groups = "fast")
-  public void testDefault() {
+  public void testDefault()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-d")
-      .withDefault("foo");
+           .withDefault("foo");
     assertGet(parser(command), "-d", "foo");
   }
 
   @Test(groups = "fast")
-  public void testNullDefault() {
+  public void testNullDefault()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-d")
-      .withDefault(null);
+           .withDefault(null);
     assertGet(parser(command), "-d", null);
   }
 
   @Test(groups = "fast")
-  public void testMissing() {
+  public void testMissing()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-v");
@@ -61,13 +67,15 @@ public class TestCliParser {
     try {
       parser(command);
       Assert.fail("expected exception");
-    } catch (ErrorMessage e) {
+    }
+    catch (ErrorMessage e) {
       Assert.assertEquals(e.getMessage(), "Missing required option: -v");
     }
   }
 
   @Test(groups = "fast")
-  public void testUnexpected() {
+  public void testUnexpected()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-a").withDefault(null);
@@ -76,13 +84,15 @@ public class TestCliParser {
     try {
       parser(command, "-x", "test", "-a", "hello");
       Assert.fail("expected exception");
-    } catch (ErrorMessage e) {
+    }
+    catch (ErrorMessage e) {
       Assert.assertEquals(e.getMessage(), "Unexpected parameters: -x test");
     }
   }
 
   @Test(groups = "fast")
-  public void testDuplicate() {
+  public void testDuplicate()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-v");
@@ -90,13 +100,15 @@ public class TestCliParser {
     try {
       parser(command, "-v", "foo", "-v=bar");
       Assert.fail("expected exception");
-    } catch (ErrorMessage e) {
+    }
+    catch (ErrorMessage e) {
       Assert.assertEquals(e.getMessage(), "Duplicate options: -v=foo, -v=bar");
     }
   }
 
   @Test(groups = "fast")
-  public void testFlag() {
+  public void testFlag()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addFlag("-f");
@@ -105,24 +117,27 @@ public class TestCliParser {
   }
 
   @Test(groups = "fast")
-  public void testMultiValues() {
+  public void testMultiValues()
+  {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
     command.addOption("-m")
-      .allowMultiple();
+           .allowMultiple();
 
     CliParser parser = parser(command, "-m", "val1", "-m", "val2");
 
     Assert.assertEquals(parser.getMulti("-m"), Arrays.asList("val1", "val2"));
   }
 
-  private static void assertGet(CliParser parser, String option, String expected) {
+  private static void assertGet(CliParser parser, String option, String expected)
+  {
     String actual = parser.get(option);
 
     Assert.assertEquals(actual, expected);
   }
 
-  private static CliParser parser(CliCommand.Builder commandBuilder, String... arguments) {
+  private static CliParser parser(CliCommand.Builder commandBuilder, String... arguments)
+  {
     CliParser parser = new CliParser(commandBuilder.build(), Arrays.asList(arguments));
 
     parser.verify(new PrintStream(new ByteArrayOutputStream()));

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.samrash.collectionsbase.Mapper;
 
-public interface InvertibleMapper<X, Y> extends Mapper<X,Y> {
+public interface InvertibleMapper<X, Y> extends Mapper<X, Y>
+{
   public X unmap(Y input);
 }

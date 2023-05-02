@@ -13,120 +13,144 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
-public class DynamicLogger implements Logger {
+public class DynamicLogger implements Logger
+{
   private final LogProvider logProvider;
 
-  public DynamicLogger(LogProvider logProvider) {
+  public DynamicLogger(LogProvider logProvider)
+  {
     this.logProvider = logProvider;
   }
 
-  private Logger getLogger() {
+  private Logger getLogger()
+  {
     return logProvider.get();
   }
 
   @Override
-  public boolean isTraceEnabled() {
+  public boolean isTraceEnabled()
+  {
     return getLogger().isTraceEnabled();
   }
 
   @Override
-  public boolean isDebugEnabled() {
+  public boolean isDebugEnabled()
+  {
     return getLogger().isDebugEnabled();
   }
 
   @Override
-  public boolean isInfoEnabled() {
+  public boolean isInfoEnabled()
+  {
     return getLogger().isInfoEnabled();
   }
 
   @Override
-  public boolean isWarnEnabled() {
+  public boolean isWarnEnabled()
+  {
     return getLogger().isWarnEnabled();
   }
 
   @Override
-  public boolean isErrorEnabled() {
+  public boolean isErrorEnabled()
+  {
     return getLogger().isErrorEnabled();
   }
 
   @Override
-  public void trace(String format, Object... args) {
+  public void trace(String format, Object... args)
+  {
     getLogger().trace(format, args);
   }
 
   @Override
-  public void trace(Throwable t, String format, Object... args) {
+  public void trace(Throwable t, String format, Object... args)
+  {
     getLogger().trace(t, format, args);
   }
 
   @Override
-  public void debug(String format, Object... args) {
+  public void debug(String format, Object... args)
+  {
     getLogger().debug(format, args);
   }
 
   @Override
-  public void debug(Throwable t, String format, Object... args) {
+  public void debug(Throwable t, String format, Object... args)
+  {
     getLogger().debug(t, format, args);
   }
 
   @Override
   @Deprecated
-  public void debug(String message, Throwable throwable) {
+  public void debug(String message, Throwable throwable)
+  {
     getLogger().debug(message, throwable);
   }
 
   @Override
-  public void info(String format, Object... args) {
+  public void info(String format, Object... args)
+  {
     getLogger().info(format, args);
   }
 
   @Override
-  public void info(Throwable t, String format, Object... args) {
+  public void info(Throwable t, String format, Object... args)
+  {
     getLogger().info(t, format, args);
   }
 
   @Override
   @Deprecated
-  public void info(String message, Throwable throwable) {
+  public void info(String message, Throwable throwable)
+  {
     getLogger().info(message, throwable);
   }
 
   @Override
-  public void warn(String format, Object... args) {
+  public void warn(String format, Object... args)
+  {
     getLogger().warn(format, args);
   }
 
   @Override
-  public void warn(Throwable t, String format, Object... args) {
+  public void warn(Throwable t, String format, Object... args)
+  {
     getLogger().warn(t, format, args);
   }
 
   @Override
   @Deprecated
-  public void warn(String message, Throwable throwable) {
+  public void warn(String message, Throwable throwable)
+  {
     getLogger().warn(message, throwable);
   }
 
   @Override
-  public void error(String format, Object... args) {
+  public void error(String format, Object... args)
+  {
     getLogger().error(format, args);
   }
 
   @Override
-  public void error(Throwable t, String format, Object... args) {
+  public void error(Throwable t, String format, Object... args)
+  {
     getLogger().error(t, format, args);
   }
 
   @Override
   @Deprecated
-  public void error(String message, Throwable throwable) {
+  public void error(String message, Throwable throwable)
+  {
     getLogger().error(message, throwable);
   }
 
   @Override
-  public String getName() {
+  public String getName()
+  {
     return getLogger().getName();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Throwables;
@@ -25,11 +26,13 @@ import java.util.Random;
 
 import static java.lang.String.format;
 
-public class BenchmarkAdaptiveHyperLogLog {
+public class BenchmarkAdaptiveHyperLogLog
+{
   private static final int COMPRESSION_LOOPS = 10000;
   private static final int COMPRESSION_WARM_LOOPS = 1000;
 
-  public static void main(String[] args) {
+  public static void main(String[] args)
+  {
     System.out.println("Warming up...");
     System.out.println();
 
@@ -44,13 +47,14 @@ public class BenchmarkAdaptiveHyperLogLog {
     benchmark(4096, count, true);
   }
 
-  private static void benchmark(int buckets, long count, boolean report) {
+  private static void benchmark(int buckets, long count, boolean report)
+  {
     if (report) {
       System.out.println(
           format(
               "-- %s buckets (%.2f%% error)", buckets, 100 * 1.04 / Math.sqrt(
-              buckets
-          )
+                  buckets
+              )
           )
       );
       System.out.println();
@@ -124,18 +128,21 @@ public class BenchmarkAdaptiveHyperLogLog {
     }
   }
 
-  private static int encodeSize(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+  private static int encodeSize(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog)
+  {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream(hyperLogLog.buckets().length);
       codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
       byte[] buf = out.toByteArray();
       return buf.length;
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw Throwables.propagate(e);
     }
   }
 
-  private static double timeEncode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+  private static double timeEncode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog)
+  {
     try {
       int buckets = hyperLogLog.buckets().length;
 
@@ -152,12 +159,14 @@ public class BenchmarkAdaptiveHyperLogLog {
         }
       }
       return encodeTime / 1.0e6 / (COMPRESSION_LOOPS - COMPRESSION_WARM_LOOPS);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw Throwables.propagate(e);
     }
   }
 
-  private static double timeDecode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+  private static double timeDecode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog)
+  {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream(hyperLogLog.buckets().length);
       codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
@@ -175,7 +184,8 @@ public class BenchmarkAdaptiveHyperLogLog {
         }
       }
       return decodeTime / 1.0e6 / (COMPRESSION_LOOPS - COMPRESSION_WARM_LOOPS);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw Throwables.propagate(e);
     }
   }

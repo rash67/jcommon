@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConcurrentSetFactory<V> implements SetFactory<V, Set<V>> {
+public class ConcurrentSetFactory<V> implements SetFactory<V, Set<V>>
+{
   @Override
-  public Set<V> create() {
+  public Set<V> create()
+  {
     return Collections.newSetFromMap(new ConcurrentHashMap<V, Boolean>());
   }
 }

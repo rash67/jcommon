@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import com.samrash.tools.ErrorMessage;
@@ -32,7 +33,8 @@ import java.util.Set;
  * Verifies the command-line arguments match the {@link com.samrash.tools.parser.CliCommand}, and
  * makes it easy to extract arguments by name.
  */
-public class CliParser {
+public class CliParser
+{
   private final CliCommand command;
   private final Set<String> switches = new LinkedHashSet<>();
   private final Map<String, String> values = new LinkedHashMap<>();
@@ -42,7 +44,8 @@ public class CliParser {
   private final List<String> unexpected = new ArrayList<>();
   private final List<Map.Entry<String, String>> duplicates = new ArrayList<>();
 
-  public CliParser(CliCommand command, List<String> arguments) {
+  public CliParser(CliCommand command, List<String> arguments)
+  {
     this.command = command;
 
     // getOption removes options as it parses them
@@ -101,8 +104,8 @@ public class CliParser {
 
       if (parameter.isRequired()) {
         CliOption option = new CliOption.SwitchBuilder()
-          .withSwitch(parameter.getName())
-          .build();
+            .withSwitch(parameter.getName())
+            .build();
 
         missing.add(option);
       }
@@ -122,7 +125,8 @@ public class CliParser {
     }
   }
 
-  public void verify(PrintStream out) {
+  public void verify(PrintStream out)
+  {
     List<String> errors = new ArrayList<>();
 
     if (!missing.isEmpty()) {
@@ -170,14 +174,16 @@ public class CliParser {
     }
   }
 
-  public String get(String option) {
+  public String get(String option)
+  {
     return get(option, CliConverter.STRING);
   }
 
-  public <T> T get(String option, CliConverter<T> converter) {
+  public <T> T get(String option, CliConverter<T> converter)
+  {
     if (!switches.contains(option)) {
       throw new IllegalStateException(
-        String.format("Expected option name to be one of %s, but got %s", switches, option)
+          String.format("Expected option name to be one of %s, but got %s", switches, option)
       );
     }
 
@@ -185,16 +191,19 @@ public class CliParser {
 
     try {
       return converter.convert(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ErrorMessage(e, "Failed to parse %s %s", option, value);
     }
   }
 
-  public List<String> getMulti(String option) {
+  public List<String> getMulti(String option)
+  {
     return getMulti(option, CliConverter.STRING);
   }
 
-  public <T> List<T> getMulti(String option, CliConverter<T> converter) {
+  public <T> List<T> getMulti(String option, CliConverter<T> converter)
+  {
     List<String> values = multiValues.get(option);
 
     if (values == null || values.isEmpty()) {
@@ -209,7 +218,8 @@ public class CliParser {
     for (String value : values) {
       try {
         result.add(converter.convert(value));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw new ErrorMessage(e, "Failed to parse %s %s", option, value);
       }
     }
@@ -217,17 +227,20 @@ public class CliParser {
     return result;
   }
 
-  public List<String> getTrailing() {
+  public List<String> getTrailing()
+  {
     return trailing;
   }
 
-  public <T> List<T> getTrailing(CliConverter<T> converter) {
+  public <T> List<T> getTrailing(CliConverter<T> converter)
+  {
     List<T> result = new ArrayList<>();
 
     for (String value : trailing) {
       try {
         result.add(converter.convert(value));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw new ErrorMessage(e, "Failed to parse %s", value);
       }
     }
@@ -236,8 +249,9 @@ public class CliParser {
   }
 
   private static List<Map.Entry<String, String>> getOption(
-    CliOption option, ArgumentList argumentList
-  ) {
+      CliOption option, ArgumentList argumentList
+  )
+  {
     List<Map.Entry<String, String>> result = new ArrayList<>();
     boolean flag = option.isFlag();
 
@@ -258,7 +272,7 @@ public class CliParser {
 
       if (defaultValue != null) {
         Map.Entry<String, String> defaultEntry =
-          new AbstractMap.SimpleImmutableEntry<>(last(option.getSwitchNames()), defaultValue);
+            new AbstractMap.SimpleImmutableEntry<>(last(option.getSwitchNames()), defaultValue);
 
         result.add(defaultEntry);
       }
@@ -267,11 +281,13 @@ public class CliParser {
     return result;
   }
 
-  private static String join(String separator, Iterable<?> values) {
+  private static String join(String separator, Iterable<?> values)
+  {
     return join(separator, values.iterator());
   }
 
-  private static String join(String separator, Iterator<?> values) {
+  private static String join(String separator, Iterator<?> values)
+  {
     StringBuilder result = new StringBuilder(80);
 
     while (values.hasNext()) {
@@ -285,11 +301,13 @@ public class CliParser {
     return result.toString();
   }
 
-  private static <T> T last(Iterable<T> values) {
+  private static <T> T last(Iterable<T> values)
+  {
     return last(values.iterator());
   }
 
-  private static <T> T last(Iterator<T> values) {
+  private static <T> T last(Iterator<T> values)
+  {
     T result = null;
 
     while (values.hasNext()) {

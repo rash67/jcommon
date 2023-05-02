@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * reference implementation of a simple counter for a bounded period of time
  */
-public class EventCounterImpl implements EventCounter {
+public class EventCounterImpl implements EventCounter
+{
   private final ReadableDateTime start;
   private final ReadableDateTime end;
   private final AtomicLong value;
 
-  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end, long initialValue) {
+  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end, long initialValue)
+  {
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -39,34 +43,41 @@ public class EventCounterImpl implements EventCounter {
     this.value = new AtomicLong(initialValue);
   }
 
-  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end) {
+  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end)
+  {
     this(start, end, 0L);
   }
 
-  public void add(long delta) {
+  public void add(long delta)
+  {
     value.addAndGet(delta);
   }
 
-  public long getValue() {
+  public long getValue()
+  {
     return value.get();
   }
 
-  public ReadableDateTime getStart() {
+  public ReadableDateTime getStart()
+  {
     return start;
   }
 
-  public ReadableDateTime getEnd() {
+  public ReadableDateTime getEnd()
+  {
     return end;
   }
 
   @Override
 
-  public Duration getLength() {
+  public Duration getLength()
+  {
     return new Duration(start, end);
   }
 
   @Override
-  public EventCounter merge(EventCounter counter) {
+  public EventCounter merge(EventCounter counter)
+  {
     ReadableDateTime mergedStart = start;
     ReadableDateTime mergedEnd = end;
 

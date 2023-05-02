@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 
@@ -23,7 +24,8 @@ import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LoopInputStream extends InputStream {
+public class LoopInputStream extends InputStream
+{
   private final Factory<InputStream> streamFactory;
   private final AtomicBoolean stop = new AtomicBoolean(false);
   private final AtomicInteger loopCount = new AtomicInteger(0);
@@ -31,14 +33,16 @@ public class LoopInputStream extends InputStream {
 
 
   public LoopInputStream(
-    Factory<InputStream> streamFactory
-  ) {
+      Factory<InputStream> streamFactory
+  )
+  {
     this.streamFactory = streamFactory;
     nextLoop();
   }
 
   @Override
-  public synchronized int read() throws IOException {
+  public synchronized int read() throws IOException
+  {
     if (stop.get()) {
       return -1;
     }
@@ -57,7 +61,8 @@ public class LoopInputStream extends InputStream {
     } while (true);
   }
 
-  private void nextLoop() {
+  private void nextLoop()
+  {
     inputStream = streamFactory.create();
 
     synchronized (loopCount) {
@@ -66,15 +71,18 @@ public class LoopInputStream extends InputStream {
     }
   }
 
-  public void stop() {
+  public void stop()
+  {
     stop.set(true);
   }
 
-  public int getLoopCount() {
+  public int getLoopCount()
+  {
     return loopCount.get();
   }
 
-  public void waitForLoopCount(int count) throws InterruptedException {
+  public void waitForLoopCount(int count) throws InterruptedException
+  {
     while (loopCount.get() < count) {
       synchronized (loopCount) {
         loopCount.wait(1000);

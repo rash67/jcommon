@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.samrash.collectionsbase.Mapper;
@@ -26,9 +27,11 @@ import java.util.Map.Entry;
  * @param <K> key type of entry
  * @param <V> value type of entry
  */
-public class EntryValueMapper<K, V> implements Mapper<Entry<K, V>, V> {
+public class EntryValueMapper<K, V> implements Mapper<Entry<K, V>, V>
+{
   @Override
-  public V map(Map.Entry<K, V> input) {
+  public V map(Map.Entry<K, V> input)
+  {
     return input.getValue();
   }
 }

@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.election;
 
 import org.apache.zookeeper.KeeperException;
 
-public interface LeaderElection extends LeaderElectionObserver {
+public interface LeaderElection extends LeaderElectionObserver
+{
   /**
    * Adds the current host to the election if it is not there already. May be
    * safely re-executed following previous exceptions.
+   *
    * @throws InterruptedException
    * @throws KeeperException
    */
@@ -29,6 +32,7 @@ public interface LeaderElection extends LeaderElectionObserver {
   /**
    * Completely removes the candidate from the election. May be safely
    * re-executed following previous exceptions.
+   *
    * @throws InterruptedException
    * @throws KeeperException
    */
@@ -38,6 +42,7 @@ public interface LeaderElection extends LeaderElectionObserver {
    * Relinquishes the candidate's current standing (possibly as the leader) and
    * demotes the candidate to the last position. May be safely re-executed
    * following previous exceptions.
+   *
    * @throws InterruptedException
    * @throws KeeperException
    */

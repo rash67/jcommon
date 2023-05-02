@@ -29,4 +29,5 @@
  * }
  * </pre>
  */
+
 package com.samrash.util.function;

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 
@@ -35,11 +36,12 @@ import org.joda.time.field.FieldUtils;
  * Instances that represent periods are constructed via
  * {@link #withTypeAndLength(TimeIntervalType, int)}.
  * <p>
- *   The main operations abstracted out are the computation of start of
- *   an interval and addition / subtraction of the interval from a time instant.
+ * The main operations abstracted out are the computation of start of
+ * an interval and addition / subtraction of the interval from a time instant.
  * </p>
  */
-public class TimeInterval {
+public class TimeInterval
+{
 
   /**
    * An infinite time interval has a length of 0 and always returns the
@@ -50,7 +52,8 @@ public class TimeInterval {
   private final long length;
   private final TimeIntervalType type;
 
-  private TimeInterval(TimeIntervalType type, long length) {
+  private TimeInterval(TimeIntervalType type, long length)
+  {
     this.type = type;
     this.length = length;
   }
@@ -63,7 +66,8 @@ public class TimeInterval {
    * @return the time interval instance.
    * @throws IllegalArgumentException if millis is less than 1.
    */
-  public static TimeInterval withMillis(long millis) {
+  public static TimeInterval withMillis(long millis)
+  {
     validateLength(millis);
     return new TimeInterval(null, millis);
   }
@@ -80,12 +84,14 @@ public class TimeInterval {
    * 40 seconds, the first interval will have the first 40 seconds in a minute
    * and the second interval will have the remaining 20 seconds in the minute.
    * </p>
-   * @param type the time interval type, cannot be null.
+   *
+   * @param type   the time interval type, cannot be null.
    * @param length the length of the interval
    * @return the time interval instance.
    * @throws IllegalArgumentException if length is less than 1.
    */
-  public static TimeInterval withTypeAndLength(TimeIntervalType type, int length) {
+  public static TimeInterval withTypeAndLength(TimeIntervalType type, int length)
+  {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null");
     }
@@ -98,9 +104,10 @@ public class TimeInterval {
    */
   @JsonCreator
   private static TimeInterval fromJson(
-    @JsonProperty("type") TimeIntervalType type,
-    @JsonProperty("length") long length
-  ) {
+      @JsonProperty("type") TimeIntervalType type,
+      @JsonProperty("length") long length
+  )
+  {
     if (type == null) {
       if (length == 0) {
         return INFINITE;
@@ -118,12 +125,12 @@ public class TimeInterval {
    * plays a significant role in computation of the interval.
    *
    * @param instant the time instant
-   *
    * @return the start instant of the time interval that will contain the
    * instant in the time zone of the supplied instant. If the TimeInterval is INFINITE
    * unix epoch for the timezone is returned.
    */
-  public DateTime getIntervalStart(DateTime instant) {
+  public DateTime getIntervalStart(DateTime instant)
+  {
     // special handling for ZERO and INFINITE
     if (this == ZERO) {
       return instant;
@@ -138,8 +145,8 @@ public class TimeInterval {
       return startOfTime.plus(intervalStart);
     } else {
       return type.getTimeIntervalStart(
-        instant,
-        length
+          instant,
+          length
       );
     }
   }
@@ -147,17 +154,17 @@ public class TimeInterval {
   /**
    * Adds supplied multiples of this interval to the supplied instant.
    *
-   * @param instant the instant that needs to be added to.
+   * @param instant  the instant that needs to be added to.
    * @param multiple the multiple value
-   * @throws IllegalArgumentException if multiple is less than one.
+   * @throws IllegalArgumentException      if multiple is less than one.
    * @throws UnsupportedOperationException if the function is invoked on an {@link #INFINITE}
-   * object
-   *
+   *                                       object
    */
-  public DateTime plus(DateTime instant, int multiple) {
+  public DateTime plus(DateTime instant, int multiple)
+  {
     if (this == INFINITE) {
       throw new IllegalStateException(
-        "plus() function is not supported on an infinite TimeInterval"
+          "plus() function is not supported on an infinite TimeInterval"
       );
     } else if (this == ZERO) {
       return instant;
@@ -169,9 +176,9 @@ public class TimeInterval {
       return instant.plus(multiple * getLength());
     } else {
       return instant.plus(
-        type.toPeriod(
-          FieldUtils.safeMultiplyToInt(multiple, getLength())
-        )
+          type.toPeriod(
+              FieldUtils.safeMultiplyToInt(multiple, getLength())
+          )
       );
     }
   }
@@ -180,14 +187,15 @@ public class TimeInterval {
    * Subtracts the supplied multiples of this interval from the supplied instant. If the
    * TimeInterval is {@link #INFINITE} the epoch in the timezone of {@code instant} is returned
    *
-   * @param instant the instant to subtract from
+   * @param instant  the instant to subtract from
    * @param multiple the multiple value
    * @throws IllegalArgumentException if multiple is less than one.
    */
-  public DateTime minus(DateTime instant, int multiple) {
+  public DateTime minus(DateTime instant, int multiple)
+  {
     if (this == INFINITE) {
       throw new IllegalStateException(
-        "minus() function is not supported on an infinite TimeInterval"
+          "minus() function is not supported on an infinite TimeInterval"
       );
     } else if (this == ZERO) {
       return instant;
@@ -199,7 +207,7 @@ public class TimeInterval {
       return instant.minus(multiple * getLength());
     } else {
       return instant.minus(type.toPeriod(
-        FieldUtils.safeMultiplyToInt(multiple, getLength())));
+          FieldUtils.safeMultiplyToInt(multiple, getLength())));
     }
   }
 
@@ -207,7 +215,8 @@ public class TimeInterval {
    * If this interval is of type period. Note that for {@link #INFINITE} & {@link #ZERO} time
    * intervals, this method will return false.
    */
-  public boolean isPeriod() {
+  public boolean isPeriod()
+  {
     return type != null;
   }
 
@@ -217,7 +226,8 @@ public class TimeInterval {
    * @return the length value
    */
   @JsonProperty("length")
-  public long getLength() {
+  public long getLength()
+  {
     return length;
   }
 
@@ -227,16 +237,17 @@ public class TimeInterval {
    * @return the interval type
    */
   @JsonProperty("type")
-  public TimeIntervalType getType() {
+  public TimeIntervalType getType()
+  {
     return type;
   }
 
   /**
    * Returns the length of the interval in milliseconds.
-   *
+   * <p>
    * Note that the length is approximate if the interval was constructed
    * via {@link #withTypeAndLength(TimeIntervalType, int)}.
-   *
+   * <p>
    * Also note that this method returns zero if the TimeInterval is
    * {@link #INFINITE}, -1 if the TimeInterval is {@link #ZERO}.
    *
@@ -246,7 +257,8 @@ public class TimeInterval {
    * is period, this might return unexpected values.
    */
   @Deprecated
-  public long toApproxMillis() {
+  public long toApproxMillis()
+  {
     if (type == null) {
       return length;
     } else {
@@ -255,7 +267,8 @@ public class TimeInterval {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -273,27 +286,31 @@ public class TimeInterval {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = (int) (length ^ (length >>> 32));
     result = 31 * result + (type != null ? type.hashCode() : 0);
     return result;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return "TimeInterval{" +
-      "length=" + length +
-      ", type=" + type +
-      '}';
+           "length=" + length +
+           ", type=" + type +
+           '}';
   }
 
-  private static void validateMultiple(int multiple) {
+  private static void validateMultiple(int multiple)
+  {
     if (multiple < 0) {
       throw new IllegalArgumentException("Multiple cannot be less that 0 : " + multiple);
     }
   }
 
-  private static void validateLength(long length) {
+  private static void validateLength(long length)
+  {
     if (length < 1) {
       throw new IllegalArgumentException("length cannot be less than one: " + length);
     }

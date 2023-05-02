@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import org.testng.annotations.Test;
@@ -20,14 +21,17 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 public class TestDenseEstimator
-  extends TestEstimator {
+    extends TestEstimator
+{
   @Override
-  protected Estimator getEstimator() {
+  protected Estimator getEstimator()
+  {
     return new DenseEstimator(1024);
   }
 
   @Test
-  public void testRoundtrip() {
+  public void testRoundtrip()
+  {
     Estimator estimator = getEstimator();
 
     for (int i = 0; i < estimator.getNumberOfBuckets(); i++) {

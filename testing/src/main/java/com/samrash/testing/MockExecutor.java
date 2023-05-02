@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 import java.util.ArrayList;
@@ -31,47 +32,56 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class MockExecutor implements ScheduledExecutorService {
+public class MockExecutor implements ScheduledExecutorService
+{
   private final List<AnnotatedRunnable> runnableList =
-    Collections.synchronizedList(new ArrayList<AnnotatedRunnable>());
+      Collections.synchronizedList(new ArrayList<AnnotatedRunnable>());
   private final CountDownLatch latch = new CountDownLatch(1);
   private final IdentityHashMap<ScheduledFuture<?>, ScheduledFuture<?>>
-    outstandingTasks = new IdentityHashMap<ScheduledFuture<?>, ScheduledFuture<?>>();
+      outstandingTasks = new IdentityHashMap<ScheduledFuture<?>, ScheduledFuture<?>>();
 
   private volatile boolean rejectSubmission = false;
   private volatile boolean isShutdown = false;
   private volatile boolean isTerminated = false;
 
-  public List<AnnotatedRunnable> getRunnableList() {
+  public List<AnnotatedRunnable> getRunnableList()
+  {
     return runnableList;
   }
 
-  public void setShutdown(boolean shutdown) {
+  public void setShutdown(boolean shutdown)
+  {
     isShutdown = shutdown;
   }
 
-  public void setTerminated(boolean terminated) {
+  public void setTerminated(boolean terminated)
+  {
     isTerminated = terminated;
   }
 
-  public void setRejectSubmission(boolean rejectSubmission) {
+  public void setRejectSubmission(boolean rejectSubmission)
+  {
     this.rejectSubmission = rejectSubmission;
   }
 
-  public void triggerShutdownLatch() {
+  public void triggerShutdownLatch()
+  {
     latch.countDown();
   }
 
-  public AnnotatedRunnable removeHead() {
+  public AnnotatedRunnable removeHead()
+  {
     return runnableList.isEmpty() ? null : runnableList.remove(0);
   }
 
-  public int getNumPendingTasks() {
+  public int getNumPendingTasks()
+  {
     return runnableList.size();
   }
 
   @Override
-  public ScheduledFuture<?> schedule(final Runnable command, long delay, TimeUnit unit) {
+  public ScheduledFuture<?> schedule(final Runnable command, long delay, TimeUnit unit)
+  {
     if (rejectSubmission) {
       throw new RejectedExecutionException();
     }
@@ -81,10 +91,13 @@ public class MockExecutor implements ScheduledExecutorService {
     return new MockScheduledFuture<Void>(toCallable(command));
   }
 
-  private <T> Callable toCallable(final Runnable runnable, final T result) {
-    return new Callable<T>() {
+  private <T> Callable toCallable(final Runnable runnable, final T result)
+  {
+    return new Callable<T>()
+    {
       @Override
-      public T call() throws Exception {
+      public T call() throws Exception
+      {
         runnable.run();
 
         return result;
@@ -93,14 +106,16 @@ public class MockExecutor implements ScheduledExecutorService {
 
   }
 
-  private Callable<Void> toCallable(Runnable runnable) {
+  private Callable<Void> toCallable(Runnable runnable)
+  {
     return toCallable(new AnnotatedRunnable(runnable), (Void) null);
   }
 
   @Override
   public <V> ScheduledFuture<V> schedule(
-    Callable<V> callable, long delay, TimeUnit unit
-  ) {
+      Callable<V> callable, long delay, TimeUnit unit
+  )
+  {
     if (rejectSubmission) {
       throw new RejectedExecutionException();
     }
@@ -117,19 +132,20 @@ public class MockExecutor implements ScheduledExecutorService {
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(
-    Runnable command, long initialDelay, long period, TimeUnit unit
-  ) {
+      Runnable command, long initialDelay, long period, TimeUnit unit
+  )
+  {
     if (rejectSubmission) {
       throw new RejectedExecutionException();
     }
 
     AnnotatedRunnable runnable =
-      new AnnotatedRunnable(command, initialDelay, period, unit);
+        new AnnotatedRunnable(command, initialDelay, period, unit);
 
     runnableList.add(runnable);
 
     MockScheduledFuture<Void> future = new MockScheduledFuture<Void>(
-      Executors.<Void>callable(runnable, (Void) null)
+        Executors.<Void>callable(runnable, (Void) null)
     );
 
     runnable.setFuture(future);
@@ -140,18 +156,19 @@ public class MockExecutor implements ScheduledExecutorService {
 
   @Override
   public ScheduledFuture<?> scheduleWithFixedDelay(
-    Runnable command, long initialDelay, long delay, TimeUnit unit
-  ) {
+      Runnable command, long initialDelay, long delay, TimeUnit unit
+  )
+  {
     if (rejectSubmission) {
       throw new RejectedExecutionException();
     }
     AnnotatedRunnable runnable =
-      new AnnotatedRunnable(command, initialDelay, delay, unit);
+        new AnnotatedRunnable(command, initialDelay, delay, unit);
 
     runnableList.add(runnable);
 
     MockScheduledFuture<Void> future = new MockScheduledFuture<Void>(
-      Executors.<Void>callable(runnable, (Void) null)
+        Executors.<Void>callable(runnable, (Void) null)
     );
 
     runnable.setFuture(future);
@@ -161,51 +178,61 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   @Override
-  public void shutdown() {
+  public void shutdown()
+  {
     cancelPendingTasks();
 
     isShutdown = true;
   }
 
   @Override
-  public List<Runnable> shutdownNow() {
+  public List<Runnable> shutdownNow()
+  {
     cancelPendingTasks();
 
     return new ArrayList<Runnable>(runnableList);
   }
 
-  private void cancelPendingTasks() {
+  private void cancelPendingTasks()
+  {
     for (IdentityHashMap.Entry<ScheduledFuture<?>, ScheduledFuture<?>> entry :
-      outstandingTasks.entrySet()
-      ) {
+        outstandingTasks.entrySet()
+    ) {
       entry.getValue().cancel(false);
     }
   }
 
   @Override
-  public boolean isShutdown() {
+  public boolean isShutdown()
+  {
     return isShutdown;
   }
 
   @Override
-  public boolean isTerminated() {
+  public boolean isTerminated()
+  {
     return isTerminated;
   }
 
   @Override
   public boolean awaitTermination(long timeout, TimeUnit unit)
-    throws InterruptedException {
+      throws InterruptedException
+  {
     return true;
   }
 
   @Override
-  public <T> Future<T> submit(final Callable<T> task) {
-    runnableList.add(new AnnotatedRunnable(new Runnable() {
+  public <T> Future<T> submit(final Callable<T> task)
+  {
+    runnableList.add(new AnnotatedRunnable(new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         try {
           task.call();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           throw new RuntimeException(e);
         }
       }
@@ -215,14 +242,16 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   @Override
-  public <T> Future<T> submit(Runnable task, T result) {
+  public <T> Future<T> submit(Runnable task, T result)
+  {
     runnableList.add(new AnnotatedRunnable(task));
 
     return new MockScheduledFuture<T>(toCallable(task, result));
   }
 
   @Override
-  public Future<?> submit(Runnable task) {
+  public Future<?> submit(Runnable task)
+  {
     runnableList.add(new AnnotatedRunnable(task));
 
     return new MockScheduledFuture<Void>(toCallable(task));
@@ -230,46 +259,54 @@ public class MockExecutor implements ScheduledExecutorService {
 
   @Override
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException {
+      throws InterruptedException
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public <T> List<Future<T>> invokeAll(
-    Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
-  ) throws InterruptedException {
+      Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
+  ) throws InterruptedException
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public <T> T invokeAny(
-    Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
-  ) throws InterruptedException, ExecutionException, TimeoutException {
+      Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
+  ) throws InterruptedException, ExecutionException, TimeoutException
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void execute(Runnable command) {
+  public void execute(Runnable command)
+  {
     schedule(command, 0, TimeUnit.SECONDS);
   }
 
   /**
    * runs all tasks in the executor in the current thread
    */
-  public void drain() {
+  public void drain()
+  {
     while (getNumPendingTasks() > 0) {
       removeHead().run();
     }
   }
 
-  public void drain(int maxTasks) {
-    for (int i = 0; i < maxTasks && getNumPendingTasks() > 0; i++)
+  public void drain(int maxTasks)
+  {
+    for (int i = 0; i < maxTasks && getNumPendingTasks() > 0; i++) {
       removeHead().run();
+    }
   }
 }

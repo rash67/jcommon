@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.google.common.collect.ImmutableSet;
@@ -62,12 +63,13 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   // SampledSetImpl<Long> to SampledSetImpl<Integer>
   @Deprecated
   public SampledSetImpl(
-    int maxSetSize,
-    DigestFunction<T> digestFunction,
-    com.samrash.collections.specialized.SnapshotableSet<T> baseSet,
-    SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory,
-    int currentSampleRate
-  ) {
+      int maxSetSize,
+      DigestFunction<T> digestFunction,
+      com.samrash.collections.specialized.SnapshotableSet<T> baseSet,
+      SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory,
+      int currentSampleRate
+  )
+  {
     this.maxSetSize = maxSetSize;
     this.digestFunction = digestFunction;
     this.setFactory = setFactory;
@@ -77,15 +79,17 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   public SampledSetImpl(
-    int maxSetSize,
-    DigestFunction<T> digestFunction,
-    SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory
-  ) {
+      int maxSetSize,
+      DigestFunction<T> digestFunction,
+      SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory
+  )
+  {
     this(maxSetSize, digestFunction, setFactory.create(), setFactory, 1);
   }
 
   @Override
-  public boolean add(T element) {
+  public boolean add(T element)
+  {
     // algorithm:
     //   1. store sample rate
     //   2. check if element is in in sample
@@ -119,7 +123,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
               returnValue = baseSet.add(element);
             }
           }
-        } finally {
+        }
+        finally {
           if (!returnValue) {
             proposedSize.decrementAndGet();
           }
@@ -135,10 +140,11 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
           // we only need to check if this element is in the sample again if
           // currentSampleRate has changed
           if (currentSampleRate == sampleRateSnapshot ||
-            inSample(elementDigest, currentSampleRate)) {
+              inSample(elementDigest, currentSampleRate)) {
             returnValue = baseSet.add(element);
           }
-        } finally {
+        }
+        finally {
           if (!returnValue) {
             proposedSize.decrementAndGet();
           }
@@ -155,11 +161,13 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
     return returnValue;
   }
 
-  private boolean inSample(long digest, int sampleRate) {
+  private boolean inSample(long digest, int sampleRate)
+  {
     return digest % sampleRate == 0;
   }
 
-  private void downSample() {
+  private void downSample()
+  {
     // very unlikely, but possible that increasing the sample rate won't
     // remove a single value; so do this in a loop
     int removed = 0;
@@ -176,7 +184,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
     }
   }
 
-  private int downSampleAtRate(int sampleRate, Set<T> set) {
+  private int downSampleAtRate(int sampleRate, Set<T> set)
+  {
     int removed = 0;
     Iterator<T> iterator = set.iterator();
 
@@ -192,7 +201,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
     return removed;
   }
 
-  private com.samrash.collections.specialized.SnapshotableSet<T> copyAtRate(int sampleRate) {
+  private com.samrash.collections.specialized.SnapshotableSet<T> copyAtRate(int sampleRate)
+  {
     if (sampleRate <= currentSampleRate) {
       // make a fast copy
       return baseSet.makeSnapshot();
@@ -208,32 +218,38 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public int getMaxSetSize() {
+  public int getMaxSetSize()
+  {
     return maxSetSize;
   }
 
   @Override
-  public int getScaledSize() {
+  public int getScaledSize()
+  {
     return baseSet.size() * currentSampleRate;
   }
 
   @Override
-  public int getSampleRate() {
+  public int getSampleRate()
+  {
     return currentSampleRate;
   }
 
   @Override
-  public int getSize() {
+  public int getSize()
+  {
     return baseSet.size();
   }
 
   @Override
-  public Set<T> getEntries() {
+  public Set<T> getEntries()
+  {
     return ImmutableSet.copyOf(baseSet);
   }
 
   @Override
-  public com.samrash.collections.specialized.SampledSetSnapshot<T> sampleAt(int rate) {
+  public com.samrash.collections.specialized.SampledSetSnapshot<T> sampleAt(int rate)
+  {
     com.samrash.collections.specialized.SnapshotableSet<T> setCopy;
     int setCopySampleRate;
 
@@ -244,7 +260,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
     try {
       setCopySampleRate = Math.max(rate, currentSampleRate);
       setCopy = copyAtRate(setCopySampleRate);
-    } finally {
+    }
+    finally {
       downSampleLock.readLock().unlock();
     }
 
@@ -252,7 +269,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public com.samrash.collections.specialized.SampledSet<T> merge(com.samrash.collections.specialized.SampledSet<T> sampledSet) {
+  public com.samrash.collections.specialized.SampledSet<T> merge(com.samrash.collections.specialized.SampledSet<T> sampledSet)
+  {
     // fast-copy of ourself for merging
     com.samrash.collections.specialized.SampledSet<T> mergedSampleSet = this.makeSnapshot();
     // now merge sampledSet into the copy
@@ -264,7 +282,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public boolean mergeInPlaceWith(com.samrash.collections.specialized.SampledSet<T> sampledSet) {
+  public boolean mergeInPlaceWith(com.samrash.collections.specialized.SampledSet<T> sampledSet)
+  {
     boolean changed = false;
     // take a snapshot of the other set at our sample rate. Note that it
     // only will use this rate if it is higher than its current sample rate
@@ -277,8 +296,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
       // shortcut for fast copy: we're empty, the snapshot's sample rate is
       // compatible with our sampleRate, and fits within our maxSize
       if (currentSampleRate <= snapshot.getSampleRate() && baseSet.isEmpty() &&
-        maxSetSize >= snapshot.getElements().size()
-        ) {
+          maxSetSize >= snapshot.getElements().size()
+      ) {
         // copy the set, current sample size, and increment the version
         baseSet = snapshot.getElements();
         currentSampleRate = snapshot.getSampleRate();
@@ -287,8 +306,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
 
         return true;
       } else if (!snapshot.getElements().isEmpty() &&
-        snapshot.getSampleRate() > currentSampleRate
-        ) {
+                 snapshot.getSampleRate() > currentSampleRate
+      ) {
         // only downsample ourself if there are actually elements in the other
         // set to merge into ourself
         int removed = downSampleAtRate(snapshot.getSampleRate(), baseSet);
@@ -299,7 +318,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
 
         currentSampleRate = snapshot.getSampleRate();
       }
-    } finally {
+    }
+    finally {
       downSampleLock.writeLock().unlock();
     }
 
@@ -319,15 +339,19 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public boolean hasChanged() {
+  public boolean hasChanged()
+  {
     return dirty.getAndSet(false);
   }
 
   @Override
-  public Iterator<T> iterator() {
-    return new WrappedIterator<T>(baseSet.iterator()) {
+  public Iterator<T> iterator()
+  {
+    return new WrappedIterator<T>(baseSet.iterator())
+    {
       @Override
-      public void remove() {
+      public void remove()
+      {
         super.remove();
         dirty.set(true);
       }
@@ -335,32 +359,38 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return getSize();
   }
 
   @Override
-  public boolean isEmpty() {
+  public boolean isEmpty()
+  {
     return baseSet.isEmpty();
   }
 
   @Override
-  public boolean contains(Object o) {
+  public boolean contains(Object o)
+  {
     return baseSet.contains(o);
   }
 
   @Override
-  public Object[] toArray() {
+  public Object[] toArray()
+  {
     return baseSet.toArray();
   }
 
   @Override
-  public <V> V[] toArray(V[] a) {
+  public <V> V[] toArray(V[] a)
+  {
     return baseSet.toArray(a);
   }
 
   @Override
-  public boolean remove(Object o) {
+  public boolean remove(Object o)
+  {
     if (baseSet.remove(o)) {
       dirty.set(true);
       return true;
@@ -370,12 +400,14 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public boolean containsAll(Collection<?> c) {
+  public boolean containsAll(Collection<?> c)
+  {
     return baseSet.containsAll(c);
   }
 
   @Override
-  public boolean addAll(Collection<? extends T> c) {
+  public boolean addAll(Collection<? extends T> c)
+  {
     boolean added = false;
 
     for (T item : c) {
@@ -392,7 +424,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public boolean retainAll(Collection<?> c) {
+  public boolean retainAll(Collection<?> c)
+  {
     if (baseSet.retainAll(c)) {
       dirty.set(true);
 
@@ -403,7 +436,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public boolean removeAll(Collection<?> c)
+  {
     if (baseSet.removeAll(c)) {
       dirty.set(true);
 
@@ -414,40 +448,44 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     baseSet.clear();
 
     dirty.set(true);
   }
 
   @Override
-  public com.samrash.collections.specialized.SampledSet<T> makeSnapshot() {
+  public com.samrash.collections.specialized.SampledSet<T> makeSnapshot()
+  {
     return new SampledSetImpl<T>(
-      maxSetSize,
-      digestFunction,
-      baseSet.makeSnapshot(),
-      setFactory,
-      currentSampleRate
+        maxSetSize,
+        digestFunction,
+        baseSet.makeSnapshot(),
+        setFactory,
+        currentSampleRate
     );
   }
 
   @Override
-  public com.samrash.collections.specialized.SampledSet<T> makeTransientSnapshot() {
+  public com.samrash.collections.specialized.SampledSet<T> makeTransientSnapshot()
+  {
     com.samrash.collections.specialized.SnapshotableSetImplFactory<T> cpuEfficientHashSetFactory =
-      new com.samrash.collections.specialized.SnapshotableSetImplFactory<T>(new com.samrash.collections.specialized.HashSetFactory<T>());
+        new com.samrash.collections.specialized.SnapshotableSetImplFactory<T>(new com.samrash.collections.specialized.HashSetFactory<T>());
     com.samrash.collections.specialized.SnapshotableSet<T> cpuEfficientHashSet = baseSet.makeTransientSnapshot();
 
     return new SampledSetImpl<T>(
-      maxSetSize,
-      digestFunction,
-      cpuEfficientHashSet,
-      cpuEfficientHashSetFactory,
-      currentSampleRate
+        maxSetSize,
+        digestFunction,
+        cpuEfficientHashSet,
+        cpuEfficientHashSetFactory,
+        currentSampleRate
     );
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     downSampleLock.writeLock().lock();
 
     try {
@@ -471,13 +509,15 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
       }
 
       return true;
-    } finally {
+    }
+    finally {
       downSampleLock.writeLock().unlock();
     }
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     downSampleLock.writeLock().lock();
 
     try {
@@ -487,28 +527,32 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
       result = 31 * result + currentSampleRate;
 
       return result;
-    } finally {
+    }
+    finally {
       downSampleLock.writeLock().unlock();
     }
   }
 
-  public static class SerDeImpl<T> implements SerDe<com.samrash.collections.specialized.SampledSet<T>> {
+  public static class SerDeImpl<T> implements SerDe<com.samrash.collections.specialized.SampledSet<T>>
+  {
     private final SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory;
     private final DigestFunction<T> digestFunction;
     private final SerDe<T> elementSerDe;
 
     public SerDeImpl(
-      SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory,
-      DigestFunction<T> digestFunction,
-      SerDe<T> elementSerDe
-    ) {
+        SetFactory<T, com.samrash.collections.specialized.SnapshotableSet<T>> setFactory,
+        DigestFunction<T> digestFunction,
+        SerDe<T> elementSerDe
+    )
+    {
       this.setFactory = setFactory;
       this.digestFunction = digestFunction;
       this.elementSerDe = elementSerDe;
     }
 
     @Override
-    public com.samrash.collections.specialized.SampledSet<T> deserialize(DataInput in) throws SerDeException {
+    public com.samrash.collections.specialized.SampledSet<T> deserialize(DataInput in) throws SerDeException
+    {
       try {
         int maxSize = in.readInt();
         int sampleRate = in.readInt();
@@ -521,18 +565,20 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
         }
 
         com.samrash.collections.specialized.SampledSet<T> sampledSet = new SampledSetImpl<T>(
-          maxSize, digestFunction, baseSet, setFactory, sampleRate
+            maxSize, digestFunction, baseSet, setFactory, sampleRate
         );
 
         return sampledSet;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(com.samrash.collections.specialized.SampledSet<T> value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       try {
         // sampling at 0 will make a copy at the existing sample rate (since the
         // rate is only used if it is larger than the existing rate)
@@ -547,7 +593,8 @@ public class SampledSetImpl<T> implements com.samrash.collections.specialized.Sa
           elementSerDe.serialize(element, out);
         }
 
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }

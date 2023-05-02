@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import com.samrash.collectionsbase.Mapper;
 import org.joda.time.Period;
 
-public class StringToPeriodMapper implements Mapper<String, Period> {
+public class StringToPeriodMapper implements Mapper<String, Period>
+{
   @Override
-  public Period map(String input) {
+  public Period map(String input)
+  {
     return new Period(ConfigUtil.getDurationMillis(input));
   }
 }

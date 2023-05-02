@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
 import java.util.concurrent.Callable;
 
-public interface StatsCollector {
+public interface StatsCollector
+{
   /**
    * @param type
    * @param delta
@@ -56,7 +58,7 @@ public interface StatsCollector {
 
   /**
    * deprecated, see
-   *
+   * <p>
    * see {@link StatsUtil#setCounterValue(String, long, Stats)}
    */
   @Deprecated
@@ -64,7 +66,7 @@ public interface StatsCollector {
 
   /**
    * deprecated, see
-   *
+   * <p>
    * see {@link StatsUtil#setCounterValue(String, long, Stats)}
    */
   @Deprecated

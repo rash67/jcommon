@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -21,12 +22,14 @@ import java.util.Arrays;
 
 import static com.samrash.stats.cardinality.StaticModelUtil.weightsToProbabilities;
 
-class StaticModel implements Model {
+class StaticModel implements Model
+{
   private final int[] counts;
 
   private final int totalIndex;
 
-  public StaticModel(double[] weights) {
+  public StaticModel(double[] weights)
+  {
     Preconditions.checkNotNull(weights, "weights is null");
 
     Preconditions.checkArgument(weights.length > 1, "weights is empty");
@@ -75,18 +78,21 @@ class StaticModel implements Model {
   }
 
   @Override
-  public SymbolInfo getSymbolInfo(int symbol) {
+  public SymbolInfo getSymbolInfo(int symbol)
+  {
     Preconditions.checkPositionIndex(symbol, counts.length, "symbol");
     return new SymbolInfo(symbol, counts[symbol], counts[symbol + 1]);
   }
 
   @Override
-  public int log2MaxCount() {
+  public int log2MaxCount()
+  {
     return StaticModelUtil.COUNT_BITS;
   }
 
   @Override
-  public SymbolInfo countToSymbol(int targetCount) {
+  public SymbolInfo countToSymbol(int targetCount)
+  {
     Preconditions.checkArgument(targetCount >= 0, "targetCount is negative %s", targetCount);
 
     // binary search for value
@@ -106,7 +112,8 @@ class StaticModel implements Model {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -127,7 +134,8 @@ class StaticModel implements Model {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = Arrays.hashCode(counts);
     result = 31 * result + totalIndex;
     return result;

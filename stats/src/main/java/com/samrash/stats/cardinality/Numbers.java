@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-class Numbers {
-  public static boolean isPowerOf2(long value) {
+class Numbers
+{
+  public static boolean isPowerOf2(long value)
+  {
     return (value & value - 1) == 0;
   }
 }

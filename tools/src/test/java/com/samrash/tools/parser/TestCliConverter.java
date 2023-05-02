@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import org.testng.Assert;
@@ -20,9 +21,11 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-public class TestCliConverter {
+public class TestCliConverter
+{
   @Test(groups = "fast")
-  public void testBoolean() throws Exception {
+  public void testBoolean() throws Exception
+  {
     Assert.assertTrue(CliConverter.BOOLEAN.convert("true"));
     Assert.assertTrue(CliConverter.BOOLEAN.convert("TRUE"));
     Assert.assertFalse(CliConverter.BOOLEAN.convert("false"));
@@ -32,7 +35,8 @@ public class TestCliConverter {
   }
 
   @Test(groups = "fast")
-  public void testRangeList() throws Exception {
+  public void testRangeList() throws Exception
+  {
     Assert.assertEquals(CliConverter.INT_LIST.convert("1,2,5"), Arrays.asList(1, 2, 5));
     Assert.assertEquals(CliConverter.INT_LIST.convert("0,7-9,13"), Arrays.asList(0, 7, 8, 9, 13));
     Assert.assertNull(CliConverter.INT_LIST.convert(null));

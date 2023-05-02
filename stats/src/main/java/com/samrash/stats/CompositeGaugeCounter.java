@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTime;
@@ -27,32 +28,37 @@ import java.util.Iterator;
  * that look like one summarized gauge counter.
  */
 public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
-  implements GaugeCounter {
+    implements GaugeCounter
+{
   private final GaugeCounterFactory gaugeCounterFactory;
 
   public CompositeGaugeCounter(
-    ReadableDuration maxLength,
-    ReadableDuration maxChunkLength,
-    GaugeCounterFactory gaugeCounterFactory
-  ) {
+      ReadableDuration maxLength,
+      ReadableDuration maxChunkLength,
+      GaugeCounterFactory gaugeCounterFactory
+  )
+  {
     super(maxLength, maxChunkLength);
     this.gaugeCounterFactory = gaugeCounterFactory;
   }
 
   public CompositeGaugeCounter(
-    ReadableDuration maxLength, GaugeCounterFactory gaugeCounterFactory
-  ) {
+      ReadableDuration maxLength, GaugeCounterFactory gaugeCounterFactory
+  )
+  {
     super(maxLength);
     this.gaugeCounterFactory = gaugeCounterFactory;
   }
 
-  public CompositeGaugeCounter(ReadableDuration maxLength) {
+  public CompositeGaugeCounter(ReadableDuration maxLength)
+  {
     this(maxLength, DefaultGaugeCounterFactory.INSTANCE);
   }
 
   public synchronized CompositeEventCounterIf<GaugeCounter> add(
-    long delta, long nsamples, ReadableDateTime start, ReadableDateTime end
-  ) {
+      long delta, long nsamples, ReadableDateTime start, ReadableDateTime end
+  )
+  {
     GaugeCounter counter = nextCounter(start, end);
     counter.add(delta, nsamples);
     return addEventCounter(counter);
@@ -62,7 +68,8 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
    * mirrors AbstractCompositeCounter:add()
    */
   @Override
-  public void add(long delta, long nsamples) {
+  public void add(long delta, long nsamples)
+  {
     DateTime now = new DateTime();
     GaugeCounter last;
 
@@ -80,7 +87,8 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
    * mirrors AbstractCompositeCounter:getValue()
    */
   @Override
-  public synchronized long getSamples() {
+  public synchronized long getSamples()
+  {
     long nsamples = 0L;
 
     trimIfNeeded();
@@ -96,7 +104,7 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
         if (getWindowStart().isAfter(counter.getStart())) {
           // adjust for partial expiration
           nsamples -=
-            (long) (getExpiredFraction(counter) * counter.getSamples());
+              (long) (getExpiredFraction(counter) * counter.getSamples());
         }
         first = false;
       }
@@ -105,7 +113,8 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
     return nsamples;
   }
 
-  public synchronized long getAverage() {
+  public synchronized long getAverage()
+  {
     long nsamples = getSamples();
     if (nsamples == 0) {
       return 0;
@@ -116,23 +125,25 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
 
   @Override
   protected GaugeCounter nextCounter(
-    ReadableDateTime start, ReadableDateTime end
-  ) {
+      ReadableDateTime start, ReadableDateTime end
+  )
+  {
     return gaugeCounterFactory.create(start, end);
   }
 
   @Override
-  public GaugeCounter merge(GaugeCounter counter) {
+  public GaugeCounter merge(GaugeCounter counter)
+  {
     // special case to handle merging of 2 composite counters
     if (counter instanceof CompositeGaugeCounter) {
       return internalMerge(
-        ((CompositeGaugeCounter) counter).getEventCounters(),
-        new CompositeGaugeCounter( getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
+          ((CompositeGaugeCounter) counter).getEventCounters(),
+          new CompositeGaugeCounter(getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
       );
     } else {
       return internalMerge(
-        Arrays.asList(counter),
-        new CompositeGaugeCounter(getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
+          Arrays.asList(counter),
+          new CompositeGaugeCounter(getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
       );
     }
   }

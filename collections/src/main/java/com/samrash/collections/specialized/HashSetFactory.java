@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SetFactory;
@@ -20,9 +21,11 @@ import com.samrash.collections.SetFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HashSetFactory<T> implements SetFactory<T, Set<T>> {
+public class HashSetFactory<T> implements SetFactory<T, Set<T>>
+{
   @Override
-  public Set<T> create() {
+  public Set<T> create()
+  {
     return new HashSet<T>(64);
   }
 }

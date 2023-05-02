@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.util.exceptions.ExceptionHandler;
@@ -20,11 +21,13 @@ import com.samrash.util.exceptions.ExceptionHandler;
 /**
  * map any exception to a runtime exception
  */
-public class RuntimeExceptionHandler implements ExceptionHandler<RuntimeException> {
+public class RuntimeExceptionHandler implements ExceptionHandler<RuntimeException>
+{
   public static final RuntimeExceptionHandler INSTANCE = new RuntimeExceptionHandler();
 
   @Override
-  public <S extends Exception> RuntimeException handle(S e) {
+  public <S extends Exception> RuntimeException handle(S e)
+  {
     return new RuntimeException(e.getMessage(), e);
   }
 }

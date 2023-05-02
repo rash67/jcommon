@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.reflect.TypeToken;
@@ -20,63 +21,75 @@ import com.google.common.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
+public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K>
+{
   private final Map<Key<K, ?>, Object> map;
 
-  public MixedTypeMap(Map<Key<K, ?>, Object> map) {
+  public MixedTypeMap(Map<Key<K, ?>, Object> map)
+  {
     this.map = map;
   }
 
-  public MixedTypeMap() {
+  public MixedTypeMap()
+  {
     this(new HashMap<Key<K, ?>, Object>());
   }
 
-  public <V1, V2 extends V1> void put(K id, Class<V1> clazz, V2 instance) {
+  public <V1, V2 extends V1> void put(K id, Class<V1> clazz, V2 instance)
+  {
     Key<K, V1> key = Key.get(id, clazz);
 
     map.put(key, instance);
   }
 
-  public <V1, V2 extends V1> void put(K id, TypeToken<V1> clazz, V2 instance) {
+  public <V1, V2 extends V1> void put(K id, TypeToken<V1> clazz, V2 instance)
+  {
     Key<K, V1> key = Key.get(id, clazz);
 
     map.put(key, instance);
   }
 
-  public <V1, V2 extends V1> void put(Key<K, V1> key, V2 instance) {
+  public <V1, V2 extends V1> void put(Key<K, V1> key, V2 instance)
+  {
     map.put(key, instance);
   }
 
-  public <V> V get(K id, Class<V> clazz) {
+  public <V> V get(K id, Class<V> clazz)
+  {
     Key<K, V> key = Key.get(id, clazz);
 
     //noinspection unchecked
     return (V) map.get(key);
   }
 
-  public <V> V get(K id, TypeToken<V> type) {
+  public <V> V get(K id, TypeToken<V> type)
+  {
     Key<K, V> key = Key.get(id, type);
 
     //noinspection unchecked
     return (V) map.get(key);
   }
 
-  public <V> V get(Key<K, V> key) {
+  public <V> V get(Key<K, V> key)
+  {
     //noinspection unchecked
     return (V) map.get(key);
   }
 
-  public MixedTypeMap<K> putAll(MixedTypeMap<K> otherMap) {
+  public MixedTypeMap<K> putAll(MixedTypeMap<K> otherMap)
+  {
     map.putAll(otherMap.map);
 
     return otherMap;
   }
 
-  public int size() {
+  public int size()
+  {
     return map.size();
   }
 
-  public void clear() {
+  public void clear()
+  {
     map.clear();
   }
 }

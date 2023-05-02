@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Throwables;
@@ -21,7 +22,8 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-class UnsafeUtil {
+class UnsafeUtil
+{
   private static final Unsafe unsafe;
 
   static {
@@ -29,12 +31,14 @@ class UnsafeUtil {
       Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
       theUnsafe.setAccessible(true);
       unsafe = (Unsafe) theUnsafe.get(null);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw Throwables.propagate(e);
     }
   }
 
-  public static int sizeOf(Class<?> clazz) {
+  public static int sizeOf(Class<?> clazz)
+  {
     long maxOffset = -1;
     Field lastField = null;
     while (clazz != null) {

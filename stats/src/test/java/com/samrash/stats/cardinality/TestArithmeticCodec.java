@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.primitives.Ints;
@@ -33,11 +34,13 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 @SuppressWarnings({"RedundantArrayCreation", "NonReproducibleMathCall", "ConstantMathCall"})
-public class TestArithmeticCodec {
+public class TestArithmeticCodec
+{
   private static final Random random = new SecureRandom();
 
   @Test
-  public void testPossibleOverflowInClose() throws Exception {
+  public void testPossibleOverflowInClose() throws Exception
+  {
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(32)),
         32,
@@ -53,7 +56,8 @@ public class TestArithmeticCodec {
   }
 
   @Test
-  public void testUnderflowBytesInClose() throws Exception {
+  public void testUnderflowBytesInClose() throws Exception
+  {
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(8)),
         8,
@@ -69,7 +73,8 @@ public class TestArithmeticCodec {
   }
 
   @Test
-  public void testDecodeZeroPaddingRequired() throws Exception {
+  public void testDecodeZeroPaddingRequired() throws Exception
+  {
     // ArithmeticDecoder buffers 6 bytes; when there are fewer than 6, it should treat the input as
     // if it had zeros for the missing bytes.  In practice, this rarely matters, but for the case
     // below, getting it wrong results in an "IllegalArgumentException: targetCount is negative" due
@@ -90,7 +95,8 @@ public class TestArithmeticCodec {
   }
 
   @Test
-  public void testRoundTrip() throws Exception {
+  public void testRoundTrip() throws Exception
+  {
     testRoundTrip(new SortedStaticDataModelFactory(new ExponentiallyDecreasingHistogramFactory()));
     testRoundTrip(new SortedStaticDataModelFactory(new GaussianHistogramFactory()));
     testRoundTrip(new SortedStaticDataModelFactory(new RandomHistogramFactory()));
@@ -100,13 +106,15 @@ public class TestArithmeticCodec {
     testRoundTrip(new StaticDataModelFactory(new RandomHistogramFactory()));
   }
 
-  public void testRoundTrip(DataModelFactory modelFactory) throws Exception {
+  public void testRoundTrip(DataModelFactory modelFactory) throws Exception
+  {
     testRoundTrip(modelFactory, new SequentialDataFactory());
     testRoundTrip(modelFactory, new RandomDataFactory());
   }
 
   private void testRoundTrip(DataModelFactory modelFactory, DataFactory dataFactory)
-      throws Exception {
+      throws Exception
+  {
     for (int size = 1; size < 100000; size <<= 1) {
       for (int numberOfSymbols = 2; numberOfSymbols <= 512; numberOfSymbols <<= 1) {
         testRoundTrip(
@@ -120,7 +128,8 @@ public class TestArithmeticCodec {
   }
 
   private void testRoundTrip(Model model, int numberOfSymbols, Iterable<Integer> symbols, int size)
-      throws Exception {
+      throws Exception
+  {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       ArithmeticEncoder encoder = new ArithmeticEncoder(model, out);
@@ -137,14 +146,15 @@ public class TestArithmeticCodec {
         if (newData != symbol) {
           Assert.assertEquals(
               newData, (int) symbol, String.format(
-              "size=%d, numberOfSymbols=%d",
-              size,
-              numberOfSymbols
-          )
+                  "size=%d, numberOfSymbols=%d",
+                  size,
+                  numberOfSymbols
+              )
           );
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new RuntimeException(
           String.format(
               "size=%d, numberOfSymbols=%d",
@@ -155,42 +165,52 @@ public class TestArithmeticCodec {
     }
   }
 
-  public static interface DataModelFactory {
+  public static interface DataModelFactory
+  {
     Model create(int numberOfSymbols);
   }
 
-  private static class StaticDataModelFactory implements DataModelFactory {
+  private static class StaticDataModelFactory implements DataModelFactory
+  {
     private final HistogramFactory histogramFactory;
 
-    private StaticDataModelFactory(HistogramFactory histogramFactory) {
+    private StaticDataModelFactory(HistogramFactory histogramFactory)
+    {
       this.histogramFactory = histogramFactory;
     }
 
-    public StaticModel create(int numberOfSymbols) {
+    public StaticModel create(int numberOfSymbols)
+    {
       double[] weights = histogramFactory.create(numberOfSymbols);
       return new StaticModel(weights);
     }
   }
 
-  private static class SortedStaticDataModelFactory implements DataModelFactory {
+  private static class SortedStaticDataModelFactory implements DataModelFactory
+  {
     private final HistogramFactory histogramFactory;
 
-    private SortedStaticDataModelFactory(HistogramFactory histogramFactory) {
+    private SortedStaticDataModelFactory(HistogramFactory histogramFactory)
+    {
       this.histogramFactory = histogramFactory;
     }
 
-    public SortedStaticModel create(int numberOfSymbols) {
+    public SortedStaticModel create(int numberOfSymbols)
+    {
       double[] weights = histogramFactory.create(numberOfSymbols);
       return new SortedStaticModel(weights);
     }
   }
 
-  private interface HistogramFactory {
+  private interface HistogramFactory
+  {
     public double[] create(int numberOfSymbols);
   }
 
-  private static class ExponentiallyDecreasingHistogramFactory implements HistogramFactory {
-    public double[] create(int numberOfSymbols) {
+  private static class ExponentiallyDecreasingHistogramFactory implements HistogramFactory
+  {
+    public double[] create(int numberOfSymbols)
+    {
       double maxExponent = log(1 / SMALLEST_PROBABILITY);
 
       double[] probability = new double[numberOfSymbols];
@@ -202,8 +222,10 @@ public class TestArithmeticCodec {
     }
   }
 
-  private static class GaussianHistogramFactory implements HistogramFactory {
-    public double[] create(int numberOfSymbols) {
+  private static class GaussianHistogramFactory implements HistogramFactory
+  {
+    public double[] create(int numberOfSymbols)
+    {
       double mean = numberOfSymbols / 2.0;
       double std = sqrt(mean);
 
@@ -212,9 +234,9 @@ public class TestArithmeticCodec {
         // see wikipedia
         double value = (1 / (std * sqrt(2.0 * PI))) * (pow(
             E, -(pow(i - mean, 2) / (2 * pow(
-            std,
-            2
-        )))
+                std,
+                2
+            )))
         ));
         probability[i] = value;
       }
@@ -222,8 +244,10 @@ public class TestArithmeticCodec {
     }
   }
 
-  private static class RandomHistogramFactory implements HistogramFactory {
-    public double[] create(int numberOfSymbols) {
+  private static class RandomHistogramFactory implements HistogramFactory
+  {
+    public double[] create(int numberOfSymbols)
+    {
       double[] probability = new double[numberOfSymbols];
       for (int i = 0; i < probability.length; i++) {
         double value = random.nextDouble();
@@ -233,13 +257,16 @@ public class TestArithmeticCodec {
     }
   }
 
-  public static interface DataFactory {
+  public static interface DataFactory
+  {
     Iterable<Integer> create(int size, int numberOfSymbols);
   }
 
-  public static class SequentialDataFactory implements DataFactory {
+  public static class SequentialDataFactory implements DataFactory
+  {
     @Override
-    public Iterable<Integer> create(int size, int numberOfSymbols) {
+    public Iterable<Integer> create(int size, int numberOfSymbols)
+    {
       List<Integer> data = new ArrayList<Integer>(size);
       for (int i = 0; i < size; i++) {
         data.add(i % numberOfSymbols);
@@ -248,9 +275,11 @@ public class TestArithmeticCodec {
     }
   }
 
-  public static class RandomDataFactory implements DataFactory {
+  public static class RandomDataFactory implements DataFactory
+  {
     @Override
-    public Iterable<Integer> create(int size, int numberOfSymbols) {
+    public Iterable<Integer> create(int size, int numberOfSymbols)
+    {
       List<Integer> data = new ArrayList<Integer>(size);
       for (int i = 0; i < size; i++) {
         data.add(random.nextInt(numberOfSymbols));

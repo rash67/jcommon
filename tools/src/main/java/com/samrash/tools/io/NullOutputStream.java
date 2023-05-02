@@ -13,31 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-class NullOutputStream extends OutputStream {
+class NullOutputStream extends OutputStream
+{
   public static final NullOutputStream INSTANCE = new NullOutputStream();
 
   @Override
-  public void write(int b) {
+  public void write(int b)
+  {
   }
 
   @Override
-  public void write(byte[] b) {
+  public void write(byte[] b)
+  {
   }
 
   @Override
-  public void write(byte[] b, int off, int len) {
+  public void write(byte[] b, int off, int len)
+  {
   }
 
   @Override
-  public void flush() throws IOException {
+  public void flush() throws IOException
+  {
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() throws IOException
+  {
   }
 }

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConfigUtil {
+public class ConfigUtil
+{
   private static final Pattern NUMBER_AND_UNIT =
-    Pattern.compile("(\\d+)([a-zA-Z]+)?");
+      Pattern.compile("(\\d+)([a-zA-Z]+)?");
 
   /**
    * default unit is seconds
@@ -36,7 +38,8 @@ public class ConfigUtil {
    * @param duration string to translate
    * @return returns duration in millis
    */
-  public static long getDurationMillis(String duration) {
+  public static long getDurationMillis(String duration)
+  {
     Matcher matcher = NUMBER_AND_UNIT.matcher(duration);
 
     if (matcher.matches()) {
@@ -74,7 +77,8 @@ public class ConfigUtil {
     }
   }
 
-  public static long getSizeBytes(String size) {
+  public static long getSizeBytes(String size)
+  {
     Matcher matcher = NUMBER_AND_UNIT.matcher(size);
 
     if (matcher.matches()) {

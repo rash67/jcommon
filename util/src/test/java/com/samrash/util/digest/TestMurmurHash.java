@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
 import com.google.common.hash.HashFunction;
@@ -26,18 +27,21 @@ import java.util.Random;
 /**
  * Murmur Hash 3 from http://sites.google.com/site/murmurhash/
  */
-public class TestMurmurHash {
+public class TestMurmurHash
+{
   private MurmurHash repeatableHasher;
   private Random random;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     repeatableHasher = MurmurHash.createRepeatableHasher();
     random = new Random(0);
   }
 
   @Test(groups = "fast")
-  public void testKnownValues() throws Exception {
+  public void testKnownValues() throws Exception
+  {
     Assert.assertEquals(repeatableHasher.hash(-4962768465676381896L), 7773119132477651622L);
     Assert.assertEquals(repeatableHasher.hash(4437113781045784766L), 6757418645758543340L);
     Assert.assertEquals(repeatableHasher.hash(-6688467811848818630L), -8604718945125690697L);
@@ -66,7 +70,8 @@ public class TestMurmurHash {
   }
 
   @Test(groups = "fast")
-  public void testPumaAndGuavaLongMurmurHash() throws Exception {
+  public void testPumaAndGuavaLongMurmurHash() throws Exception
+  {
     // our impl is slightly faster, and this is just a check to see we match guava
     HashFunction function = Hashing.murmur3_128((int) MurmurHash.JCOMMON_SEED);
     int numToCheck = 10000;

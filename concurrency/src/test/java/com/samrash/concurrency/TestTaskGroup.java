@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.testing.MockExecutor;
@@ -25,24 +26,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class TestTaskGroup {
+public class TestTaskGroup
+{
   private ExecutorService executor1;
   private ExecutorService executor2;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     executor1 = Executors.newSingleThreadExecutor();
     executor2 = Executors.newSingleThreadExecutor();
   }
 
   @AfterMethod(alwaysRun = true)
-  public void tearDown() throws Exception {
+  public void tearDown() throws Exception
+  {
     executor1.shutdownNow();
     executor2.shutdownNow();
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     MockExecutor mockExecutor = new MockExecutor();
     TaskGroup taskGroup = new TaskGroup(mockExecutor);
     // Register some tasks
@@ -68,7 +73,8 @@ public class TestTaskGroup {
   }
 
   @Test(groups = "fast")
-  public void testSingleExecutor() throws Exception {
+  public void testSingleExecutor() throws Exception
+  {
     TaskGroup taskGroup = new TaskGroup(executor1);
 
     DelayRunnable runnable1 = new DelayRunnable(500);
@@ -85,7 +91,8 @@ public class TestTaskGroup {
   }
 
   @Test(groups = "fast")
-  public void testMultipleExecutor() throws Exception {
+  public void testMultipleExecutor() throws Exception
+  {
     TaskGroup taskGroup = new TaskGroup();
 
     DelayRunnable runnable1 = new DelayRunnable(500);
@@ -104,30 +111,36 @@ public class TestTaskGroup {
     Assert.assertTrue(runnable3.isRun());
   }
 
-  private static class DelayRunnable implements Runnable {
+  private static class DelayRunnable implements Runnable
+  {
     private volatile boolean isRun = false;
 
     private final long delayMillis;
 
-    private DelayRunnable(long delayMillis) {
+    private DelayRunnable(long delayMillis)
+    {
       this.delayMillis = delayMillis;
     }
 
-    private DelayRunnable() {
+    private DelayRunnable()
+    {
       this(0);
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
       try {
         TimeUnit.MILLISECONDS.sleep(delayMillis);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         // Do nothing
       }
       isRun = true;
     }
 
-    public boolean isRun() {
+    public boolean isRun()
+    {
       return isRun;
     }
   }

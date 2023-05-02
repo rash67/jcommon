@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
+import com.samrash.logging.Logger;
+import com.samrash.stats.topk.TopK;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -22,18 +25,17 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import com.samrash.logging.Logger;
-import com.samrash.stats.topk.TopK;
-
 import static org.testng.Assert.assertEquals;
 
-public abstract class TestIntegerTopK {
+public abstract class TestIntegerTopK
+{
   // few hundred millis each test to keep tests short
   private static final long TEST_TIME_NANOS = TimeUnit.MILLISECONDS.toNanos(1250);
   private static Logger LOG;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     LOG = getLogger();
   }
 
@@ -47,7 +49,8 @@ public abstract class TestIntegerTopK {
   protected abstract Logger getLogger();
 
   @Test(groups = "fast")
-  public void testTop3() {
+  public void testTop3()
+  {
     TopK<Integer> topK = getInstance(10, 3);
 
     assertTopK(topK);
@@ -66,23 +69,26 @@ public abstract class TestIntegerTopK {
   }
 
   @Test(groups = "fast",
-        expectedExceptions = IllegalArgumentException.class,
-        expectedExceptionsMessageRegExp = "count to add must be non-negative, got -3")
-  public void testAddNegative() {
+      expectedExceptions = IllegalArgumentException.class,
+      expectedExceptionsMessageRegExp = "count to add must be non-negative, got -3")
+  public void testAddNegative()
+  {
     TopK<Integer> topK = getInstance(10, 3);
     topK.add(0, -3);
   }
 
   @Test(groups = "fast",
-        expectedExceptions = NullPointerException.class,
-        expectedExceptionsMessageRegExp = "key can't be null")
-  public void testNullKey() {
+      expectedExceptions = NullPointerException.class,
+      expectedExceptionsMessageRegExp = "key can't be null")
+  public void testNullKey()
+  {
     TopK<Integer> topK = getInstance(10, 3);
     topK.add(null, 1);
   }
 
   @Test(groups = "slow")
-  public void testInsertionTiming() {
+  public void testInsertionTiming()
+  {
     int keySpaceSize = 10000;
     int k = 100;
     int maxAdd = 100;
@@ -108,15 +114,16 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %d entries in %d ms. Insertion rate = %f entries/s",
-      count,
-      TimeUnit.NANOSECONDS.toMillis(totalTime),
-      count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
+        "Processed %d entries in %d ms. Insertion rate = %f entries/s",
+        count,
+        TimeUnit.NANOSECONDS.toMillis(totalTime),
+        count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
     );
   }
 
   @Test(groups = "slow")
-  public void testRetrievalTiming() {
+  public void testRetrievalTiming()
+  {
     int keySpaceSize = 10000;
     int k = 100;
     int maxAdd = 100;
@@ -145,14 +152,15 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %d entries in %d ms. Retrieval rate = %f retrievals/s",
-      count,
-      TimeUnit.NANOSECONDS.toMillis(totalTime),
-      count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
+        "Processed %d entries in %d ms. Retrieval rate = %f retrievals/s",
+        count,
+        TimeUnit.NANOSECONDS.toMillis(totalTime),
+        count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
     );
   }
 
-  private static void assertTopK(TopK<Integer> topK, Integer... expected) {
+  private static void assertTopK(TopK<Integer> topK, Integer... expected)
+  {
     assertEquals(topK.getTopK(), Arrays.asList(expected));
   }
 }

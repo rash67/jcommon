@@ -13,36 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
-import com.samrash.tools.parser.CliCommand;
-import com.samrash.tools.parser.CliParser;
 import com.samrash.tools.io.IO;
 import com.samrash.tools.io.MockIO;
+import com.samrash.tools.parser.CliCommand;
+import com.samrash.tools.parser.CliParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-public class TestCommandDispatcher {
+public class TestCommandDispatcher
+{
   private static final String EXPECTED_FOO =
-    "foo\n  test\n\n  -b --bar <option>\n    [Required] Testing\n";
+      "foo\n  test\n\n  -b --bar <option>\n    [Required] Testing\n";
   private static final String EXPECTED_HELP = "help <command_name>\n  Displays help for commands\n";
   private static final String EXPECTED_ALL =
-    "foo\n  test\nhelp <command_name>\n  Displays help for commands\n";
+      "foo\n  test\nhelp <command_name>\n  Displays help for commands\n";
 
   private MockIO io;
   private FooCommand fooCommand;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     io = new MockIO();
     fooCommand = new FooCommand(io);
   }
 
   @Test(groups = "fast")
-  public void testDispatchNoArgs() {
+  public void testDispatchNoArgs()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run();
 
@@ -50,7 +54,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchBogusArg() {
+  public void testDispatchBogusArg()
+  {
     CommandDispatcher dispatcher = createDispatcher(new FooCommand(io));
     int resultStatus = dispatcher.run("bogus");
 
@@ -58,7 +63,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchHelp() {
+  public void testDispatchHelp()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("help");
 
@@ -66,7 +72,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchHelpFoo() {
+  public void testDispatchHelpFoo()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("help", "foo");
 
@@ -74,7 +81,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchHelpHelp() {
+  public void testDispatchHelpHelp()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("help", "help");
 
@@ -82,7 +90,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchFoo() {
+  public void testDispatchFoo()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("foo", "--bar", "test");
 
@@ -90,7 +99,8 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDispatchFooMissingRequired() {
+  public void testDispatchFooMissingRequired()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("foo");
 
@@ -98,20 +108,23 @@ public class TestCommandDispatcher {
   }
 
   @Test(groups = "fast")
-  public void testDuplicateArg() {
+  public void testDuplicateArg()
+  {
     CommandDispatcher dispatcher = createDispatcher(fooCommand);
     int resultStatus = dispatcher.run("foo", "-b", "bar", "--bar=baz");
 
     assertResult(resultStatus, -1, EXPECTED_FOO + "\n", "Duplicate options: -b=bar, --bar=baz\n");
   }
 
-  private CommandDispatcher createDispatcher(CommandBuilder... commands) {
+  private CommandDispatcher createDispatcher(CommandBuilder... commands)
+  {
     return new CommandDispatcher(io, Arrays.asList(commands));
   }
 
   private void assertResult(
-    int actualResult, int expectedResult, String expectedOut, String expectedErr
-  ) {
+      int actualResult, int expectedResult, String expectedOut, String expectedErr
+  )
+  {
     String out = io.getOut();
     String err = io.getErr();
 
@@ -120,15 +133,18 @@ public class TestCommandDispatcher {
     Assert.assertTrue(err.startsWith(expectedErr));
   }
 
-  private static class FooCommand implements CommandBuilder {
+  private static class FooCommand implements CommandBuilder
+  {
     private final IO io;
 
-    private FooCommand(IO io) {
+    private FooCommand(IO io)
+    {
       this.io = io;
     }
 
     @Override
-    public CliCommand defineCommand() {
+    public CliCommand defineCommand()
+    {
       CliCommand.Builder builder = new CliCommand.Builder("foo", "test");
 
       builder.addOption("-b", "--bar").withDescription("Testing");
@@ -137,7 +153,8 @@ public class TestCommandDispatcher {
     }
 
     @Override
-    public void runCommand(CliParser parser) {
+    public void runCommand(CliParser parser)
+    {
       io.out.println("I am foo");
       io.err.println("oof ma I");
     }

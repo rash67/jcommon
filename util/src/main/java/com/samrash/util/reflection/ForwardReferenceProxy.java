@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.reflection;
 
 import com.google.common.base.Preconditions;
@@ -23,39 +24,46 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ForwardReferenceProxy<T> {
+public class ForwardReferenceProxy<T>
+{
   private final AtomicReference<T> instanceRef;
   private final Supplier<T> proxySupplier;
 
-  public ForwardReferenceProxy(final Class<T> clazz) {
+  public ForwardReferenceProxy(final Class<T> clazz)
+  {
     this.instanceRef = new AtomicReference<>();
     proxySupplier = Suppliers.memoize(
-      new Supplier<T>() {
-        @Override
-        public T get() {
-          return wrap(clazz, instanceRef);
+        new Supplier<T>()
+        {
+          @Override
+          public T get()
+          {
+            return wrap(clazz, instanceRef);
+          }
         }
-      }
     );
   }
 
-  public ForwardReferenceProxy<T> setInstance(T instance) {
+  public ForwardReferenceProxy<T> setInstance(T instance)
+  {
     instanceRef.set(instance);
 
     return this;
   }
 
-  public T get() {
+  public T get()
+  {
     return proxySupplier.get();
   }
 
-  private static <T> T wrap(Class<T> clazz, final AtomicReference<T> instance) {
+  private static <T> T wrap(Class<T> clazz, final AtomicReference<T> instance)
+  {
     Preconditions.checkNotNull(instance, "must pass a non-null atomic reference");
     InvocationHandler handler = (proxy, method, args) -> method.invoke(
-      Preconditions.checkNotNull(
-        instance.get(),
-        "instance has not been set"
-      ), args
+        Preconditions.checkNotNull(
+            instance.get(),
+            "instance has not been set"
+        ), args
     );
 
     T wrapper = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, handler);

@@ -13,44 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
-import com.samrash.tools.parser.CliParser;
 import com.samrash.tools.io.IO;
+import com.samrash.tools.parser.CliParser;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandRunner {
+public class CommandRunner
+{
   private final IO io;
   private final CommandBuilder command;
   private final boolean printStackTraces;
 
-  private CommandRunner(IO io, CommandBuilder command, boolean printStackTraces) {
+  private CommandRunner(IO io, CommandBuilder command, boolean printStackTraces)
+  {
     this.io = io;
     this.command = command;
     this.printStackTraces = printStackTraces;
   }
 
-  public CommandRunner(IO io, CommandBuilder command) {
+  public CommandRunner(IO io, CommandBuilder command)
+  {
     this(io, command, false);
   }
 
-  public static CommandRunner printStackTraces(IO io, CommandBuilder command) {
+  public static CommandRunner printStackTraces(IO io, CommandBuilder command)
+  {
     return new CommandRunner(io, command, true);
   }
 
-  public int run(String... arguments) {
+  public int run(String... arguments)
+  {
     return run(Arrays.asList(arguments));
   }
 
-  public int run(List<String> arguments) {
+  public int run(List<String> arguments)
+  {
     CliParser parser = new CliParser(command.defineCommand(), arguments);
 
     return run(command, parser);
   }
 
-  public int run(CommandBuilder command, CliParser parser) {
+  public int run(CommandBuilder command, CliParser parser)
+  {
     try {
       parser.verify(io.out);
 
@@ -59,7 +67,8 @@ public class CommandRunner {
       } else {
         command.runCommand(parser);
       }
-    } catch (ErrorMessage e) {
+    }
+    catch (ErrorMessage e) {
       io.err.println(e.getMessage());
 
       Throwable cause = e.getCause();
@@ -74,7 +83,8 @@ public class CommandRunner {
       }
 
       return e.getErrorCode();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       io.err.printfln("An unexpected error occurred: %s", e.getMessage());
 
       Throwable cause = e.getCause();

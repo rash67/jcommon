@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
 /**
@@ -29,21 +30,24 @@ package com.samrash.stats.mx;
  * so we memoize a default key, but store the prefix/suffix for the
  * per-category key.
  */
-public class TemplateStatType implements StatType {
+public class TemplateStatType implements StatType
+{
   private final String basePrefix;
   private final String baseSuffix;
   private String defaultKey;
 
   public TemplateStatType(
-    String basePrefix, String baseSuffix, String defaultKey
-  ) {
+      String basePrefix, String baseSuffix, String defaultKey
+  )
+  {
     this.basePrefix = basePrefix;
     this.baseSuffix = baseSuffix;
     this.defaultKey = defaultKey;
   }
 
   @Override
-  public String getKey() {
+  public String getKey()
+  {
     internalMaterialize();
 
     return defaultKey;
@@ -51,7 +55,8 @@ public class TemplateStatType implements StatType {
 
   // materializes the default key; handles null values for
   // basePrefix and baseSuffix
-  private void internalMaterialize() {
+  private void internalMaterialize()
+  {
     if (defaultKey == null) {
       if (basePrefix == null && baseSuffix == null) {
         defaultKey = null;
@@ -66,29 +71,32 @@ public class TemplateStatType implements StatType {
   }
 
   @Override
-  public StatType append(String suffix) {
+  public StatType append(String suffix)
+  {
     return new TemplateStatType(
-      basePrefix, baseSuffix == null ? suffix : baseSuffix + suffix, null
+        basePrefix, baseSuffix == null ? suffix : baseSuffix + suffix, null
     );
   }
 
   @Override
-  public StatType prepend(String prefix) {
+  public StatType prepend(String prefix)
+  {
     return new TemplateStatType(
-      basePrefix == null ? prefix : prefix + basePrefix, baseSuffix, null
+        basePrefix == null ? prefix : prefix + basePrefix, baseSuffix, null
     );
   }
 
   @Override
-  public StatType materialize(String value) {
+  public StatType materialize(String value)
+  {
     // optimize to remove a string concatenation
     if (value != null && !value.isEmpty()) {
       return new TemplateStatType(
-        basePrefix, baseSuffix, basePrefix + value + baseSuffix
+          basePrefix, baseSuffix, basePrefix + value + baseSuffix
       );
     } else {
       return new TemplateStatType(
-        basePrefix, baseSuffix, basePrefix + baseSuffix
+          basePrefix, baseSuffix, basePrefix + baseSuffix
       );
     }
   }

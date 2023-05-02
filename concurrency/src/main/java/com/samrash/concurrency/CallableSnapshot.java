@@ -13,42 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.samrash.concurrency;
 
-import java.util.concurrent.Callable;
+package com.samrash.concurrency;
 
 import com.samrash.util.exceptions.ExceptionHandler;
 
-public class CallableSnapshot<V, E extends Exception> {
+import java.util.concurrent.Callable;
+
+public class CallableSnapshot<V, E extends Exception>
+{
   private V value = null;
   private E exception = null;
 
-  private CallableSnapshot(E exception) {
+  private CallableSnapshot(E exception)
+  {
     this.exception = exception;
   }
 
   public CallableSnapshot(
-    Callable<V> callable, ExceptionHandler<E> exceptionHandler
-  ) {
+      Callable<V> callable, ExceptionHandler<E> exceptionHandler
+  )
+  {
     try {
       value = callable.call();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       exception = exceptionHandler.handle(e);
     }
   }
 
-  public static <V, E extends Exception> CallableSnapshot<V, E> createWithException(E exception) {
+  public static <V, E extends Exception> CallableSnapshot<V, E> createWithException(E exception)
+  {
     return new CallableSnapshot<>(exception);
   }
 
-  public V get() throws E {
+  public V get() throws E
+  {
     if (exception != null) {
       throw exception;
     }
     return value;
   }
 
-  public E getException() {
+  public E getException()
+  {
     return exception;
   }
 }

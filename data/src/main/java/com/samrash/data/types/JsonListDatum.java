@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.google.common.collect.ImmutableList;
 
-public class JsonListDatum extends ListDatum {
-  public JsonListDatum(Iterable<Datum> datumList) {
+public class JsonListDatum extends ListDatum
+{
+  public JsonListDatum(Iterable<Datum> datumList)
+  {
     super(ImmutableList.copyOf(datumList));
   }
 
   @Override
-  public String asString() {
+  public String asString()
+  {
     return DatumUtils.buildJSON(this).toString();
   }
 }

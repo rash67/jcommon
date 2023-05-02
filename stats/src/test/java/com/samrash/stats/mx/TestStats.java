@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
 import com.google.common.collect.ImmutableMap;
@@ -24,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class TestStats {
+public class TestStats
+{
   private static final String NOT_INSERTED_KEY = "not Inserted";
   private static final String KEY1 = "key1";
   private static final String KEY2 = "key2";
@@ -34,19 +36,21 @@ public class TestStats {
   private static final String COUNTER_NOT_SET = "counter-not-set";
 
   private Map<String, String> attributeMap = new ImmutableMap.Builder<String, String>()
-    .put(KEY1, KEY2)
-    .put(KEY2, KEY3)
-    .put(KEY3, KEY1)
-    .build();
+      .put(KEY1, KEY2)
+      .put(KEY2, KEY3)
+      .put(KEY3, KEY1)
+      .build();
 
   private Stats stats;
 
   @BeforeMethod(alwaysRun = true)
-  void setup() {
+  void setup()
+  {
     stats = new Stats();
   }
 
-  public void verifyStatAttributes() {
+  public void verifyStatAttributes()
+  {
     // Test out getAttribute calls
     Assert.assertEquals(stats.getAttribute(KEY1), KEY2);
     Assert.assertEquals(stats.getAttribute(KEY2), KEY3);
@@ -65,7 +69,8 @@ public class TestStats {
    * Test the setAttribute(String, String) function
    */
   @Test(groups = "fast")
-  public void testAttributeString() {
+  public void testAttributeString()
+  {
     for (Map.Entry<String, String> attribute : attributeMap.entrySet()) {
       stats.setAttribute(attribute.getKey(), attribute.getValue());
     }
@@ -76,27 +81,34 @@ public class TestStats {
    * Test the setAttribute(String, Callable <String> ) function
    */
   @Test(groups = "fast")
-  public void testAttributeCallable() {
-    for (final String key: attributeMap.keySet()) {
-      stats.setAttribute(key,
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            return TestStats.this.attributeMap.get(key);
+  public void testAttributeCallable()
+  {
+    for (final String key : attributeMap.keySet()) {
+      stats.setAttribute(
+          key,
+          new Callable<String>()
+          {
+            @Override
+            public String call() throws Exception
+            {
+              return TestStats.this.attributeMap.get(key);
+            }
           }
-        });
+      );
     }
 
     verifyStatAttributes();
   }
 
   @Test(groups = "fast")
-  public void testGetEmptyCounter() throws Exception {
+  public void testGetEmptyCounter() throws Exception
+  {
     Assert.assertEquals(stats.getCounter("fuu"), 0);
   }
 
   @Test(groups = "fast")
-  public void testRemoveCounter() throws Exception {
+  public void testRemoveCounter() throws Exception
+  {
     stats.incrementCounter("fuu", 1);
     Assert.assertTrue(stats.removeCounter("fuu"));
     Assert.assertFalse(stats.removeCounter("fuu"));
@@ -106,7 +118,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testRemoveAttribute() throws Exception {
+  public void testRemoveAttribute() throws Exception
+  {
     stats.setAttribute("bar", "bar");
     Assert.assertTrue(stats.removeAttribute("bar"));
     Assert.assertFalse(stats.removeAttribute("bar"));
@@ -114,7 +127,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testDynamicCounters() throws Exception {
+  public void testDynamicCounters() throws Exception
+  {
     LongWrapper longValue = new LongWrapper(1);
     final String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
@@ -149,7 +163,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testGetDynamicCounters() throws Exception {
+  public void testGetDynamicCounters() throws Exception
+  {
     LongWrapper longValue = new LongWrapper(1);
     final String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
@@ -158,7 +173,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testSetCounterValue() throws Exception {
+  public void testSetCounterValue() throws Exception
+  {
     stats.incrementCounter(COUNTER_TO_SET, 2);
     stats.incrementCounter(COUNTER_TO_SET, 20);
     stats.incrementCounter(COUNTER_TO_SET, 200);
@@ -168,7 +184,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testReset() throws Exception {
+  public void testReset() throws Exception
+  {
     Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
     stats.incrementCounter(ZERO_COUNTER, 1);
     stats.incrementCounter(ZERO_COUNTER, 10);
@@ -178,7 +195,8 @@ public class TestStats {
   }
 
   @Test(groups = "fast")
-  public void testResetBeforeCallingIncrementOrGet() {
+  public void testResetBeforeCallingIncrementOrGet()
+  {
     stats.resetCounter(COUNTER_NOT_SET);
     Assert.assertEquals(stats.getCounter(COUNTER_NOT_SET), 0);
   }
@@ -186,19 +204,23 @@ public class TestStats {
   /**
    * Helper class for testing dynamic counters.
    */
-  private static class LongWrapper implements Callable<Long> {
+  private static class LongWrapper implements Callable<Long>
+  {
     private long value;
 
-    private LongWrapper(long value) {
+    private LongWrapper(long value)
+    {
       this.value = value;
     }
 
-    public void setValue(long value) {
+    public void setValue(long value)
+    {
       this.value = value;
     }
 
     @Override
-    public Long call() throws Exception {
+    public Long call() throws Exception
+    {
       return value;
     }
   }

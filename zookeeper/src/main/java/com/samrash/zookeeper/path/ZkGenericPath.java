@@ -13,63 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.path;
 
 import java.util.Iterator;
 
-public class ZkGenericPath {
+public class ZkGenericPath
+{
   private final ZkPathCore pathCore;
 
-  public ZkGenericPath(String appRoot) {
+  public ZkGenericPath(String appRoot)
+  {
     this(new ZkPathCore(appRoot));
   }
 
-  private ZkGenericPath(ZkPathCore pathCore) {
+  private ZkGenericPath(ZkPathCore pathCore)
+  {
     this.pathCore = pathCore;
   }
 
-  public static ZkGenericPath parse(String appRoot, String fullPath) {
+  public static ZkGenericPath parse(String appRoot, String fullPath)
+  {
     return new ZkGenericPath(
-      new ZkPathCoreBuilder(appRoot)
-        .parse(fullPath)
-        .build()
+        new ZkPathCoreBuilder(appRoot)
+            .parse(fullPath)
+            .build()
     );
   }
 
-  public boolean isRoot() {
+  public boolean isRoot()
+  {
     return pathCore.getZNodes().isEmpty();
   }
 
-  public ZkGenericPath getParent() {
+  public ZkGenericPath getParent()
+  {
     if (pathCore.getZNodes().isEmpty()) {
       throw new IllegalStateException("No more parents");
     }
     return new ZkGenericPath(
-      new ZkPathCoreBuilder(pathCore)
-        .remove()
-        .build()
+        new ZkPathCoreBuilder(pathCore)
+            .remove()
+            .build()
     );
   }
 
-  public ZkGenericPath appendChild(String child) {
+  public ZkGenericPath appendChild(String child)
+  {
     return new ZkGenericPath(
-      new ZkPathCoreBuilder(pathCore)
-        .append(child)
-        .build()
+        new ZkPathCoreBuilder(pathCore)
+            .append(child)
+            .build()
     );
   }
 
-  public Iterator<ZkGenericPath> lineageIterator() {
+  public Iterator<ZkGenericPath> lineageIterator()
+  {
     return new LineageIterator();
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return pathCore.toString();
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -87,22 +98,26 @@ public class ZkGenericPath {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     return pathCore.hashCode();
   }
 
-  private class LineageIterator implements Iterator<ZkGenericPath> {
+  private class LineageIterator implements Iterator<ZkGenericPath>
+  {
     private final Iterator<String> nodeIter = pathCore.getZNodes().iterator();
     private boolean appRootReturned = false;
     private ZkGenericPath previousPath;
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNext()
+    {
       return !appRootReturned || nodeIter.hasNext();
     }
 
     @Override
-    public ZkGenericPath next() {
+    public ZkGenericPath next()
+    {
       if (!appRootReturned) {
         appRootReturned = true;
         previousPath = new ZkGenericPath(pathCore.getAppRoot());
@@ -113,7 +128,8 @@ public class ZkGenericPath {
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
       throw new UnsupportedOperationException();
     }
   }

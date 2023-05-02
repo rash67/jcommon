@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import com.samrash.tools.ErrorMessage;
@@ -26,43 +27,53 @@ import java.util.NoSuchElementException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class InputStreamInput implements Input {
+public class InputStreamInput implements Input
+{
   private final BufferedReader reader;
 
-  public InputStreamInput(InputStream inputStream) {
+  public InputStreamInput(InputStream inputStream)
+  {
     this(new BufferedReader(new InputStreamReader(inputStream, UTF_8)));
   }
 
-  public InputStreamInput(BufferedReader reader) {
+  public InputStreamInput(BufferedReader reader)
+  {
     this.reader = reader;
   }
 
   @Override
-  public int read() {
+  public int read()
+  {
     try {
       return reader.read();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error reading input");
     }
   }
 
   @Override
-  public String readLine() {
+  public String readLine()
+  {
     try {
       return reader.readLine();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error reading input");
     }
   }
 
   @Override
-  public Iterator<String> iterator() {
-    return new Iterator<String>() {
+  public Iterator<String> iterator()
+  {
+    return new Iterator<String>()
+    {
       private String line;
       private boolean pending = false;
 
       @Override
-      public boolean hasNext() {
+      public boolean hasNext()
+      {
         if (pending) {
           return true;
         }
@@ -74,7 +85,8 @@ public class InputStreamInput implements Input {
       }
 
       @Override
-      public String next() {
+      public String next()
+      {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
@@ -85,7 +97,8 @@ public class InputStreamInput implements Input {
       }
 
       @Override
-      public void remove() {
+      public void remove()
+      {
         throw new UnsupportedOperationException();
       }
     };

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import com.samrash.util.TimeUtil;
@@ -24,15 +25,17 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-public class TestCompositeMin {
+public class TestCompositeMin
+{
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     TimeUtil.setNow(new DateTime("2012-01-01", DateTimeZone.UTC));
 
     CompositeMin compositeMax = new CompositeMin(
         Duration.standardSeconds(30), Duration.standardSeconds(10)
-      );
+    );
 
     compositeMax.add(2);
     compositeMax.add(3);
@@ -48,7 +51,8 @@ public class TestCompositeMin {
   }
 
   @AfterMethod(alwaysRun = true)
-  public void tearDown() throws Exception {
+  public void tearDown() throws Exception
+  {
     DateTimeUtils.setCurrentMillisSystem();
   }
 }

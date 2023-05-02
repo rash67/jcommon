@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParser;
 
-public interface CommandBuilder {
+public interface CommandBuilder
+{
   public CliCommand defineCommand();
 
   public void runCommand(CliParser parser);

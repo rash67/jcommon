@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtRunnable;
+
 import java.util.function.ObjLongConsumer;
 
-public interface ExtObjLongConsumer<T, E extends Throwable> {
+public interface ExtObjLongConsumer<T, E extends Throwable>
+{
   void accept(T t, long value) throws E;
 
-  static <T> ObjLongConsumer<T> quiet(ExtObjLongConsumer<T, ?> objLongConsumer) {
+  static <T> ObjLongConsumer<T> quiet(ExtObjLongConsumer<T, ?> objLongConsumer)
+  {
     return (t, value) -> ExtRunnable.quiet(() -> objLongConsumer.accept(t, value)).run();
   }
 }

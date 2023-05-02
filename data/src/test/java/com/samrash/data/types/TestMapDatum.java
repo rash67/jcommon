@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
+import com.google.common.collect.ImmutableMap;
 import com.samrash.util.serialization.SerDe;
 import com.samrash.util.serialization.SerDeUtils;
-
-import com.google.common.collect.ImmutableMap;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -26,7 +26,8 @@ import org.testng.annotations.Test;
 
 import java.util.Iterator;
 
-public class TestMapDatum {
+public class TestMapDatum
+{
 
   private MapDatum primes1;
   private MapDatum primes2;
@@ -34,45 +35,47 @@ public class TestMapDatum {
   private MapDatum factorials;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     primes1 = new MapDatum(
-      new ImmutableMap.Builder<Datum, Datum>()
-        .put(new LongDatum(1), new LongDatum(2))
-        .put(new LongDatum(2), new LongDatum(3))
-        .put(new LongDatum(3), new LongDatum(5))
-        .put(new LongDatum(4), new LongDatum(7))
-        .build()
+        new ImmutableMap.Builder<Datum, Datum>()
+            .put(new LongDatum(1), new LongDatum(2))
+            .put(new LongDatum(2), new LongDatum(3))
+            .put(new LongDatum(3), new LongDatum(5))
+            .put(new LongDatum(4), new LongDatum(7))
+            .build()
     );
     primes2 = new MapDatum(
-      new ImmutableMap.Builder<Datum, Datum>()
-        .put(new LongDatum(1), new LongDatum(2))
-        .put(new LongDatum(2), new LongDatum(3))
-        .put(new LongDatum(3), new LongDatum(5))
-        .put(new LongDatum(4), new LongDatum(7))
-        .build()
+        new ImmutableMap.Builder<Datum, Datum>()
+            .put(new LongDatum(1), new LongDatum(2))
+            .put(new LongDatum(2), new LongDatum(3))
+            .put(new LongDatum(3), new LongDatum(5))
+            .put(new LongDatum(4), new LongDatum(7))
+            .build()
     );
     fibonacci = new MapDatum(
-      new ImmutableMap.Builder<Datum, Datum>()
-        .put(new LongDatum(0), new LongDatum(0))
-        .put(new LongDatum(1), new LongDatum(1))
-        .put(new LongDatum(2), new LongDatum(1))
-        .put(new LongDatum(3), new LongDatum(2))
-        .put(new LongDatum(4), new LongDatum(3))
-        .build()
+        new ImmutableMap.Builder<Datum, Datum>()
+            .put(new LongDatum(0), new LongDatum(0))
+            .put(new LongDatum(1), new LongDatum(1))
+            .put(new LongDatum(2), new LongDatum(1))
+            .put(new LongDatum(3), new LongDatum(2))
+            .put(new LongDatum(4), new LongDatum(3))
+            .build()
     );
     factorials = new MapDatum(
-      new ImmutableMap.Builder<Datum, Datum>()
-        .put(new LongDatum(0), new LongDatum(1))
-        .put(new LongDatum(1), new LongDatum(1))
-        .put(new LongDatum(2), new LongDatum(2))
-        .put(new LongDatum(3), new LongDatum(6))
-        .put(new LongDatum(4), new LongDatum(24))
-        .build()
+        new ImmutableMap.Builder<Datum, Datum>()
+            .put(new LongDatum(0), new LongDatum(1))
+            .put(new LongDatum(1), new LongDatum(1))
+            .put(new LongDatum(2), new LongDatum(2))
+            .put(new LongDatum(3), new LongDatum(6))
+            .put(new LongDatum(4), new LongDatum(24))
+            .build()
     );
   }
 
   @Test(groups = "fast")
-  public void testCompare() throws Exception {
+  public void testCompare() throws Exception
+  {
     // check equality
     Assert.assertEquals(primes1.compareTo(primes1), 0);
     Assert.assertEquals(primes1.compareTo(primes2), 0);
@@ -84,14 +87,16 @@ public class TestMapDatum {
   }
 
   @Test(groups = "fast")
-  public void testEquality() throws Exception {
+  public void testEquality() throws Exception
+  {
     Assert.assertEquals(primes1, primes1);
     Assert.assertEquals(primes1, primes2);
     Assert.assertFalse(factorials.equals(primes2));
   }
 
   @Test(groups = "fast")
-  public void testAsString() throws Exception {
+  public void testAsString() throws Exception
+  {
     JSONObject primesJsonObject = new JSONObject(primes1.asString());
 
     Assert.assertEquals(primesJsonObject.length(), 4);
@@ -102,7 +107,8 @@ public class TestMapDatum {
   }
 
   @Test(groups = "fast")
-  public void testAsJsonString() throws Exception {
+  public void testAsJsonString() throws Exception
+  {
     JSONObject jsonObject = DatumUtils.buildJSON(primes1);
     JSONObject expected = new JSONObject("{\"3\":5,\"2\":3,\"1\":2,\"4\":7}");
     Iterator<String> keys = expected.keys();
@@ -116,7 +122,8 @@ public class TestMapDatum {
   }
 
   @Test(groups = "fast")
-  public void testAsBytes() throws Exception {
+  public void testAsBytes() throws Exception
+  {
     // asBytes() == asString, so if above task passes, and these are equal, we're good
     String bytesAsString = new String(primes1.asBytes());
 
@@ -124,14 +131,15 @@ public class TestMapDatum {
   }
 
   @Test(groups = "fast")
-  public void testSerDe() throws Exception {
+  public void testSerDe() throws Exception
+  {
     SerDe<Datum> serDe = new MapDatum.SerDeImpl();
     Assert.assertEquals(
-      primes1,
-      SerDeUtils.deserializeFromBytes(
-        SerDeUtils.serializeToBytes(primes1, serDe),
-        serDe
-      )
+        primes1,
+        SerDeUtils.deserializeFromBytes(
+            SerDeUtils.serializeToBytes(primes1, serDe),
+            serDe
+        )
     );
   }
 }

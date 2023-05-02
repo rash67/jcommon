@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
-interface Status {
+interface Status
+{
   public void status(String line);
 
   public void status(boolean value);

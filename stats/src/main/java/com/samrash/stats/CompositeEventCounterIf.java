@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
 
-public interface CompositeEventCounterIf<C extends EventCounterIf<C>> extends EventCounterIf<C> {
+public interface CompositeEventCounterIf<C extends EventCounterIf<C>> extends EventCounterIf<C>
+{
   /**
    * creates a new counter and adds it to the composite one. Despite being a public method, this is
    * most often used inside of other counters to add a new "head" counter when computing multiple
@@ -30,7 +32,7 @@ public interface CompositeEventCounterIf<C extends EventCounterIf<C>> extends Ev
    * @return the CompositeEventCounterIf after adding the new counter
    */
   public CompositeEventCounterIf<C> add(
-    long delta, ReadableDateTime start, ReadableDateTime end
+      long delta, ReadableDateTime start, ReadableDateTime end
   );
 
   /**

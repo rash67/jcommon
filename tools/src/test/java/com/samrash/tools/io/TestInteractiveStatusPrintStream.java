@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import com.google.common.base.Joiner;
@@ -24,7 +25,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-public class TestInteractiveStatusPrintStream {
+public class TestInteractiveStatusPrintStream
+{
   private static final String WHITE_ON_RED = "\033[1;37;41m";
   private static final String DEFAULT_COLORS = "\033[0m";
 
@@ -33,7 +35,8 @@ public class TestInteractiveStatusPrintStream {
   private PrintStreamPlus err;
 
   @BeforeMethod(alwaysRun = true)
-  protected void setUp() throws Exception {
+  protected void setUp() throws Exception
+  {
     outputStream = new ByteArrayOutputStream();
 
     ConsoleStatus status = new ConsoleStatus(new PrintWriter(outputStream));
@@ -43,37 +46,40 @@ public class TestInteractiveStatusPrintStream {
   }
 
   @Test(groups = "fast")
-  public void testStartingWithOut() {
+  public void testStartingWithOut()
+  {
     out.println("Hello, world!");
     out.println("This is a test");
     err.println("Another test...");
     out.println("Goodbye");
     assertOutput(
-      "Hello, world!",
-      "This is a test",
-      "\033[1;37;41m\033[KAnother test...",
-      "\033[0m\033[KGoodbye",
-      ""
+        "Hello, world!",
+        "This is a test",
+        "\033[1;37;41m\033[KAnother test...",
+        "\033[0m\033[KGoodbye",
+        ""
     );
   }
 
   @Test(groups = "fast")
-  public void testStartingWithErr() {
+  public void testStartingWithErr()
+  {
     err.println("Hello, world!");
     err.println("This is a test");
     out.println("Another test...");
     err.println("Goodbye");
     assertOutput(
-      "\033[1;37;41m\033[KHello, world!",
-      "This is a test",
-      "\033[0m\033[KAnother test...",
-      "\033[1;37;41m\033[KGoodbye",
-      ""
+        "\033[1;37;41m\033[KHello, world!",
+        "This is a test",
+        "\033[0m\033[KAnother test...",
+        "\033[1;37;41m\033[KGoodbye",
+        ""
     );
   }
 
   @Test(groups = "fast")
-  public void testStatus() {
+  public void testStatus()
+  {
     out.print("Hello, world!");
     out.status("Overwrite");
     out.status("Again");
@@ -85,23 +91,24 @@ public class TestInteractiveStatusPrintStream {
     out.status("...");
     err.println("bye!");
     assertOutput(
-      "Hello, world!",
-      "\r\033[2KOverwrite",
-      "\r\033[2KAgain",
-      "\r\033[2Kand again...",
-      "\r\033[2Kand again!",
-      "\r\033[2K\033[1;37;41m\033[KAlso overwrite",
-      "",
-      "\r\033[0m\033[2KAlmost done",
-      "\r\033[2K\033[1;37;41m\033[KGood",
-      "",
-      "\r\033[0m\033[2K...",
-      "\r\033[2K\033[1;37;41m\033[Kbye!",
-      ""
+        "Hello, world!",
+        "\r\033[2KOverwrite",
+        "\r\033[2KAgain",
+        "\r\033[2Kand again...",
+        "\r\033[2Kand again!",
+        "\r\033[2K\033[1;37;41m\033[KAlso overwrite",
+        "",
+        "\r\033[0m\033[2KAlmost done",
+        "\r\033[2K\033[1;37;41m\033[KGood",
+        "",
+        "\r\033[0m\033[2K...",
+        "\r\033[2K\033[1;37;41m\033[Kbye!",
+        ""
     );
   }
 
-  private void assertOutput(String... lines) {
+  private void assertOutput(String... lines)
+  {
     String actual = outputStream.toString().replace("\033", "\\033").replace("\r", "\n\\r");
     String expected = Joiner.on('\n').join(lines).replace("\033", "\\033").replace("\r", "\\r");
 

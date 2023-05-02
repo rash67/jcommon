@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DoubleExtractor implements Extractor<Double> {
+public class DoubleExtractor implements Extractor<Double>
+{
   @Override
   public Double extract(String key, JSONObject jsonObject)
-    throws JSONException {
+      throws JSONException
+  {
     return jsonObject.getDouble(key);
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import java.lang.annotation.Retention;
@@ -23,8 +24,11 @@ import java.lang.annotation.RetentionPolicy;
  * from JSON to populate the field via the set method
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FieldExtractor {
+public @interface FieldExtractor
+{
   public String key();
+
   public Class<?> extractorClass();
+
   public boolean optional() default false;
 }

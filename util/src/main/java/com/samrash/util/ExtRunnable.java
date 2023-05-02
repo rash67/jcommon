@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import com.samrash.util.exceptions.UncheckedCheckedException;
@@ -23,16 +24,20 @@ import com.samrash.util.exceptions.UncheckedCheckedException;
  *
  * @param <E> type of exception you want to be able to throw
  */
-public interface ExtRunnable<E extends Throwable>{
+public interface ExtRunnable<E extends Throwable>
+{
   void run() throws E;
 
-  static Runnable quiet(ExtRunnable<?> runnable) {
+  static Runnable quiet(ExtRunnable<?> runnable)
+  {
     return () -> {
       try {
         runnable.run();
-      } catch (Error | RuntimeException e) {
+      }
+      catch (Error | RuntimeException e) {
         throw e;
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
         throw new UncheckedCheckedException(e);
       }
     };

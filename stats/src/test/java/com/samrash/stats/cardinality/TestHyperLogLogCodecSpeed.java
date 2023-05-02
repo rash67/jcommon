@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import org.testng.annotations.Test;
@@ -24,13 +25,15 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
-public class TestHyperLogLogCodecSpeed {
+public class TestHyperLogLogCodecSpeed
+{
   private static final int LOOPS = 10000;
   private static final int WARM_LOOPS = 1000;
 
   @Test(groups = "slow", enabled = false)
   public void testHyperLogLog()
-      throws Exception {
+      throws Exception
+  {
     warm();
 
     testHyperLogLog(10);
@@ -39,7 +42,8 @@ public class TestHyperLogLogCodecSpeed {
   }
 
   public void testHyperLogLog(int log2m)
-      throws Exception {
+      throws Exception
+  {
     System.out.printf(
         "%11s  %11s  %6s  %4s  %4s  %4s  %9s  %6s  %6s\n",
         "actual",
@@ -78,7 +82,8 @@ public class TestHyperLogLogCodecSpeed {
       long estimate,
       double err,
       int entropy
-  ) throws IOException {
+  ) throws IOException
+  {
     int buckets = 1 << log2m;
     HyperLogLogCodec codec = new HyperLogLogCodec();
 
@@ -113,7 +118,8 @@ public class TestHyperLogLogCodecSpeed {
     );
   }
 
-  private static void warm() throws IOException {
+  private static void warm() throws IOException
+  {
     int bucketCount = 1 << 11;
     HyperLogLog hyperLogLog = new HyperLogLog(bucketCount);
     for (long i = 0; i < 100000; i++) {
@@ -135,7 +141,8 @@ public class TestHyperLogLogCodecSpeed {
   }
 
   private static double timeEncode(HyperLogLogCodec codec, HyperLogLog hyperLogLog)
-      throws IOException {
+      throws IOException
+  {
     int buckets = hyperLogLog.buckets().length;
 
     long encodeTime = 0;
@@ -153,7 +160,8 @@ public class TestHyperLogLogCodecSpeed {
     return encodeTime / 1.0e6 / (LOOPS - WARM_LOOPS);
   }
 
-  private static double timeDecode(HyperLogLogCodec codec, byte[] buf) throws IOException {
+  private static double timeDecode(HyperLogLogCodec codec, byte[] buf) throws IOException
+  {
     long decodeTime = 0;
     for (int i = 0; i < LOOPS; i++) {
 

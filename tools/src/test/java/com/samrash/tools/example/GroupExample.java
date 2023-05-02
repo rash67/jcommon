@@ -19,25 +19,29 @@ import com.samrash.tools.io.IO;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class GroupExample extends CommandDispatcher {
-  public GroupExample(IO io) {
+public class GroupExample extends CommandDispatcher
+{
+  public GroupExample(IO io)
+  {
     super(
-      io,
-      new CreateReplayFile(io),
-      new CommandGroup(
         io,
-        "ops",
-        "Commands used by on-call",
-        new ExportCheckpoints(io)
-      )
+        new CreateReplayFile(io),
+        new CommandGroup(
+            io,
+            "ops",
+            "Commands used by on-call",
+            new ExportCheckpoints(io)
+        )
     );
   }
 
-  public GroupExample() {
+  public GroupExample()
+  {
     this(new IO());
   }
 
-  public static void main(String... args) {
+  public static void main(String... args)
+  {
     GroupExample runner = new GroupExample();
 
     System.exit(runner.run(args));

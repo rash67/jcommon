@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.IntPredicate;
 
-public interface ExtIntPredicate<E extends Throwable> {
+public interface ExtIntPredicate<E extends Throwable>
+{
   boolean test(int value) throws E;
 
-  default ExtIntPredicate<E> and(ExtIntPredicate<E> other) {
+  default ExtIntPredicate<E> and(ExtIntPredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
 
-  default ExtIntPredicate<E> negate() {
+  default ExtIntPredicate<E> negate()
+  {
     return (value) -> !test(value);
   }
 
-  default ExtIntPredicate<E> or(ExtIntPredicate<E> other) {
+  default ExtIntPredicate<E> or(ExtIntPredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
 
-  static IntPredicate quiet(ExtIntPredicate<?> intPredicate) {
+  static IntPredicate quiet(ExtIntPredicate<?> intPredicate)
+  {
     return (value) -> ExtBooleanSupplier.quiet(() -> intPredicate.test(value)).getAsBoolean();
   }
 }

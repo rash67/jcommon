@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -37,9 +38,9 @@ limitations under the License.
     <testGroups>fast,slow</testGroups>
     <dep.jackson.version>2.7.4</dep.jackson.version>
     <dep.plugin.surefire.version>2.17</dep.plugin.surefire.version>
-    <project.build.targetJdk>20.0.1</project.build.targetJdk>
+    <project.build.targetJdk>20</project.build.targetJdk>
     <dep.guava.version>21.0</dep.guava.version>
-    <argLine />
+    <argLine/>
   </properties>
 
   <scm>
@@ -215,9 +216,9 @@ limitations under the License.
       <!--third party-->
       <!-- https://mvnrepository.com/artifact/io.netty/netty-buffer -->
       <dependency>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-buffer</artifactId>
-          <version>4.1.22.Final</version>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-buffer</artifactId>
+        <version>4.1.22.Final</version>
       </dependency>
       <dependency>
         <groupId>com.github.ben-manes.caffeine</groupId>

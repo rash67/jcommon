@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 
@@ -23,23 +24,28 @@ import java.util.Arrays;
  * but subsequent ones may be
  */
 
-public class LongPairList extends AbstractLongTupleList implements LongTupleHeap {
+public class LongPairList extends AbstractLongTupleList implements LongTupleHeap
+{
 
-  private LongPairList(long[] tuples, int size) {
+  private LongPairList(long[] tuples, int size)
+  {
     super(tuples, size);
   }
 
-  public LongPairList(int initialSize) {
+  public LongPairList(int initialSize)
+  {
     super(initialSize, 2);
   }
 
   @Override
-  protected int getTupleSize() {
+  protected int getTupleSize()
+  {
     return 2;
   }
 
   @Override
-  protected LongTupleHeap copyHeap(long[] tuples, int size) {
+  protected LongTupleHeap copyHeap(long[] tuples, int size)
+  {
     return new LongPairList(Arrays.copyOf(tuples, tuples.length), size);
   }
 }

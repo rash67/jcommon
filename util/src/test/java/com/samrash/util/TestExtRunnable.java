@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import java.util.function.Supplier;
 
-public class TestExtRunnable extends TestQuietFunctionBase {
+public class TestExtRunnable extends TestQuietFunctionBase
+{
   @Override
-  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtRunnable.quiet(() -> { throw toThrow.get(); }).run();
+  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow)
+  {
+    ExtRunnable.quiet(() -> {
+      throw toThrow.get();
+    }).run();
   }
 }

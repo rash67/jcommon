@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
 /**
@@ -20,11 +21,13 @@ package com.samrash.util.digest;
  *
  * @param <T>
  */
-public class LongIdentityDigestFunction implements DigestFunction<Long> {
+public class LongIdentityDigestFunction implements DigestFunction<Long>
+{
   public static final LongIdentityDigestFunction INSTANCE = new LongIdentityDigestFunction();
 
   @Override
-  public long computeDigest(Long input) {
+  public long computeDigest(Long input)
+  {
     return input;
   }
 }

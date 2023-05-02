@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
-public enum NumberType {
+public enum NumberType
+{
   INTEGER,
   LONG,
   ;

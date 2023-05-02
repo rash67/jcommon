@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import com.samrash.logging.Logger;
@@ -20,15 +21,18 @@ import com.samrash.logging.LoggerImpl;
 import com.samrash.stats.topk.ArrayBasedIntegerTopK;
 import com.samrash.stats.topk.TopK;
 
-public class TestArrayBasedIntegerTopK extends TestIntegerTopK {
+public class TestArrayBasedIntegerTopK extends TestIntegerTopK
+{
   private static final Logger LOG = LoggerImpl.getLogger(TestArrayBasedIntegerTopK.class);
 
-  protected TopK<Integer> getInstance(int keySpaceSize, int k) {
+  protected TopK<Integer> getInstance(int keySpaceSize, int k)
+  {
     return new ArrayBasedIntegerTopK(keySpaceSize, k);
   }
 
   @Override
-  protected Logger getLogger() {
+  protected Logger getLogger()
+  {
     return LOG;
   }
 }

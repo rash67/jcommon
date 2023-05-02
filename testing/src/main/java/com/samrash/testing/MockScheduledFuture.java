@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 import org.slf4j.Logger;
@@ -25,27 +26,32 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
+public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable
+{
   private static final Logger LOG = LoggerFactory.getLogger(MockScheduledFuture.class);
 
   private final Callable<V> callable;
   private final Object lock = new Object();
 
   private volatile boolean hasRun = false;
-  private volatile boolean isCancelled  = false;
+  private volatile boolean isCancelled = false;
   private Exception callableException = null;
   private V result = null;
 
-  public MockScheduledFuture(Callable<V> callable) {
+  public MockScheduledFuture(Callable<V> callable)
+  {
     this.callable = callable;
   }
 
-  public void run() {
+  public void run()
+  {
     try {
       result = callable.call();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       callableException = e;
-    } finally {
+    }
+    finally {
       synchronized (lock) {
         hasRun = true;
         lock.notifyAll();
@@ -54,35 +60,42 @@ public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
   }
 
   @Override
-  public long getDelay(TimeUnit unit) {
+  public long getDelay(TimeUnit unit)
+  {
     return 0;
   }
 
   @Override
-  public int compareTo(Delayed o) {
+  public int compareTo(Delayed o)
+  {
     return 0;
   }
 
   @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
+  public boolean cancel(boolean mayInterruptIfRunning)
+  {
     return isCancelled = true;
   }
 
   @Override
-  public boolean isCancelled() {
+  public boolean isCancelled()
+  {
     return isCancelled;
   }
 
   @Override
-  public boolean isDone() {
+  public boolean isDone()
+  {
     return hasRun;
   }
 
   @Override
-  public V get() throws InterruptedException, ExecutionException {
+  public V get() throws InterruptedException, ExecutionException
+  {
     try {
       return get(0, TimeUnit.SECONDS);
-    } catch (TimeoutException e) {
+    }
+    catch (TimeoutException e) {
       LOG.error("should never see this");
 
       throw new RuntimeException(e);
@@ -91,7 +104,8 @@ public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
 
   @Override
   public V get(long timeout, TimeUnit unit)
-    throws InterruptedException, ExecutionException, TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException
+  {
     long timeoutMillis = unit.toMillis(timeout);
     long start = System.currentTimeMillis();
 
@@ -101,7 +115,7 @@ public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
 
         if (timeoutMillis > 0 &&
             System.currentTimeMillis() - start >= timeoutMillis
-          ) {
+        ) {
           throw new TimeoutException();
         }
       }

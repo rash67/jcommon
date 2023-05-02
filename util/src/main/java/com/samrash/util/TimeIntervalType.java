@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import org.joda.time.DateTime;
@@ -49,34 +50,40 @@ import static org.joda.time.DateTimeFieldType.yearOfCentury;
  * 2011-10-09T13:09:00.
  * </p>
  */
-public enum TimeIntervalType {
+public enum TimeIntervalType
+{
   MILLIS(PeriodType.millis(), millisOfSecond(), secondOfMinute()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.millis(length);
     }
   },
   SECOND(PeriodType.seconds(), secondOfMinute(), minuteOfHour()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.seconds(length);
     }
   },
   MINUTE(PeriodType.minutes(), minuteOfHour(), hourOfDay()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.minutes(length);
     }
   },
   HOUR(PeriodType.hours(), hourOfDay(), dayOfMonth()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.hours(length);
     }
   },
   DAY(PeriodType.days(), dayOfMonth(), monthOfYear()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.days(length);
     }
   },
@@ -88,19 +95,22 @@ public enum TimeIntervalType {
    */
   WEEK(PeriodType.weeks(), weekOfWeekyear(), yearOfCentury()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.weeks(length);
     }
   },
   MONTH(PeriodType.months(), monthOfYear(), yearOfCentury()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.months(length);
     }
   },
   YEAR(PeriodType.years(), yearOfCentury(), centuryOfEra()) {
     @Override
-    public Period toPeriod(int length) {
+    public Period toPeriod(int length)
+    {
       return Period.years(length);
     }
   };
@@ -110,8 +120,9 @@ public enum TimeIntervalType {
   private final DateTimeFieldType truncateFieldType;
 
   TimeIntervalType(
-    PeriodType periodType, DateTimeFieldType fieldType, DateTimeFieldType truncateFieldType
-  ) {
+      PeriodType periodType, DateTimeFieldType fieldType, DateTimeFieldType truncateFieldType
+  )
+  {
     this.periodType = periodType;
     this.fieldType = fieldType;
     this.truncateFieldType = truncateFieldType;
@@ -129,15 +140,16 @@ public enum TimeIntervalType {
    * Validates that the specified interval value is valid for this
    * interval type in the supplied time zone.
    *
-   * @param timeZone the time zone
+   * @param timeZone       the time zone
    * @param intervalLength the interval length
    */
-  public void validateValue(DateTimeZone timeZone, long intervalLength) {
+  public void validateValue(DateTimeZone timeZone, long intervalLength)
+  {
     final DateTimeField field = fieldType.getField(TimeUtil.getChronology(timeZone.getID()));
     if (intervalLength < 1
-      || intervalLength > field.getMaximumValue()) {
+        || intervalLength > field.getMaximumValue()) {
       throw new IllegalArgumentException(
-        "Supplied value " + intervalLength + " is out of bounds for " + name()
+          "Supplied value " + intervalLength + " is out of bounds for " + name()
       );
     }
   }
@@ -148,17 +160,17 @@ public enum TimeIntervalType {
    * and the time zone for this interval type.
    *
    * @param instant the event time instant.
-   * @param length the interval length
-   *
+   * @param length  the interval length
    * @return the start instant of the interval of given length that contains
    * the supplied time instant in the supplied time zone
    */
-  public DateTime getTimeIntervalStart(DateTime instant, long length) {
+  public DateTime getTimeIntervalStart(DateTime instant, long length)
+  {
     validateValue(instant.getZone(), length);
 
     // Reset all the fields
     DateTime periodStart = instant.property(truncateFieldType)
-      .roundFloorCopy();
+                                  .roundFloorCopy();
     // figure out the which time interval does the instant lie in
     Period period = new Period(periodStart, instant, periodType);
     DurationField durationField = fieldType.getField(instant.getChronology()).getDurationField();
@@ -173,9 +185,10 @@ public enum TimeIntervalType {
    *
    * @return the number of milliseconds per unit of this interval type.
    */
-  public long toDurationMillis() {
+  public long toDurationMillis()
+  {
     return fieldType.getDurationType().getField(
-      // Assume that durations are always in UTC
-      ISOChronology.getInstance(DateTimeZone.UTC)).getUnitMillis();
+        // Assume that durations are always in UTC
+        ISOChronology.getInstance(DateTimeZone.UTC)).getUnitMillis();
   }
 }

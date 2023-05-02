@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.samrash.collectionsbase.Mapper;
 
 import java.util.Iterator;
 
-public class TranslatingIterable<X, Y> implements Iterable<Y> {
+public class TranslatingIterable<X, Y> implements Iterable<Y>
+{
   private final Mapper<X, Y> mapper;
   private final Iterable<X> iterable;
 
-  public TranslatingIterable(Mapper<X, Y> mapper, Iterable<X> iterable) {
+  public TranslatingIterable(Mapper<X, Y> mapper, Iterable<X> iterable)
+  {
     this.mapper = mapper;
     this.iterable = iterable;
   }
 
   @Override
-  public Iterator<Y> iterator() {
-    return new TranslatingIterator<X,Y>(mapper, iterable.iterator());
+  public Iterator<Y> iterator()
+  {
+    return new TranslatingIterator<X, Y>(mapper, iterable.iterator());
   }
 }

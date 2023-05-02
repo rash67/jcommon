@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
-public interface SimpleHeapFactory<T, S extends SimpleHeap<T>> {
+public interface SimpleHeapFactory<T, S extends SimpleHeap<T>>
+{
   /**
-   *
    * @param initialSize hint to be used to size the heap initially
    * @return
    */

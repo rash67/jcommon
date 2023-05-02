@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -24,10 +25,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.samrash.stats.MultiWindowDistribution.Quantile.*;
 import static com.google.common.collect.Lists.transform;
+import static com.samrash.stats.MultiWindowDistribution.Quantile.P50;
+import static com.samrash.stats.MultiWindowDistribution.Quantile.P75;
+import static com.samrash.stats.MultiWindowDistribution.Quantile.P95;
+import static com.samrash.stats.MultiWindowDistribution.Quantile.P99;
+import static com.samrash.stats.MultiWindowDistribution.Quantile.getQuantileFunction;
 
-public class MultiWindowDistribution implements WritableMultiWindowStat {
+public class MultiWindowDistribution implements WritableMultiWindowStat
+{
   private final QuantileDigest oneMinute;
   private final QuantileDigest tenMinutes;
   private final QuantileDigest oneHour;
@@ -35,67 +41,79 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
 
   @VisibleForTesting
   MultiWindowDistribution(
-    QuantileDigest oneMinute,
-    QuantileDigest tenMinutes,
-    QuantileDigest oneHour,
-    QuantileDigest allTime
-  ) {
+      QuantileDigest oneMinute,
+      QuantileDigest tenMinutes,
+      QuantileDigest oneHour,
+      QuantileDigest allTime
+  )
+  {
     this.oneMinute = oneMinute;
     this.tenMinutes = tenMinutes;
     this.oneHour = oneHour;
     this.allTime = allTime;
   }
 
-  public MultiWindowDistribution() {
+  public MultiWindowDistribution()
+  {
     this(
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60)),
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600)),
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600)),
-      new QuantileDigest(0.01)
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60)),
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600)),
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600)),
+        new QuantileDigest(0.01)
     );
   }
 
   @Override
-  public void add(long value) {
+  public void add(long value)
+  {
     oneMinute.add(value);
     tenMinutes.add(value);
     oneHour.add(value);
     allTime.add(value);
   }
 
-  public QuantileDigest getOneMinute() {
+  public QuantileDigest getOneMinute()
+  {
     return oneMinute;
   }
 
-  public QuantileDigest getTenMinutes() {
+  public QuantileDigest getTenMinutes()
+  {
     return tenMinutes;
   }
 
-  public QuantileDigest getOneHour() {
+  public QuantileDigest getOneHour()
+  {
     return oneHour;
   }
 
-  public QuantileDigest getAllTime() {
+  public QuantileDigest getAllTime()
+  {
     return allTime;
   }
 
-  public Map<Quantile, Long> getOneMinuteQuantiles() {
+  public Map<Quantile, Long> getOneMinuteQuantiles()
+  {
     return getQuantiles(oneMinute);
   }
 
-  public Map<Quantile, Long> getTenMinuteQuantiles() {
+  public Map<Quantile, Long> getTenMinuteQuantiles()
+  {
     return getQuantiles(tenMinutes);
   }
 
-  public Map<Quantile, Long> getOneHourQuantiles() {
+  public Map<Quantile, Long> getOneHourQuantiles()
+  {
     return getQuantiles(oneHour);
   }
 
-  public Map<Quantile, Long> getAllTimeQuantiles() {
+  public Map<Quantile, Long> getAllTimeQuantiles()
+  {
     return getQuantiles(allTime);
   }
 
-  private Map<Quantile, Long> getQuantiles(QuantileDigest digest) {
+  private Map<Quantile, Long> getQuantiles(QuantileDigest digest)
+  {
     List<Quantile> keys = ImmutableList.of(P50, P75, P95, P99);
     List<Long> values = digest.getQuantiles(transform(keys, getQuantileFunction()));
 
@@ -110,7 +128,8 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
     return result;
   }
 
-  public enum Quantile {
+  public enum Quantile
+  {
     P50("p50", 0.5),
     P75("p75", 0.75),
     P95("p95", 0.95),
@@ -119,22 +138,28 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
     private final String key;
     private final double quantile;
 
-    private Quantile(String key, double quantile) {
+    private Quantile(String key, double quantile)
+    {
       this.key = key;
       this.quantile = quantile;
     }
 
-    public String getKey() {
+    public String getKey()
+    {
       return key;
     }
 
-    public double getQuantile() {
+    public double getQuantile()
+    {
       return quantile;
     }
 
-    public static Function<Quantile, Double> getQuantileFunction() {
-      return new Function<Quantile, Double>() {
-        public Double apply(Quantile input) {
+    public static Function<Quantile, Double> getQuantileFunction()
+    {
+      return new Function<Quantile, Double>()
+      {
+        public Double apply(Quantile input)
+        {
           return input.getQuantile();
         }
       };

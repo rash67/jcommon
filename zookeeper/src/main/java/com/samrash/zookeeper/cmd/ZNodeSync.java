@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.cmd;
 
 import com.samrash.util.StreamImporter;
@@ -26,66 +27,73 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-public class ZNodeSync extends ZkScript {
+public class ZNodeSync extends ZkScript
+{
   private final ZNodeBulkLoader loader;
   private final ZNodePruner pruner;
 
-  public ZNodeSync(ZkQuickConnectionManager zkQuickConnectionManager) {
+  public ZNodeSync(ZkQuickConnectionManager zkQuickConnectionManager)
+  {
     super(zkQuickConnectionManager);
     loader = new ZNodeBulkLoader(zkQuickConnectionManager);
     pruner = new ZNodePruner(zkQuickConnectionManager);
     // Share the provided connection
   }
 
-  public ZNodeSync() {
+  public ZNodeSync()
+  {
     this(new ZkQuickConnectionManager());
   }
 
-  public void setVerbose(boolean verbose) {
+  public void setVerbose(boolean verbose)
+  {
     loader.setVerbose(verbose);
     pruner.setVerbose(verbose);
   }
 
   @Override
-  protected String getName() {
+  protected String getName()
+  {
     return ZNodeSync.class.getName();
   }
 
   @Override
-  protected Options getSpecificOptions() {
+  protected Options getSpecificOptions()
+  {
     Options options = new Options();
     options.addOption(
-      "z",
-      "zkpath",
-      true,
-      "ZooKeeper path to sync (includes all descendants) [Required]"
+        "z",
+        "zkpath",
+        true,
+        "ZooKeeper path to sync (includes all descendants) [Required]"
     );
     options.addOption(
-      "k",
-      "keyword",
-      true,
-      "Keyword to write into zNodes that will be removed. This may be used " +
+        "k",
+        "keyword",
+        true,
+        "Keyword to write into zNodes that will be removed. This may be used " +
         "to help reduce activity on or underneath this node [Default: freeze]"
     );
     options.addOption(
-      "f",
-      "file-template",
-      true,
-      "Path to file containing new-line delimited list of ZNodes to sync. " +
+        "f",
+        "file-template",
+        true,
+        "Path to file containing new-line delimited list of ZNodes to sync. " +
         "The list only applies to persistent ZNodes. If this parameter is " +
         "not specified, expects the values to be provided via standard input."
     );
     options.addOption(
-      "v",
-      "verbose",
-      false,
-      "Print verbose messages [Default: off]"
+        "v",
+        "verbose",
+        false,
+        "Print verbose messages [Default: off]"
     );
     return options;
   }
 
   @Override
-  protected boolean verifySpecificOptions(CommandLine cmd) {
+  protected boolean verifySpecificOptions(CommandLine cmd)
+  {
     if (!cmd.hasOption("zkpath")) {
       System.err.println("Error: You must specify a ZooKeeper path.\n");
       return false;
@@ -101,12 +109,13 @@ public class ZNodeSync extends ZkScript {
   }
 
   @Override
-  protected void runScript(CommandLine cmd) throws Exception {
+  protected void runScript(CommandLine cmd) throws Exception
+  {
     setVerbose(cmd.hasOption("verbose"));
     String root = cmd.getOptionValue("zkpath");
     String keyword = cmd.getOptionValue("keyword", ZNodePruner.DEFAULT_KEYWORD);
     InputStream in =
-      (cmd.hasOption("file-template"))
+        (cmd.hasOption("file-template"))
         ? new FileInputStream(new File(cmd.getOptionValue("file-template")))
         : System.in;
     try {
@@ -115,12 +124,14 @@ public class ZNodeSync extends ZkScript {
       loader.load(template);
       // Then prune everything else under specified root
       pruner.prunePersistent(root, keyword, template);
-    } finally {
+    }
+    finally {
       in.close();
     }
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception
+  {
     ZkScript script = new ZNodeSync();
     script.runMain(args);
     System.out.println("DONE");

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.subprocess;
 
 import com.samrash.tools.io.IO;
@@ -53,22 +54,27 @@ import java.util.Map;
  *
  * @see Subprocess
  */
-public class SubprocessBuilder {
+public class SubprocessBuilder
+{
   private final ProcessBuilderWrapper builder;
 
-  public SubprocessBuilder() {
+  public SubprocessBuilder()
+  {
     this.builder = new JavaProcessBuilderWrapper();
   }
 
-  public SubprocessBuilder(ProcessBuilderWrapper builder) {
+  public SubprocessBuilder(ProcessBuilderWrapper builder)
+  {
     this.builder = builder;
   }
 
-  public Builder forCommand(String command) {
+  public Builder forCommand(String command)
+  {
     return new Builder(command, builder);
   }
 
-  public static class Builder {
+  public static class Builder
+  {
     private final List<String> command = new ArrayList<>();
     private final Map<String, String> environmentOverrides = new LinkedHashMap<>();
     private final ProcessBuilderWrapper builder;
@@ -79,12 +85,14 @@ public class SubprocessBuilder {
     private IO echoOutput = null;
     private int outputBytesLimit = 512_000;
 
-    private Builder(String command, ProcessBuilderWrapper builder) {
+    private Builder(String command, ProcessBuilderWrapper builder)
+    {
       this.command.add(command);
       this.builder = builder;
     }
 
-    public Builder withArguments(List<?> arguments) {
+    public Builder withArguments(List<?> arguments)
+    {
       for (Object argument : arguments) {
         command.add(String.valueOf(argument));
       }
@@ -92,47 +100,55 @@ public class SubprocessBuilder {
       return this;
     }
 
-    public Builder withArguments(Object... arguments) {
+    public Builder withArguments(Object... arguments)
+    {
       return withArguments(Arrays.asList(arguments));
     }
 
-    public Builder withEnvironmentVariable(String key, String value) {
+    public Builder withEnvironmentVariable(String key, String value)
+    {
       environmentOverrides.put(key, value);
 
       return this;
     }
 
-    public Builder withoutEnvironmentVariable(String key) {
+    public Builder withoutEnvironmentVariable(String key)
+    {
       environmentOverrides.put(key, null);
 
       return this;
     }
 
-    public Builder redirectStderrToStdout() {
+    public Builder redirectStderrToStdout()
+    {
       redirectStderrToStdout = true;
 
       return this;
     }
 
-    public Builder withWorkingDirectory(File workingDirectory) {
+    public Builder withWorkingDirectory(File workingDirectory)
+    {
       this.workingDirectory = workingDirectory;
 
       return this;
     }
 
-    public Builder echoCommand(IO io) {
+    public Builder echoCommand(IO io)
+    {
       echoCommand = io;
 
       return this;
     }
 
-    public Builder echoOutput(IO io) {
+    public Builder echoOutput(IO io)
+    {
       echoOutput = io;
 
       return this;
     }
 
-    public Builder outputBytesLimit(int outputBytesLimit) {
+    public Builder outputBytesLimit(int outputBytesLimit)
+    {
       this.outputBytesLimit = outputBytesLimit;
 
       return this;
@@ -143,7 +159,8 @@ public class SubprocessBuilder {
      *
      * @return a running command
      */
-    public Subprocess start() {
+    public Subprocess start()
+    {
       return start(false);
     }
 
@@ -152,20 +169,22 @@ public class SubprocessBuilder {
      *
      * @return a running command
      */
-    public Subprocess stream() {
+    public Subprocess stream()
+    {
       return start(true);
     }
 
-    private Subprocess start(boolean streaming) {
+    private Subprocess start(boolean streaming)
+    {
       final Process process;
 
       if (redirectStderrToStdout) {
         process = builder.createProcess(
-          RedirectErrorsTo.STDOUT, environmentOverrides, workingDirectory, command
+            RedirectErrorsTo.STDOUT, environmentOverrides, workingDirectory, command
         );
       } else {
         process = builder.createProcess(
-          RedirectErrorsTo.STDERR, environmentOverrides, workingDirectory, command
+            RedirectErrorsTo.STDERR, environmentOverrides, workingDirectory, command
         );
       }
 

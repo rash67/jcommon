@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
-public interface ReadableMultiWindowGauge extends ReadableMultiWindowRate {
+public interface ReadableMultiWindowGauge extends ReadableMultiWindowRate
+{
   long getMinuteSamples();
+
   long getMinuteAvg();
+
   long getTenMinuteSamples();
+
   long getTenMinuteAvg();
+
   long getHourSamples();
+
   long getHourAvg();
+
   long getAllTimeSamples();
+
   long getAllTimeAvg();
 }

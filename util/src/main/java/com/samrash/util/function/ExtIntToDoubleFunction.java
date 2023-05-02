@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.IntToDoubleFunction;
 
-public interface ExtIntToDoubleFunction<E extends Throwable> {
+public interface ExtIntToDoubleFunction<E extends Throwable>
+{
   double applyAsDouble(int value) throws E;
 
-  static IntToDoubleFunction quiet(ExtIntToDoubleFunction<?> intToDoubleFunction) {
+  static IntToDoubleFunction quiet(ExtIntToDoubleFunction<?> intToDoubleFunction)
+  {
     return (value) -> ExtDoubleSupplier.quiet(() -> intToDoubleFunction.applyAsDouble(value)).getAsDouble();
   }
 }

@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.serialization;
 
 /**
  * marker interface
+ *
  * @param <T>
  */
-public interface SerDe<T> extends com.samrash.util.serialization.Serializer<T>, com.samrash.util.serialization.Deserializer<T>
+public interface SerDe<T>
+    extends com.samrash.util.serialization.Serializer<T>, com.samrash.util.serialization.Deserializer<T>
 {
 }

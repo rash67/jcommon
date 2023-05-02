@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 /**
@@ -22,5 +23,6 @@ package com.samrash.collectionsbase;
  * @param <K>
  * @param <E>
  */
-public interface Filter<K, E extends Throwable> extends Function<K, Boolean, E> {
+public interface Filter<K, E extends Throwable> extends Function<K, Boolean, E>
+{
 }

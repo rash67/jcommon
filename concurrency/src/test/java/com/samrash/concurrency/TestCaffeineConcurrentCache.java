@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
-public class TestCaffeineConcurrentCache extends AbstractTestConcurrentCache {
+public class TestCaffeineConcurrentCache extends AbstractTestConcurrentCache
+{
   @Override
   protected ConcurrentCache<String, String, RuntimeException> createCache(
-    ValueFactory<String, String, RuntimeException> valueFactory
-  ) {
+      ValueFactory<String, String, RuntimeException> valueFactory
+  )
+  {
     return new CaffeineConcurrentCache<>(valueFactory, RuntimeExceptionHandler.INSTANCE);
   }
 
   @Override
-  public void testRemoveBeforeValueSwap() throws Exception {
+  public void testRemoveBeforeValueSwap() throws Exception
+  {
     // skip this test since ConcurrentHashMap.computeIfPresent(key, ...) will block remove(key)
   }
 }

@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.samrash.collections.specialized;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+package com.samrash.collections.specialized;
 
 import com.samrash.collections.SetFactory;
 import com.samrash.collections.SetMap;
@@ -26,14 +22,19 @@ import com.samrash.collections.SetMapImpl;
 import com.samrash.collections.Trackable;
 import com.samrash.collections.WrappedIterator;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * decorates a SetMap so that a caller can tell if the data structure
  * has changed.
- *
+ * <p>
  * NOTE: if a caller modifies the set directly:
- *   Set<V> set = setMap.get(key);
- *   set.add(key);
- *
+ * Set<V> set = setMap.get(key);
+ * set.add(key);
+ * <p>
  * This will not be reflected in the version
  *
  * @param <K>
@@ -41,21 +42,25 @@ import com.samrash.collections.WrappedIterator;
  * @param <S>
  */
 public class TrackableSetMap<K, V, S extends Set<V>>
-  implements SetMap<K,V,S>, Trackable {
+    implements SetMap<K, V, S>, Trackable
+{
 
-  private final SetMap<K,V,S> delegate;
+  private final SetMap<K, V, S> delegate;
   private final AtomicBoolean dirty = new AtomicBoolean(false);
 
-  public TrackableSetMap(SetMap<K, V, S> delegate) {
+  public TrackableSetMap(SetMap<K, V, S> delegate)
+  {
     this.delegate = delegate;
   }
 
-  public TrackableSetMap(SetFactory<V, S> setFactory) {
+  public TrackableSetMap(SetFactory<V, S> setFactory)
+  {
     delegate = new SetMapImpl<K, V, S>(setFactory);
   }
 
   @Override
-  public boolean add(K key, V item) {
+  public boolean add(K key, V item)
+  {
     if (delegate.add(key, item)) {
       dirty.set(true);
 
@@ -66,7 +71,8 @@ public class TrackableSetMap<K, V, S extends Set<V>>
   }
 
   @Override
-  public S removeSet(K key) {
+  public S removeSet(K key)
+  {
     S value = delegate.removeSet(key);
 
     if (value != null) {
@@ -77,7 +83,8 @@ public class TrackableSetMap<K, V, S extends Set<V>>
   }
 
   @Override
-  public boolean remove(K key, V item) {
+  public boolean remove(K key, V item)
+  {
     if (delegate.remove(key, item)) {
       dirty.set(true);
 
@@ -88,25 +95,31 @@ public class TrackableSetMap<K, V, S extends Set<V>>
   }
 
   @Override
-  public boolean hasChanged() {
+  public boolean hasChanged()
+  {
     return dirty.getAndSet(false);
   }
 
   @Override
-  public S get(K key) {
+  public S get(K key)
+  {
     return delegate.get(key);
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     delegate.clear();
   }
 
   @Override
-  public Iterator<Map.Entry<K, S>> iterator() {
-    return new WrappedIterator<Map.Entry<K, S>>(delegate.iterator()) {
+  public Iterator<Map.Entry<K, S>> iterator()
+  {
+    return new WrappedIterator<Map.Entry<K, S>>(delegate.iterator())
+    {
       @Override
-      public void remove() {
+      public void remove()
+      {
         super.remove();
         dirty.set(true);
       }

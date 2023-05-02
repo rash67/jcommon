@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import java.util.Map;
@@ -20,7 +21,8 @@ import java.util.Map;
 /**
  * A interface for reporting statistics (counters, exported values)
  */
-public interface FacebookStatsReporter {
+public interface FacebookStatsReporter
+{
 
   void deleteCounter(String key);
 

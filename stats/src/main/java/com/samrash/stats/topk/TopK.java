@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.topk;
 
 import java.util.List;
@@ -20,7 +21,9 @@ import java.util.List;
 /*
  * Interface for streaming top-k algorithms.
  */
-public interface TopK<T extends Comparable<T>> {
+public interface TopK<T extends Comparable<T>>
+{
   public void add(T key, long count);
+
   public List<T> getTopK();
 }

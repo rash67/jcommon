@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 import com.google.common.base.Function;
 
-public class FunctionToMapper<X, Y> implements Mapper<X, Y> {
+public class FunctionToMapper<X, Y> implements Mapper<X, Y>
+{
   private final Function<X, Y> function;
 
-  public FunctionToMapper(Function<X, Y> function) {
+  public FunctionToMapper(Function<X, Y> function)
+  {
     this.function = function;
   }
 
   @Override
-  public Y map(X input) {
+  public Y map(X input)
+  {
     return function.apply(input);
   }
 }

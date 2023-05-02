@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 import java.util.Comparator;
 
-public class Arrays {
-  private Arrays() {
+public class Arrays
+{
+  private Arrays()
+  {
     throw new AssertionError();
   }
 
@@ -30,10 +33,13 @@ public class Arrays {
    * @param <T>
    * @return
    */
-  public static <T extends Comparable<? super T>> int compareArrays(T[] array1, T[] array2) {
-    Comparator<T> comparator = new Comparator<T>() {
+  public static <T extends Comparable<? super T>> int compareArrays(T[] array1, T[] array2)
+  {
+    Comparator<T> comparator = new Comparator<T>()
+    {
       @Override
-      public int compare(T o1, T o2) {
+      public int compare(T o1, T o2)
+      {
         return o1.compareTo(o2);
       }
     };
@@ -43,8 +49,9 @@ public class Arrays {
 
 
   public static <T> int comparPrimitiveArrays(
-    T[] array1, T[] array2, Comparator<? super T[]> comparator
-  ) {
+      T[] array1, T[] array2, Comparator<? super T[]> comparator
+  )
+  {
 
     int compare = comparator.compare(array1, array2);
 
@@ -60,9 +67,10 @@ public class Arrays {
    * @return
    */
   public static <T> int compareArrays(
-    T[] array1, T[] array2, Comparator<? super T> comparator
+      T[] array1, T[] array2, Comparator<? super T> comparator
 
-  ) {
+  )
+  {
     // null < all other values
     if (array1 == null) {
       if (array2 == null) {

@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
-public class InstanceLogProvider implements LogProvider {
+public class InstanceLogProvider implements LogProvider
+{
   private final Logger logger;
 
-  public InstanceLogProvider(Logger logger) {
+  public InstanceLogProvider(Logger logger)
+  {
     this.logger = logger;
   }
 
   @Override
-  public Logger get() {
+  public Logger get()
+  {
     return logger;
   }
 }

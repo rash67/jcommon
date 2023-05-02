@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.samrash.concurrency;
 
-import com.samrash.concurrency.ExecutorServiceFactory;
+package com.samrash.concurrency;
 
 import java.util.concurrent.ExecutorService;
 
 public class SingletonExecutorServiceFactory<T extends ExecutorService>
-  implements ExecutorServiceFactory<T> {
+    implements ExecutorServiceFactory<T>
+{
   private final T instance;
 
-  public SingletonExecutorServiceFactory(T instance) {
+  public SingletonExecutorServiceFactory(T instance)
+  {
     this.instance = instance;
   }
 
   @Override
-  public T create() {
+  public T create()
+  {
     return instance;
   }
 }

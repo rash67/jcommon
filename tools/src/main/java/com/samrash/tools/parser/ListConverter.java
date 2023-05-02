@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListConverter<T> implements CliConverter<List<T>> {
+public class ListConverter<T> implements CliConverter<List<T>>
+{
   private final CliConverter<T> converter;
 
-  public ListConverter(CliConverter<T> converter) {
+  public ListConverter(CliConverter<T> converter)
+  {
     this.converter = converter;
   }
 
   @Override
-  public List<T> convert(String value) throws Exception {
+  public List<T> convert(String value) throws Exception
+  {
     if (value == null) {
       return null;
     }

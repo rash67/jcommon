@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.exceptions;
 
-public interface ExceptionHandler<T extends Exception> {
+public interface ExceptionHandler<T extends Exception>
+{
   public <S extends Exception> T handle(S e);
 }

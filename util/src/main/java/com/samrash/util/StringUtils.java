@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-public class StringUtils {
-  private StringUtils() {
+public class StringUtils
+{
+  private StringUtils()
+  {
     throw new AssertionError();
   }
 
-  public static String stripQuotes(String input) {
+  public static String stripQuotes(String input)
+  {
     if (input.startsWith("'") || input.startsWith("\"")) {
       return StringEscapeUtils.unescapeJava(input.substring(1, input.length() - 1));
     } else {

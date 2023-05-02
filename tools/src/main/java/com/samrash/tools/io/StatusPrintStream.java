@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.OutputStream;
 
 @SuppressWarnings("AbstractClassExtendsConcreteClass")
-public abstract class StatusPrintStream extends PrintStreamPlus implements Status {
-  protected StatusPrintStream(OutputStream out) {
+public abstract class StatusPrintStream extends PrintStreamPlus implements Status
+{
+  protected StatusPrintStream(OutputStream out)
+  {
     super(out);
   }
 }

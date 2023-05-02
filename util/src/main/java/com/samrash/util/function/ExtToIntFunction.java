@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.ToIntFunction;
 
-public interface ExtToIntFunction<T, E extends Throwable> {
+public interface ExtToIntFunction<T, E extends Throwable>
+{
   int applyAsInt(T value) throws E;
 
-  static <T> ToIntFunction<T> quiet(ExtToIntFunction<T, ?> toIntFunction) {
+  static <T> ToIntFunction<T> quiet(ExtToIntFunction<T, ?> toIntFunction)
+  {
     return (value) -> ExtIntSupplier.quiet(() -> toIntFunction.applyAsInt(value)).getAsInt();
   }
 }

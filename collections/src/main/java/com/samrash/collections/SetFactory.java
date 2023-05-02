@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Set;
 
-public interface SetFactory<V, S extends Set<V>> {
+public interface SetFactory<V, S extends Set<V>>
+{
   public S create();
 }

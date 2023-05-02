@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
 /**
  * String wrapper that can memoize and efficiently do prepend/append/INSERT
- *
+ * <p>
  * For use with counters that need a default and a dynamic one (ex: per-
  * category)
  */
-public interface StatType {
+public interface StatType
+{
   /**
-   *
    * @return the current key
    */
   public String getKey();
 
   /**
-   *
    * @param suffix - append ".suffix"
    * @return returns getKey() + suffix
    */
   public StatType append(String suffix);
 
   /**
-   *
    * @param prefix - prepend "prefix."
    * @return returns prefix +  getKey()
    */
@@ -44,11 +43,11 @@ public interface StatType {
 
   /**
    * will create StatType such that
-   *
+   * <p>
    * getKey() = prefix + value + suffix
-   *
+   * <p>
    * but leaves the internal prefix + suffix the same.  ex:
-   *
+   * <p>
    * materialize("x").materialize("y").getKey() = prefix + "y" + suffix
    *
    * @param value - string to use as replacement value

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import com.samrash.logging.log4j.CustodianLog4JDailyRollingFileAppender;

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.base.Preconditions;
@@ -24,7 +25,8 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
-public class DynamicIterator<T> extends AbstractIterator<T> {
+public class DynamicIterator<T> extends AbstractIterator<T>
+{
 
   private static final int DEFAULT_INITIAL_SIZE = 16;
 
@@ -36,17 +38,20 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
   @GuardedBy("queue")
   private boolean finished;
 
-  public DynamicIterator(int initialSize) {
+  public DynamicIterator(int initialSize)
+  {
     Preconditions.checkArgument(initialSize >= 0, "initialSize must be >= 0");
 
     this.queue = new ArrayDeque<T>(initialSize);
   }
 
-  public DynamicIterator() {
+  public DynamicIterator()
+  {
     this(DEFAULT_INITIAL_SIZE);
   }
 
-  public boolean add(T element) throws InterruptedException {
+  public boolean add(T element) throws InterruptedException
+  {
     Preconditions.checkNotNull(element, "element is null");
 
     boolean added;
@@ -62,7 +67,8 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
     return added;
   }
 
-  public void finish() {
+  public void finish()
+  {
     synchronized (queue) {
       finished = true;
     }
@@ -73,7 +79,8 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
   }
 
   @Override
-  protected T computeNext() {
+  protected T computeNext()
+  {
     try {
       available.acquire();
 
@@ -85,7 +92,8 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
         }
         return element;
       }
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw Throwables.propagate(e);
     }

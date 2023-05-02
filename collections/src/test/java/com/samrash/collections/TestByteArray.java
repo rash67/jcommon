@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestByteArray {
+public class TestByteArray
+{
   private ByteArray byteArray1;
   private ByteArray nullArray;
   private ByteArray byteArray2;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     byteArray1 = ByteArray.wrap("string a".getBytes());
     byteArray2 = ByteArray.wrap("string b".getBytes());
     nullArray = ByteArray.wrap(null);
   }
 
   @Test(groups = "fast")
-  public void testCompareTo() throws Exception {
+  public void testCompareTo() throws Exception
+  {
     Assert.assertEquals(byteArray1.compareTo(byteArray2), -1);
     Assert.assertEquals(byteArray2.compareTo(byteArray1), 1);
     Assert.assertEquals(byteArray1.compareTo(byteArray1), 0);
@@ -43,7 +47,8 @@ public class TestByteArray {
   }
 
   @Test(groups = "fast")
-  public void testEquals() throws Exception {
+  public void testEquals() throws Exception
+  {
     // symmetric two difference arrays
     Assert.assertFalse(byteArray1.equals(byteArray2));
     Assert.assertFalse(byteArray2.equals(byteArray1));

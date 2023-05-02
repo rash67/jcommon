@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.exceptions.UncheckedCheckedException;
+
 import java.util.function.LongSupplier;
 
-public interface ExtLongSupplier<E extends Throwable> {
+public interface ExtLongSupplier<E extends Throwable>
+{
   long getAsLong() throws E;
 
-  static LongSupplier quiet(ExtLongSupplier<?> longSupplier) {
+  static LongSupplier quiet(ExtLongSupplier<?> longSupplier)
+  {
     return () -> {
       try {
         return longSupplier.getAsLong();
-      } catch (Error | RuntimeException e) {
+      }
+      catch (Error | RuntimeException e) {
         throw e;
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
         throw new UncheckedCheckedException(e);
       }
     };

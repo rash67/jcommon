@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Preconditions;
+import com.samrash.util.exceptions.ExceptionHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-import com.samrash.util.exceptions.ExceptionHandler;
-
-public class CaffeineConcurrentCache<K, V, E extends Exception> implements ConcurrentCache<K, V, E> {
+public class CaffeineConcurrentCache<K, V, E extends Exception> implements ConcurrentCache<K, V, E>
+{
   private final LoadingCache<K, CallableSnapshot<V, E>> cache;
   private final ExceptionHandler<E> exceptionHandler;
   private final ConcurrentMap<K, CallableSnapshot<V, E>> cacheAsMap;
@@ -39,42 +41,48 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
    * @param cacheBuilder     - result of Caffeine.newBuilder() + any config (caller may customize the cache)
    */
   public CaffeineConcurrentCache(
-    ValueFactory<K, V, E> valueFactory,
-    ExceptionHandler<E> exceptionHandler,
-    Caffeine<Object, Object> cacheBuilder
-  ) {
+      ValueFactory<K, V, E> valueFactory,
+      ExceptionHandler<E> exceptionHandler,
+      Caffeine<Object, Object> cacheBuilder
+  )
+  {
     this.exceptionHandler = exceptionHandler;
     this.cache = cacheBuilder.build(new CacheValueLoader<>(valueFactory, exceptionHandler));
     cacheAsMap = cache.asMap();
   }
 
   public CaffeineConcurrentCache(
-    ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
-  ) {
+      ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
+  )
+  {
     this(valueFactory, exceptionHandler, Caffeine.newBuilder());
   }
 
   @Override
-  public V get(final K key) throws E {
+  public V get(final K key) throws E
+  {
     return cache.get(key).get();
   }
 
   @Override
-  public V put(K key, V value) throws E {
+  public V put(K key, V value) throws E
+  {
     CallableSnapshot<V, E> putResult = cacheAsMap.put(key, new CallableSnapshot<>(() -> value, exceptionHandler));
 
     return putResult == null ? null : putResult.get();
   }
 
   @Override
-  public V remove(K key) throws E {
+  public V remove(K key) throws E
+  {
     CallableSnapshot<V, E> removeResult = cacheAsMap.remove(key);
 
     return removeResult == null ? null : removeResult.get();
   }
 
   @Override
-  public boolean removeIfError(K key) {
+  public boolean removeIfError(K key)
+  {
     CallableSnapshot<V, E> snapshot = cache.getIfPresent(key);
 
     if (snapshot != null && snapshot.getException() != null) {
@@ -87,17 +95,20 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     cache.invalidateAll();
   }
 
   @Override
-  public void prune() {
+  public void prune()
+  {
     cache.cleanUp();
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     long sizeInLong = cache.estimatedSize();
     Preconditions.checkState(sizeInLong < Integer.MAX_VALUE, "overflow on cache size");
 
@@ -105,33 +116,39 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
   }
 
   @Override
-  public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator() {
+  public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator()
+  {
     Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator = cacheAsMap.entrySet().iterator();
 
     return iterator;
   }
 
   @Override
-  public CallableSnapshot<V, E> getIfPresent(K key) {
+  public CallableSnapshot<V, E> getIfPresent(K key)
+  {
     return cache.getIfPresent(key);
   }
 
-  private static class CacheValueLoader<K, V, E extends Exception> implements CacheLoader<K, CallableSnapshot<V, E>> {
+  private static class CacheValueLoader<K, V, E extends Exception> implements CacheLoader<K, CallableSnapshot<V, E>>
+  {
     private final ValueFactory<K, V, E> valueFactory;
     private final ExceptionHandler<E> exceptionHandler;
 
-    private CacheValueLoader(ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler) {
+    private CacheValueLoader(ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler)
+    {
       this.valueFactory = valueFactory;
       this.exceptionHandler = exceptionHandler;
     }
 
     @Override
-    public CallableSnapshot<V, E> load(K key) {
+    public CallableSnapshot<V, E> load(@Nonnull K key)
+    {
       try {
         V value = valueFactory.create(key);
 
         return new CallableSnapshot<>(() -> value, exceptionHandler);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         return CallableSnapshot.createWithException(exceptionHandler.handle(e));
       }
     }

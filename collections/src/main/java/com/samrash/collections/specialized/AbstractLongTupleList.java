@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
-
-
-import com.samrash.collections.specialized.LongTupleHeap;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,13 +25,13 @@ import java.util.NoSuchElementException;
 /**
  * List of long-tuples that are sorted by their first element in ascending order.
  * The first element may not be negative, but subsequent ones may be.
- *
+ * <p>
  * The list will have an initial amount of space allocated according to initialListSize, but
  * will grow/shrink as items are added and removed
- *
  */
 
-public abstract class AbstractLongTupleList implements LongTupleHeap {
+public abstract class AbstractLongTupleList implements LongTupleHeap
+{
   private static final int SORT_INDEX = 0;
   private static final int DEFAULT_INITIAL_LIST_SIZE = 1; // size in tuples
   private static final int DEFAULT_TUPLE_SIZE = 2;
@@ -44,31 +42,33 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
   private volatile int size = 0; // in # of tuples
 
   /**
-   *
    * @param initialListSize initial number of tuples for which to allocate spacee
    * @param tupleSize
    */
-  protected AbstractLongTupleList(int initialListSize, int tupleSize) {
+  protected AbstractLongTupleList(int initialListSize, int tupleSize)
+  {
     this.tuples = new long[initialListSize * tupleSize];
     Arrays.fill(tuples, EMPTY);
     setHeadIndex(0);
   }
 
-  protected AbstractLongTupleList(long[] tuples, int size) {
+  protected AbstractLongTupleList(long[] tuples, int size)
+  {
     this.tuples = tuples;
     this.size = size;
   }
 
-  public AbstractLongTupleList(AbstractLongTupleList otherTupleList) {
+  public AbstractLongTupleList(AbstractLongTupleList otherTupleList)
+  {
     // we want a consistent view of otherTupleList, so synchronize on it
     synchronized (otherTupleList) {
       if (getTupleSize() != otherTupleList.getTupleSize()) {
         throw new IllegalArgumentException(
-          String.format(
-            "mismatched tuple sizes: [%d] and [%d]",
-            getTupleSize(),
-            otherTupleList.getTupleSize()
-          )
+            String.format(
+                "mismatched tuple sizes: [%d] and [%d]",
+                getTupleSize(),
+                otherTupleList.getTupleSize()
+            )
         );
       }
       tuples = Arrays.copyOf(otherTupleList.tuples, otherTupleList.tuples.length);
@@ -86,33 +86,37 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
 
   /**
    * creates a new heap
+   *
    * @return
    */
   protected abstract LongTupleHeap copyHeap(long[] tuples, int size);
 
   @Override
-  public synchronized long[] peek() {
+  public synchronized long[] peek()
+  {
     return findSmallest(false);
   }
 
   @Override
-  public synchronized long[] poll() {
+  public synchronized long[] poll()
+  {
     return findSmallest(true);
   }
 
   @Override
-  public synchronized boolean add(long[] tuple) {
+  public synchronized boolean add(long[] tuple)
+  {
     if (tuple.length != getTupleSize()) {
       throw new IllegalArgumentException(String.format("tuples must be of size %d ", getTupleSize()));
     }
 
     if (tuple[SORT_INDEX] < 0) {
       throw new IllegalArgumentException(
-        String.format(
-          "tuple[%d] with value %d is not >= 0 ",
-          SORT_INDEX,
-          tuple[SORT_INDEX]
-        )
+          String.format(
+              "tuple[%d] with value %d is not >= 0 ",
+              SORT_INDEX,
+              tuple[SORT_INDEX]
+          )
       );
     }
 
@@ -141,12 +145,14 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
   }
 
   @Override
-  public synchronized boolean addAll(Collection<? extends long[]> tuples) {
+  public synchronized boolean addAll(Collection<? extends long[]> tuples)
+  {
     throw new UnsupportedOperationException("not yet");
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return size;
   }
 
@@ -154,7 +160,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    * @return # of long elements saved
    */
   @Override
-  public synchronized int shrink() {
+  public synchronized int shrink()
+  {
     if (size == 0 || translate(size) == tuples.length) {
       return 0;
     }
@@ -180,12 +187,14 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
   }
 
   @Override
-  public synchronized LongTupleHeap makeCopy() {
+  public synchronized LongTupleHeap makeCopy()
+  {
     return copyHeap(tuples, size);
   }
 
   @Override
-  public Iterator<long[]> iterator() {
+  public Iterator<long[]> iterator()
+  {
     return new Iter();
   }
 
@@ -194,7 +203,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    *
    * @return # of empty slots we found t the start
    */
-  private int leftCompact() {
+  private int leftCompact()
+  {
     if (size == 0) {
       return 0;
     }
@@ -213,12 +223,13 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
   /**
    * moves all values left so there are no empty slots at the start. Works if there are empty gaps
    * between elements
-   *
+   * <p>
    * keeping this around for potential future tweaks if we find a sparse array makes sense
    *
    * @return # of empty slots we found at the start of the list
    */
-  private int leftCompactSparse() {
+  private int leftCompactSparse()
+  {
     int translatedWritePosition = 0;
     int translatedReadPosition = getTupleSize();
     int numProcessed = 0;
@@ -233,7 +244,7 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
 
         if (translatedReadPosition >= tuples.length) {
           throw new IllegalStateException(
-            "compact failed--couldn't find non-empty to copy to empty"
+              "compact failed--couldn't find non-empty to copy to empty"
           );
         }
 
@@ -250,7 +261,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     return emptySlots;
   }
 
-  private void swap(int firstTranslatedPosition, int secondTranslatedPosition) {
+  private void swap(int firstTranslatedPosition, int secondTranslatedPosition)
+  {
     long[] tmpList = new long[getTupleSize()];
 
     System.arraycopy(tuples, firstTranslatedPosition, tmpList, 0, getTupleSize());
@@ -263,7 +275,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    *
    * @return index of the slot, or the index to the left if it's empty
    */
-  private int findInsertLocation(long value) {
+  private int findInsertLocation(long value)
+  {
     // negative value at 0th slot => start index of non-empty values
     int startIndex = getHeadIndex();
     int endIndex = startIndex + translate(size);
@@ -288,7 +301,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    *
    * @param start
    */
-  private int rightShift(int start) {
+  private int rightShift(int start)
+  {
     if (!isEmpty(tuples.length - getTupleSize())) {
       int numShifted = getTupleSize() * leftCompact();
 
@@ -303,11 +317,13 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     return start;
   }
 
-  private boolean isEmpty(int position) {
+  private boolean isEmpty(int position)
+  {
     return tuples[position] < 0;
   }
 
-  private boolean spaceFor(int numItems) {
+  private boolean spaceFor(int numItems)
+  {
     return translate(size - 1) + getTupleSize() * numItems < tuples.length;
   }
 
@@ -315,7 +331,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    * @param tuple              tuple to insert
    * @param translatedPosition translated translatedPosition
    */
-  private void insertAt(long[] tuple, int translatedPosition) {
+  private void insertAt(long[] tuple, int translatedPosition)
+  {
     if (tuple.length != getTupleSize()) {
       throw new IllegalArgumentException(String.format("tuples must be of size %d ", getTupleSize()));
     }
@@ -330,7 +347,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     size++;
   }
 
-  private void resize() {
+  private void resize()
+  {
     int newSize = getTupleSize() * (size + ALLOCATION_CHUNK_SIZE);
     long[] replacement = new long[newSize];
 
@@ -339,7 +357,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     tuples = replacement;
   }
 
-  private long[] findSmallest(boolean remove) {
+  private long[] findSmallest(boolean remove)
+  {
     if (size == 0) {
       return null;
     }
@@ -358,7 +377,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     return tupleAt;
   }
 
-  private int getHeadIndex() {
+  private int getHeadIndex()
+  {
     // the first element is overloaded to be a pointer to the head of the non-empty segment
     // of the tuples when it is negative
     if (tuples[0] < 0) {
@@ -368,12 +388,13 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     }
   }
 
-  private void setHeadIndex(int index) {
+  private void setHeadIndex(int index)
+  {
     if (tuples[0] < 0) {
       tuples[0] = -index;
     } else {
       throw new IllegalStateException(
-        String.format("trying to set head index when not empty. value: %d", tuples[0])
+          String.format("trying to set head index when not empty. value: %d", tuples[0])
       );
     }
   }
@@ -383,7 +404,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    *
    * @param insertLocation
    */
-  private void updateHeadIndex(int insertLocation) {
+  private void updateHeadIndex(int insertLocation)
+  {
     int headIndex = getHeadIndex();
 
     if (headIndex > insertLocation) {
@@ -397,15 +419,18 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
    * @param position tuple position
    * @return position in flattened array
    */
-  private int translate(int position) {
+  private int translate(int position)
+  {
     return getTupleSize() * position;
   }
 
-  private int invertTranslation(int translatedPosition) {
+  private int invertTranslation(int translatedPosition)
+  {
     return translatedPosition / getTupleSize();
   }
 
-  private long[] getTupleAt(int translatedPosition) {
+  private long[] getTupleAt(int translatedPosition)
+  {
     long[] result = new long[getTupleSize()];
 
     System.arraycopy(tuples, translatedPosition, result, 0, getTupleSize());
@@ -413,12 +438,14 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     return result;
   }
 
-  private class Iter implements Iterator<long[]> {
+  private class Iter implements Iterator<long[]>
+  {
     private int position = getHeadIndex() / getTupleSize();
     private long[] nextValue = null;
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNext()
+    {
       boolean hasNext = true;
 
       synchronized (AbstractLongTupleList.this) {
@@ -443,13 +470,14 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     }
 
     @Override
-    public long[] next() {
+    public long[] next()
+    {
       synchronized (AbstractLongTupleList.this) {
         if (!hasNext()) {
           throw new NoSuchElementException(
-            String.format(
-              "position: %d, nextValue %s", position, nextValue
-            )
+              String.format(
+                  "position: %d, nextValue %s", position, nextValue
+              )
           );
         }
 
@@ -464,7 +492,8 @@ public abstract class AbstractLongTupleList implements LongTupleHeap {
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
       throw new UnsupportedOperationException("remove not supported; read-only");
     }
   }

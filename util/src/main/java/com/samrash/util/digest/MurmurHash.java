@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
 import com.google.common.hash.HashCode;
@@ -25,7 +26,8 @@ import javax.annotation.concurrent.ThreadSafe;
  * Murmur Hash 3 from http://sites.google.com/site/murmurhash/
  */
 @ThreadSafe
-public class MurmurHash {
+public class MurmurHash
+{
   //  one constant seed we use when, for the same input at two arbitrary executions, spanning JVM
   // instances, hosts, etc, the hash is meant to produce the same digest for "all timeF"
   public static final long JCOMMON_SEED = 1318007700;
@@ -33,23 +35,28 @@ public class MurmurHash {
   private final long seed;
   private final HashFunction byteArrayHasher = Hashing.murmur3_128((int) JCOMMON_SEED);
 
-  public MurmurHash(long seed) {
+  public MurmurHash(long seed)
+  {
     this.seed = seed;
   }
 
   /**
    * This returns our MurmurHasher such that hash(x) = y "for all time"
+   *
    * @return
    */
-  public static MurmurHash createRepeatableHasher() {
+  public static MurmurHash createRepeatableHasher()
+  {
     return new MurmurHash(JCOMMON_SEED);
   }
 
-  private long rotateLeft64(long x, int r) {
+  private long rotateLeft64(long x, int r)
+  {
     return (x << r) | (x >>> (64 - r));
   }
 
-  private long fmix(long k) {
+  private long fmix(long k)
+  {
     k ^= k >>> 33;
     k *= 0xff51afd7ed558ccdL;
     k ^= k >>> 33;
@@ -61,19 +68,21 @@ public class MurmurHash {
 
   /**
    * Hash the given byte array into 128-bit values
-   *
+   * <p>
    * use guava imple
    *
    * @param data data to hash
    * @return 128 bits of hash result
    */
-  public byte[] hash(byte[] data) {
+  public byte[] hash(byte[] data)
+  {
     HashCode hashCode = byteArrayHasher.hashBytes(data);
 
     return hashCode.asBytes();
   }
 
-  public long hashToLong(byte[] data) {
+  public long hashToLong(byte[] data)
+  {
     HashCode hashCode = byteArrayHasher.hashBytes(data);
 
     return hashCode.asLong();
@@ -86,7 +95,8 @@ public class MurmurHash {
    * @param data the data to hash
    * @return lower 64 bites of the 128-bit hash result.
    */
-  public long hash(long data) {
+  public long hash(long data)
+  {
     long c1 = 0x87c37b91114253d5L;
     long c2 = 0x4cf5ad432745937fL;
 

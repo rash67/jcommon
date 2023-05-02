@@ -13,281 +13,343 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import java.util.Collection;
 
-public class CompositeLogger implements Logger {
+public class CompositeLogger implements Logger
+{
   private static final Logger LOG = LoggerImpl.getClassLogger();
 
   private final Collection<Logger> loggers;
 
-  public CompositeLogger(Collection<Logger> loggers) {
+  public CompositeLogger(Collection<Logger> loggers)
+  {
     this.loggers = loggers;
   }
 
   @Override
-  public boolean isTraceEnabled() {
+  public boolean isTraceEnabled()
+  {
     return accumulate(
-      new OrAccumulator() {
-        @Override
-        protected boolean getValue(Logger log) {
-          return log.isTraceEnabled();
+        new OrAccumulator()
+        {
+          @Override
+          protected boolean getValue(Logger log)
+          {
+            return log.isTraceEnabled();
+          }
         }
-      }
     );
   }
 
   @Override
-  public boolean isDebugEnabled() {
+  public boolean isDebugEnabled()
+  {
     return accumulate(
-      new OrAccumulator() {
-        @Override
-        protected boolean getValue(Logger log) {
-          return log.isDebugEnabled();
+        new OrAccumulator()
+        {
+          @Override
+          protected boolean getValue(Logger log)
+          {
+            return log.isDebugEnabled();
+          }
         }
-      }
     );
   }
 
   @Override
-  public boolean isInfoEnabled() {
+  public boolean isInfoEnabled()
+  {
     return accumulate(
-      new OrAccumulator() {
-        @Override
-        protected boolean getValue(Logger log) {
-          return log.isInfoEnabled();
+        new OrAccumulator()
+        {
+          @Override
+          protected boolean getValue(Logger log)
+          {
+            return log.isInfoEnabled();
+          }
         }
-      }
     );
   }
 
   @Override
-  public boolean isWarnEnabled() {
+  public boolean isWarnEnabled()
+  {
     return accumulate(
-      new OrAccumulator() {
-        @Override
-        protected boolean getValue(Logger log) {
-          return log.isWarnEnabled();
+        new OrAccumulator()
+        {
+          @Override
+          protected boolean getValue(Logger log)
+          {
+            return log.isWarnEnabled();
+          }
         }
-      }
     );
   }
 
   @Override
-  public boolean isErrorEnabled() {
+  public boolean isErrorEnabled()
+  {
     return accumulate(
-      new OrAccumulator() {
-        @Override
-        protected boolean getValue(Logger log) {
-          return log.isErrorEnabled();
-        }
-      }
-    );
-  }
-
-  @Override
-  public void trace(final String format, final Object... args) {
-    logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isTraceEnabled()) {
-            log.trace(format, args);
+        new OrAccumulator()
+        {
+          @Override
+          protected boolean getValue(Logger log)
+          {
+            return log.isErrorEnabled();
           }
         }
-      }
     );
   }
 
   @Override
-  public void trace(final Throwable t, final String format, final Object... args) {
+  public void trace(final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isTraceEnabled()) {
-            log.trace(t, format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isTraceEnabled()) {
+              log.trace(format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void debug(final String format, final Object... args) {
+  public void trace(final Throwable t, final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isDebugEnabled()) {
-            log.debug(format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isTraceEnabled()) {
+              log.trace(t, format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void debug(final Throwable t, final String format, final Object... args) {
+  public void debug(final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isDebugEnabled()) {
-            log.debug(t, format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isDebugEnabled()) {
+              log.debug(format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void debug(final String message, final Throwable throwable) {
+  public void debug(final Throwable t, final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isDebugEnabled()) {
-            log.debug(throwable, message);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isDebugEnabled()) {
+              log.debug(t, format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void info(final String format, final Object... args) {
+  public void debug(final String message, final Throwable throwable)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isInfoEnabled()) {
-            log.info(format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isDebugEnabled()) {
+              log.debug(throwable, message);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void info(final Throwable t, final String format, final Object... args) {
+  public void info(final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isInfoEnabled()) {
-            log.info(t, format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isInfoEnabled()) {
+              log.info(format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void info(final String message, final Throwable throwable) {
+  public void info(final Throwable t, final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isInfoEnabled()) {
-            log.info(throwable, message);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isInfoEnabled()) {
+              log.info(t, format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void warn(final String format, final Object... args) {
+  public void info(final String message, final Throwable throwable)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isWarnEnabled()) {
-            log.warn(format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isInfoEnabled()) {
+              log.info(throwable, message);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void warn(final Throwable t, final String format, final Object... args) {
+  public void warn(final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isWarnEnabled()) {
-            log.warn(t, format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isWarnEnabled()) {
+              log.warn(format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void warn(final String message, final Throwable throwable) {
+  public void warn(final Throwable t, final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isWarnEnabled()) {
-            log.warn(throwable, message);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isWarnEnabled()) {
+              log.warn(t, format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void error(final String format, final Object... args) {
+  public void warn(final String message, final Throwable throwable)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isErrorEnabled()) {
-            log.error(format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isWarnEnabled()) {
+              log.warn(throwable, message);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void error(final Throwable t, final String format, final Object... args) {
+  public void error(final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isErrorEnabled()) {
-            log.error(t, format, args);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isErrorEnabled()) {
+              log.error(format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public void error(final String message, final Throwable throwable) {
+  public void error(final Throwable t, final String format, final Object... args)
+  {
     logAll(
-      new LoggerOperation() {
-        @Override
-        public void execute(Logger log) {
-          if (log.isErrorEnabled()) {
-            log.error(throwable, message);
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isErrorEnabled()) {
+              log.error(t, format, args);
+            }
           }
         }
-      }
     );
   }
 
   @Override
-  public String getName() {
+  public void error(final String message, final Throwable throwable)
+  {
+    logAll(
+        new LoggerOperation()
+        {
+          @Override
+          public void execute(Logger log)
+          {
+            if (log.isErrorEnabled()) {
+              log.error(throwable, message);
+            }
+          }
+        }
+    );
+  }
+
+  @Override
+  public String getName()
+  {
     return loggers.toString();
   }
 
-  private boolean accumulate(Accumulator accumulator) {
+  private boolean accumulate(Accumulator accumulator)
+  {
 
     for (Logger log : loggers) {
       accumulator.accumulate(log);
@@ -296,38 +358,45 @@ public class CompositeLogger implements Logger {
     return accumulator.result();
   }
 
-  private void logAll(LoggerOperation loggerOperation) {
+  private void logAll(LoggerOperation loggerOperation)
+  {
     for (Logger log : loggers) {
       try {
         loggerOperation.execute(log);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error(e, "error writing to logger %s", log.getName());
       }
     }
   }
 
-  private interface Accumulator {
+  private interface Accumulator
+  {
     boolean accumulate(Logger log);
 
     boolean result();
   }
 
-  private interface LoggerOperation {
+  private interface LoggerOperation
+  {
     void execute(Logger log);
   }
 
-  private static abstract class OrAccumulator implements Accumulator {
+  private static abstract class OrAccumulator implements Accumulator
+  {
     private boolean value = false;
 
     protected abstract boolean getValue(Logger log);
 
     @Override
-    public boolean accumulate(Logger log) {
+    public boolean accumulate(Logger log)
+    {
       return value |= getValue(log);
     }
 
     @Override
-    public boolean result() {
+    public boolean result()
+    {
       return value;
     }
   }

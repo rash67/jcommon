@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper;
 
-public interface Encodable {
+public interface Encodable
+{
   /**
    * Interface for classes that can provide byte array encodings
+   *
    * @return an array of bytes
    */
   public byte[] encode();

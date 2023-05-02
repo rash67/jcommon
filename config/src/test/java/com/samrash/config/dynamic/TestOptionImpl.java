@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
 import org.testng.Assert;
@@ -21,27 +22,32 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestOptionImpl {
+public class TestOptionImpl
+{
   private Option<String> option;
 
   @BeforeMethod(alwaysRun = true)
-  protected void setUp() throws Exception {
+  protected void setUp() throws Exception
+  {
     option = new OptionImpl<>();
   }
 
   @Test(groups = "fast")
-  public void testGetValueUninitialized() throws Exception {
+  public void testGetValueUninitialized() throws Exception
+  {
     Assert.assertNull(option.getValue());
   }
 
   @Test(groups = "fast")
-  public void testGetValue() throws Exception {
+  public void testGetValue() throws Exception
+  {
     option.setValue("testing");
     Assert.assertEquals(option.getValue(), "testing");
   }
 
   @Test(groups = "fast")
-  public void testWatcher() throws Exception {
+  public void testWatcher() throws Exception
+  {
     Watcher watcher = new Watcher();
 
     option.addWatcher(watcher);
@@ -67,13 +73,16 @@ public class TestOptionImpl {
   }
 
   @Test(groups = "fast")
-  public void testWatcherException() throws Exception {
+  public void testWatcherException() throws Exception
+  {
     Watcher watcher1 = new Watcher();
     Watcher watcher2 = new Watcher();
     final AtomicInteger failureCount = new AtomicInteger();
-    OptionWatcher<String> failure = new OptionWatcher<String>() {
+    OptionWatcher<String> failure = new OptionWatcher<String>()
+    {
       @Override
-      public void propertyUpdated(String value) throws Exception {
+      public void propertyUpdated(String value) throws Exception
+      {
         failureCount.incrementAndGet();
         throw new Exception("fail!");
       }
@@ -90,21 +99,25 @@ public class TestOptionImpl {
   }
 
   @Test(groups = "fast")
-  public void testInitialValue() throws Exception {
+  public void testInitialValue() throws Exception
+  {
     Assert.assertEquals(new OptionImpl<>("test").getValue(), "test");
   }
 
-  private static class Watcher implements OptionWatcher<String> {
+  private static class Watcher implements OptionWatcher<String>
+  {
     private String value;
     private int updatedCount;
 
     @Override
-    public void propertyUpdated(String value) throws Exception {
+    public void propertyUpdated(String value) throws Exception
+    {
       this.value = value;
       ++updatedCount;
     }
 
-    public void assertState(String expectedValue, int expectedUpdateCount) {
+    public void assertState(String expectedValue, int expectedUpdateCount)
+    {
       Assert.assertEquals(value, expectedValue);
       Assert.assertEquals(updatedCount, expectedUpdateCount);
     }

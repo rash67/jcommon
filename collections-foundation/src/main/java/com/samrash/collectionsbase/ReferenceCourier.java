@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 
-public class ReferenceCourier<T> implements Courier<T> {
+public class ReferenceCourier<T> implements Courier<T>
+{
   private final T instance;
 
-  public ReferenceCourier(T instance) {
+  public ReferenceCourier(T instance)
+  {
     this.instance = instance;
   }
 
-  public static <T2> ReferenceCourier<T2> empty() {
+  public static <T2> ReferenceCourier<T2> empty()
+  {
     return new ReferenceCourier<>(null);
   }
 
   @Override
-  public boolean isSet() {
+  public boolean isSet()
+  {
     return instance != null;
   }
 
   @Override
-  public T get() {
+  public T get()
+  {
     if (instance == null) {
       throw new NullPointerException();
     }

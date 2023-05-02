@@ -13,32 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.samrash.stats.mx;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
+package com.samrash.stats.mx;
 
 import com.samrash.stats.MultiWindowDistribution;
 import com.samrash.stats.MultiWindowRate;
 import com.samrash.stats.MultiWindowSpread;
 
-interface StatsReader {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+interface StatsReader
+{
   void exportCounters(Map<String, Long> counters);
+
   MultiWindowRate getRate(String key);
+
   MultiWindowRate getRate(StatType statType);
+
   MultiWindowRate getSum(String key);
+
   MultiWindowRate getSum(StatType statType);
+
   long getCounter(StatType key);
+
   long getCounter(String key);
+
   MultiWindowSpread getSpread(StatType key);
+
   MultiWindowSpread getSpread(String key);
+
   MultiWindowDistribution getDistribution(StatType key);
+
   MultiWindowDistribution getDistribution(String key);
+
   String getAttribute(StatType key);
+
   String getAttribute(String key);
+
   @Deprecated
   Callable<Long> getDynamicCounter(StatType key);
+
   @Deprecated
   Callable<Long> getDynamicCounter(String key);
 
@@ -47,7 +63,8 @@ interface StatsReader {
    */
   Map<String, String> getAttributes();
 
-  default Map<String, Long> getCounters() {
+  default Map<String, Long> getCounters()
+  {
     Map<String, Long> result = new HashMap<>();
     exportCounters(result);
 

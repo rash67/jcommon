@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 
-import com.samrash.collectionsbase.Piles;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.samrash.collectionsbase.Piles;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-public class TestMixedTypeMap {
+public class TestMixedTypeMap
+{
   private MixedTypeMap<String> stringMap1;
   private MixedTypeMap<String> stringMap2;
   private String key1;
@@ -35,7 +37,8 @@ public class TestMixedTypeMap {
   private CounterMap<String> value3;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     stringMap1 = new MixedTypeMap<>();
     stringMap2 = new MixedTypeMap<>();
     key1 = "fuu";
@@ -53,14 +56,16 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testSanity1() throws Exception {
+  public void testSanity1() throws Exception
+  {
     Long value = stringMap1.get(key1, Long.class);
 
     Assert.assertEquals(value.longValue(), 100L);
   }
 
   @Test(groups = "fast")
-  public void testSanity2() throws Exception {
+  public void testSanity2() throws Exception
+  {
     Pair pair = stringMap1.get(key2);
 
     Assert.assertEquals(pair.getFirst(), 200L);
@@ -68,7 +73,8 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testSanity3() throws Exception {
+  public void testSanity3() throws Exception
+  {
     CounterMap<String> value = stringMap1.get(key3);
 
     Assert.assertEquals(value.get("a"), 1);
@@ -77,7 +83,8 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testSuperType() throws Exception {
+  public void testSuperType() throws Exception
+  {
     Key<String, Object> objectKey = Key.get("x", Object.class);
     Key<String, Number> numberKey = Key.get("x", Number.class);
     Key<String, Float> floatKey = Key.get("x", Float.class);
@@ -86,7 +93,8 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testSuperUsingTypeToken() throws Exception {
+  public void testSuperUsingTypeToken() throws Exception
+  {
     // version that use the type token directly
     Key<String, Object> objectKey = Key.get("x", TypeToken.of(Object.class));
     Key<String, Number> numberKey = Key.get("x", TypeToken.of(Number.class));
@@ -96,10 +104,11 @@ public class TestMixedTypeMap {
   }
 
   private void asssertSuperTestResults(
-    Key<String, Object> objectKey,
-    Key<String, Number> numberKey,
-    Key<String, Float> floatKey
-  ) {
+      Key<String, Object> objectKey,
+      Key<String, Number> numberKey,
+      Key<String, Float> floatKey
+  )
+  {
     stringMap1.put(objectKey, 37);
     stringMap1.put(numberKey, 4.16);
     // obvious
@@ -111,7 +120,8 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testTypeTokenAndClass() throws Exception {
+  public void testTypeTokenAndClass() throws Exception
+  {
     Key<String, Integer> classKey = Key.get("baz", Integer.class);
     Key<String, Integer> typeKey = Key.get("baz", TypeToken.of(Integer.class));
 
@@ -124,15 +134,18 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testGenerics() throws Exception {
-    TypeToken<List<String>> stringTypeToken = new TypeToken<List<String>>() {};
+  public void testGenerics() throws Exception
+  {
+    TypeToken<List<String>> stringTypeToken = new TypeToken<List<String>>()
+    {
+    };
     List<String> stringList = Piles.<String>copyOf(
-      ImmutableList.<String>builder()
-        .add("x")
-        .add("y")
-        .add("z")
-        .add("1")
-        .build().iterator()
+        ImmutableList.<String>builder()
+                     .add("x")
+                     .add("y")
+                     .add("z")
+                     .add("1")
+                     .build().iterator()
     );
 
     stringMap1.put("fuu", stringTypeToken, stringList);
@@ -143,7 +156,8 @@ public class TestMixedTypeMap {
   }
 
   @Test(groups = "fast")
-  public void testPutAll() throws Exception {
+  public void testPutAll() throws Exception
+  {
     stringMap1.put("key1", String.class, "value1");
     stringMap1.put("key2", String.class, "value2");
     stringMap1.put("key3", String.class, "value3");

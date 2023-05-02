@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper.States;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-import org.apache.zookeeper.ZooKeeper.States;
 
 import java.util.List;
 
@@ -29,37 +30,38 @@ import java.util.List;
  * may be added to this interface as needed.
  * See ZooKeeper API for documentation.
  */
-public interface ZooKeeperIface {
+public interface ZooKeeperIface
+{
   long getSessionId();
 
   void close() throws InterruptedException;
 
   String create(String path, byte[] data, List<ACL> acl, CreateMode createMode)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   void delete(String path, int version)
-    throws InterruptedException, KeeperException;
+      throws InterruptedException, KeeperException;
 
   Stat exists(String path, Watcher watcher)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   Stat exists(String path, boolean watch)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   byte[] getData(String path, Watcher watcher, Stat stat)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   byte[] getData(String path, boolean watch, Stat stat)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   Stat setData(String path, byte[] data, int version)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   List<String> getChildren(String path, Watcher watcher)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   List<String> getChildren(String path, boolean watch)
-    throws KeeperException, InterruptedException;
+      throws KeeperException, InterruptedException;
 
   States getState();
 }

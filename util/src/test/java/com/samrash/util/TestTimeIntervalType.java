@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import org.joda.time.DateTime;
@@ -34,11 +35,13 @@ import static org.joda.time.DateTimeZone.UTC;
  * Mostly conformance testing: these aren't testing how things <em>should</em> work but rather how
  * they <em>do</em> work (since there's a lot of code that relies on the existing behavior).
  */
-public class TestTimeIntervalType {
+public class TestTimeIntervalType
+{
   private static final DateTimeZone PDT = DateTimeZone.forID("America/Los_Angeles");
 
   @Test
-  public void testMillisIntervalStart() throws Exception {
+  public void testMillisIntervalStart() throws Exception
+  {
     assertStart("2016-04-13T11:26:47.856-07:00", PDT, MILLIS, 1, "2016-04-13T11:26:47.856-07:00");
     assertStart("2016-04-13T11:26:47.856-07:00", PDT, MILLIS, 100, "2016-04-13T11:26:47.800-07:00");
     assertStart("2016-04-13T11:26:48.356-07:00", PDT, MILLIS, 1, "2016-04-13T11:26:48.356-07:00");
@@ -46,7 +49,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testSecondsIntervalStart() throws Exception {
+  public void testSecondsIntervalStart() throws Exception
+  {
     assertStart("2016-04-13T11:25:51.302-07:00", PDT, SECOND, 1, "2016-04-13T11:25:51.000-07:00");
     assertStart("2016-04-13T11:25:51.302-07:00", PDT, SECOND, 10, "2016-04-13T11:25:50.000-07:00");
     assertStart("2016-04-13T11:25:51.302-07:00", PDT, SECOND, 30, "2016-04-13T11:25:30.000-07:00");
@@ -56,7 +60,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testMinuteIntervalStart() throws Exception {
+  public void testMinuteIntervalStart() throws Exception
+  {
     assertStart("2016-04-13T11:20:29.330-07:00", PDT, MINUTE, 1, "2016-04-13T11:20:00.000-07:00");
     assertStart("2016-04-13T11:20:29.330-07:00", PDT, MINUTE, 5, "2016-04-13T11:20:00.000-07:00");
     assertStart("2016-04-13T11:20:29.330-07:00", PDT, MINUTE, 15, "2016-04-13T11:15:00.000-07:00");
@@ -68,7 +73,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testDayIntervalStartUTC() throws Exception {
+  public void testDayIntervalStartUTC() throws Exception
+  {
     assertStart("2016-01-13T00:52:38.337Z", UTC, DAY, 1, "2016-01-13T00:00:00.000Z");
     assertStart("2016-02-13T02:52:38.337Z", UTC, DAY, 2, "2016-02-13T00:00:00.000Z");
     assertStart("2016-03-13T04:52:38.337Z", UTC, DAY, 3, "2016-03-13T00:00:00.000Z");
@@ -84,7 +90,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testDayIntervalStartPDT() throws Exception {
+  public void testDayIntervalStartPDT() throws Exception
+  {
     assertStart("2016-01-13T00:51:03.772-08:00", PDT, DAY, 1, "2016-01-13T00:00:00.000-08:00");
     assertStart("2016-02-13T02:51:03.772-08:00", PDT, DAY, 2, "2016-02-13T00:00:00.000-08:00");
     assertStart("2016-03-13T04:51:03.772-07:00", PDT, DAY, 3, "2016-03-13T00:00:00.000-08:00");
@@ -100,7 +107,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testHourIntervalStartUTC() throws Exception {
+  public void testHourIntervalStartUTC() throws Exception
+  {
     assertStart("2016-01-02T00:00:00.000Z", UTC, HOUR, 1, "2016-01-02T00:00:00.000Z");
     assertStart("2016-01-02T02:00:00.000Z", UTC, HOUR, 3, "2016-01-02T00:00:00.000Z");
     assertStart("2016-01-02T04:00:00.000Z", UTC, HOUR, 7, "2016-01-02T00:00:00.000Z");
@@ -116,7 +124,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testHourIntervalStartPDT() throws Exception {
+  public void testHourIntervalStartPDT() throws Exception
+  {
     assertStart("2016-01-02T00:00:00.000-08:00", PDT, HOUR, 1, "2016-01-02T00:00:00.000-08:00");
     assertStart("2016-01-02T02:00:00.000-08:00", PDT, HOUR, 3, "2016-01-02T00:00:00.000-08:00");
     assertStart("2016-01-02T04:00:00.000-08:00", PDT, HOUR, 7, "2016-01-02T00:00:00.000-08:00");
@@ -132,7 +141,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testWeekIntervalStartUTC() throws Exception {
+  public void testWeekIntervalStartUTC() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000Z", UTC, WEEK, 1, "2016-04-01T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, WEEK, 2, "2016-03-25T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, WEEK, 3, "2016-03-25T00:00:00.000Z");
@@ -142,7 +152,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testWeekIntervalStartPDT() throws Exception {
+  public void testWeekIntervalStartPDT() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, WEEK, 1, "2016-04-01T00:00:00.000-07:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, WEEK, 2, "2016-03-25T00:00:00.000-07:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, WEEK, 3, "2016-03-25T00:00:00.000-07:00");
@@ -152,7 +163,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testMonthIntervalStartUTC() throws Exception {
+  public void testMonthIntervalStartUTC() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000Z", UTC, MONTH, 1, "2016-04-01T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, MONTH, 2, "2016-03-01T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, MONTH, 3, "2016-04-01T00:00:00.000Z");
@@ -161,7 +173,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testMonthIntervalStartPDT() throws Exception {
+  public void testMonthIntervalStartPDT() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, MONTH, 1, "2016-04-01T00:00:00.000-07:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, MONTH, 2, "2016-03-01T00:00:00.000-08:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, MONTH, 3, "2016-04-01T00:00:00.000-07:00");
@@ -170,7 +183,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testYearIntervalStartUTC() throws Exception {
+  public void testYearIntervalStartUTC() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000Z", UTC, YEAR, 1, "2016-01-01T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, YEAR, 2, "2016-01-01T00:00:00.000Z");
     assertStart("2016-04-05T00:00:00.000Z", UTC, YEAR, 3, "2015-01-01T00:00:00.000Z");
@@ -184,7 +198,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testYearIntervalStartPDT() throws Exception {
+  public void testYearIntervalStartPDT() throws Exception
+  {
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, YEAR, 1, "2016-01-01T00:00:00.000-08:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, YEAR, 2, "2016-01-01T00:00:00.000-08:00");
     assertStart("2016-04-05T00:00:00.000-07:00", PDT, YEAR, 3, "2015-01-01T00:00:00.000-08:00");
@@ -198,7 +213,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testHourGetTimeIntervalStartGap() throws Exception {
+  public void testHourGetTimeIntervalStartGap() throws Exception
+  {
     DateTimeZone timeZone = DateTimeZone.forID("America/Havana");
 
     // Daylight saving causes a gap at midnight: time jumps from midnight to 1am on the 13th.
@@ -207,7 +223,8 @@ public class TestTimeIntervalType {
   }
 
   @Test
-  public void testDayGetTimeIntervalStartGap() throws Exception {
+  public void testDayGetTimeIntervalStartGap() throws Exception
+  {
     DateTimeZone timeZone = DateTimeZone.forID("Asia/Amman");
 
     // Daylight saving causes a gap at midnight: time jumps from midnight to 1am on the 1st.
@@ -216,8 +233,9 @@ public class TestTimeIntervalType {
   }
 
   private static void assertStart(
-    String date, DateTimeZone timeZone, TimeIntervalType type, int length, String expected
-  ) {
+      String date, DateTimeZone timeZone, TimeIntervalType type, int length, String expected
+  )
+  {
     DateTime actual = type.getTimeIntervalStart(new DateTime(date, timeZone), length);
 
     Assert.assertEquals(actual, new DateTime(expected, timeZone), length + " " + type);

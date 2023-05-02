@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Collections;
@@ -32,18 +33,21 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <K> type for the key
  * @param <V> type of the elements in the set
  */
-public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
+public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K, V, S>
+{
   private final ConcurrentMap<K, S> sets =
-    new ConcurrentHashMap<K, S>();
+      new ConcurrentHashMap<K, S>();
   private final ReadWriteLock removalLock = new ReentrantReadWriteLock();
   private final SetFactory<V, S> setFactory;
 
-  public SetMapImpl(SetFactory<V, S> setFactory) {
+  public SetMapImpl(SetFactory<V, S> setFactory)
+  {
     this.setFactory = setFactory;
   }
 
   @Override
-  public boolean add(K key, V item) {
+  public boolean add(K key, V item)
+  {
     // we have to make sure that the set isn't removed while we add to it
     removalLock.readLock().lock();
 
@@ -61,19 +65,22 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
       }
 
       return set.add(item);
-    } finally {
+    }
+    finally {
       removalLock.readLock().unlock();
     }
   }
 
   @Override
-  public S removeSet(K key) {
+  public S removeSet(K key)
+  {
     // unconditional remove, so no lock held
     return sets.remove(key);
   }
 
   @Override
-  public boolean remove(K key, V item) {
+  public boolean remove(K key, V item)
+  {
     S set = sets.get(key);
 
     if (set == null) {
@@ -89,7 +96,8 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
       removalLock.writeLock().lock();
       try {
         sets.remove(key, Collections.EMPTY_SET);
-      } finally {
+      }
+      finally {
         removalLock.writeLock().unlock();
       }
     }
@@ -98,17 +106,20 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
   }
 
   @Override
-  public S get(K key) {
+  public S get(K key)
+  {
     return sets.get(key);
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     sets.clear();
   }
 
   @Override
-  public Iterator<Map.Entry<K, S>> iterator() {
+  public Iterator<Map.Entry<K, S>> iterator()
+  {
     return sets.entrySet().iterator();
   }
 }

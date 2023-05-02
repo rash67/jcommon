@@ -13,34 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
+import com.google.common.collect.Lists;
 import com.samrash.logging.Logger;
 import com.samrash.logging.LoggerImpl;
-import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class OptionImpl<V> implements Option<V> {
+public class OptionImpl<V> implements Option<V>
+{
   private static final Logger LOG = LoggerImpl.getClassLogger();
   private final List<OptionWatcher<V>> watchers = Lists.newCopyOnWriteArrayList();
 
   private volatile V value;
 
-  public OptionImpl() {
+  public OptionImpl()
+  {
   }
 
-  public OptionImpl(V value) {
+  public OptionImpl(V value)
+  {
     this.value = value;
   }
 
   @Override
-  public V getValue() {
+  public V getValue()
+  {
     return value;
   }
 
   @Override
-  public synchronized void setValue(V value) {
+  public synchronized void setValue(V value)
+  {
     this.value = value;
 
     for (OptionWatcher<V> watcher : watchers) {
@@ -49,21 +55,25 @@ public class OptionImpl<V> implements Option<V> {
   }
 
   @Override
-  public void addWatcher(OptionWatcher<V> watcher) {
+  public void addWatcher(OptionWatcher<V> watcher)
+  {
     if (!watchers.contains(watcher)) {
       watchers.add(watcher);
     }
   }
 
   @Override
-  public void removeWatcher(OptionWatcher<V> watcher) {
+  public void removeWatcher(OptionWatcher<V> watcher)
+  {
     watchers.remove(watcher);
   }
 
-  private void notifyWatcher(OptionWatcher<V> watcher, V value) {
+  private void notifyWatcher(OptionWatcher<V> watcher, V value)
+  {
     try {
       watcher.propertyUpdated(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn(e, "Problem running property watcher for value update: %s", value);
     }
   }

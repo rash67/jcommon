@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestCounterMap {
+public class TestCounterMap
+{
   private CounterMap<String> counterMap;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     counterMap = new CounterMap<>();
   }
 
   @Test
-  public void testCleanup() throws Exception {
+  public void testCleanup() throws Exception
+  {
     counterMap.addAndGet("fuu", 1);
     counterMap.addAndGet("fuu", -1);
 
@@ -36,23 +40,27 @@ public class TestCounterMap {
   }
 
   @Test
-  public void testAddAndGet() throws Exception {
+  public void testAddAndGet() throws Exception
+  {
     Assert.assertEquals(counterMap.addAndGet("fuu", 1), 1);
   }
 
   @Test
-  public void testGetAndAdd() throws Exception {
+  public void testGetAndAdd() throws Exception
+  {
     Assert.assertEquals(counterMap.getAndAdd("fuu", 1), 0);
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  public void testInitialize() throws Exception
+  {
     Assert.assertEquals(counterMap.tryInitializeCounter("fuu", 100), 100);
     Assert.assertEquals(counterMap.addAndGet("fuu", 21), 121);
   }
 
   @Test
-  public void trySet() throws Exception {
+  public void trySet() throws Exception
+  {
     Assert.assertEquals(counterMap.trySetCounter("fuu", 100), 100);
     Assert.assertEquals(counterMap.addAndGet("fuu", 21), 121);
   }

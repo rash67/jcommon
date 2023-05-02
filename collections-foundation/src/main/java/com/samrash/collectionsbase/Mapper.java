@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
-public interface Mapper<X, Y> {
+public interface Mapper<X, Y>
+{
   Y map(X input);
 }

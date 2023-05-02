@@ -13,30 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import java.util.concurrent.TimeUnit;
 
-public class TestingClock implements Clock {
+public class TestingClock implements Clock
+{
   private long time;
 
-  public TestingClock(long time) {
+  public TestingClock(long time)
+  {
     this.time = time;
   }
 
-  public TestingClock() {
+  public TestingClock()
+  {
     this(0);
   }
 
-  public long getMillis() {
+  public long getMillis()
+  {
     return time;
   }
 
-  public void setTime(long millis) {
+  public void setTime(long millis)
+  {
     time = millis;
   }
 
-  public void increment(long delta, TimeUnit unit) {
+  public void increment(long delta, TimeUnit unit)
+  {
     time += unit.toMillis(delta);
   }
 }

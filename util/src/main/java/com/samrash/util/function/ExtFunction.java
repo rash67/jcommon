@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtSupplier;
+
 import java.util.Objects;
 import java.util.function.Function;
 
-public interface ExtFunction<T, R, E extends Throwable> {
+public interface ExtFunction<T, R, E extends Throwable>
+{
   R apply(T t) throws E;
 
-  default <V> ExtFunction<V, R, E> compose(ExtFunction<? super V, ? extends T, E> before) {
+  default <V> ExtFunction<V, R, E> compose(ExtFunction<? super V, ? extends T, E> before)
+  {
     Objects.requireNonNull(before);
     return (v) -> apply(before.apply(v));
   }
 
-  default <V> ExtFunction<T, V, E> andThen(ExtFunction<? super R, ? extends V, E> after) {
+  default <V> ExtFunction<T, V, E> andThen(ExtFunction<? super R, ? extends V, E> after)
+  {
     Objects.requireNonNull(after);
     return (t) -> after.apply(apply(t));
   }
 
-  static <T, R> Function<T, R> quiet(ExtFunction<T, R, ?> function) {
+  static <T, R> Function<T, R> quiet(ExtFunction<T, R, ?> function)
+  {
     return (t) -> ExtSupplier.quiet(() -> function.apply(t)).get();
   }
 }

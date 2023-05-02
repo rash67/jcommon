@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.util.ExtRunnable;
 import com.samrash.util.TimeUtil;
 import com.samrash.util.digest.LongMurmur3Hash;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -29,18 +29,21 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-public class TestColtHashSet {
+public class TestColtHashSet
+{
   private ColtLongHashSet set;
   private int numElements;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     numElements = 10;
     set = new ColtLongHashSet(numElements);
   }
 
   @Test(groups = "fast")
-  public void testAdd() throws Exception {
+  public void testAdd() throws Exception
+  {
     Assert.assertEquals(set.size(), 0);
     Assert.assertTrue(set.add(100L));
     Assert.assertTrue(set.contains(100L));
@@ -54,21 +57,24 @@ public class TestColtHashSet {
   }
 
   @Test(groups = "fast")
-  public void testIsEmpty() throws Exception {
+  public void testIsEmpty() throws Exception
+  {
     Assert.assertTrue(set.isEmpty());
     Assert.assertTrue(set.add(100L));
     Assert.assertFalse(set.isEmpty());
   }
 
   @Test(groups = "fast")
-  public void testNotThere() throws Exception {
+  public void testNotThere() throws Exception
+  {
     Assert.assertEquals(set.size(), 0);
     Assert.assertTrue(set.add(100L));
     Assert.assertFalse(set.contains(10L));
   }
 
   @Test(groups = "fast")
-  public void testRemove() throws Exception {
+  public void testRemove() throws Exception
+  {
     Assert.assertTrue(set.add(1L));
     Assert.assertTrue(set.remove(1L));
     Assert.assertFalse(set.remove(1L));
@@ -76,13 +82,15 @@ public class TestColtHashSet {
 
 
   @Test(groups = "fast")
-  public void testResize() throws Exception {
+  public void testResize() throws Exception
+  {
     fillSet();
     Assert.assertEquals(set.size(), numElements);
   }
 
   @Test(groups = "fast")
-  public void testConcurrentModifcation() throws Exception {
+  public void testConcurrentModifcation() throws Exception
+  {
     set.add(1L);
     Iterator<Long> iterator = set.iterator();
     Assert.assertTrue(iterator.hasNext());
@@ -92,14 +100,16 @@ public class TestColtHashSet {
     // only changing the set should cause this
     try {
       iterator.hasNext();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Assert.assertTrue(e instanceof ConcurrentModificationException);
     }
 
   }
 
   @Test(groups = "fast")
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     set.add(1L);
     set.add(2L);
     set.add(3L);
@@ -115,7 +125,8 @@ public class TestColtHashSet {
   }
 
   @Test(groups = "fast")
-  public void testIteratorWhenFull() throws Exception {
+  public void testIteratorWhenFull() throws Exception
+  {
     fillSet();
 
     int count = 0;
@@ -137,7 +148,8 @@ public class TestColtHashSet {
   }
 
   @Test(groups = "fast")
-  public void testIterateAndRemove() throws Exception {
+  public void testIterateAndRemove() throws Exception
+  {
     Set<Long> answer = new HashSet<Long>();
     answer.add(1L);
     answer.add(2L);
@@ -155,13 +167,14 @@ public class TestColtHashSet {
     Assert.assertTrue(iterator.hasNext());
     // check that whatever value we removed, the other one is still present
     Assert.assertEquals(
-      iterator.next().longValue(),
-      answer.iterator().next().longValue()
+        iterator.next().longValue(),
+        answer.iterator().next().longValue()
     );
   }
 
   @Test(groups = "fast")
-  public void testRepeatedRemove() throws Exception {
+  public void testRepeatedRemove() throws Exception
+  {
     set.add(1L);
 
     Iterator<Long> iterator = set.iterator();
@@ -171,13 +184,15 @@ public class TestColtHashSet {
     try {
       iterator.remove();
       Assert.fail("expected exception");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Assert.assertTrue(e instanceof IllegalStateException);
     }
   }
 
   @Test(groups = "fast")
-  public void testRemoveWithoutNext() throws Exception {
+  public void testRemoveWithoutNext() throws Exception
+  {
     set.add(1L);
 
     Iterator<Long> iterator = set.iterator();
@@ -185,27 +200,32 @@ public class TestColtHashSet {
     try {
       iterator.remove();
       Assert.fail("expected exception");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Assert.assertTrue(e instanceof IllegalStateException);
     }
   }
 
   @Test(groups = "fast")
-  public void testStress() throws Exception {
+  public void testStress() throws Exception
+  {
     // sanity test that exercises LongHashSet2 and LongLinkedList
     int inserts = 100000;
     int maxSize = 8000;
     SampledSet<Long> set = new SampledSetImpl<>(
-      maxSize, new LongMurmur3Hash(), new LongHashSetFactory(maxSize)
+        maxSize, new LongMurmur3Hash(), new LongHashSetFactory(maxSize)
     );
     timeAdds("custom-long-hash-set-2", set, inserts);
   }
 
   private static void timeAdds(String tag, final Set<Long> set, final int numAdds)
-    throws Exception {
-    TimeUtil.logElapsedTime(tag, new ExtRunnable<Exception>() {
+      throws Exception
+  {
+    TimeUtil.logElapsedTime(tag, new ExtRunnable<Exception>()
+    {
       @Override
-      public void run() throws Exception {
+      public void run() throws Exception
+      {
         Random random = new Random();
         for (int i = 0; i < numAdds; i++) {
           set.add(Math.abs(random.nextLong()));
@@ -214,13 +234,15 @@ public class TestColtHashSet {
     });
   }
 
-  private void fillSet() {
+  private void fillSet()
+  {
     for (int i = 0; i < numElements; i++) {
       Assert.assertTrue(set.add((long) i));
     }
   }
 
-  private void emptySet() {
+  private void emptySet()
+  {
     for (int i = 0; i < numElements; i++) {
       Assert.assertTrue(set.remove((long) i));
     }
@@ -229,7 +251,8 @@ public class TestColtHashSet {
     Assert.assertTrue(set.isEmpty());
   }
 
-  private void checkFullSet() {
+  private void checkFullSet()
+  {
     Assert.assertEquals(set.size(), numElements);
 
     for (int i = 0; i < numElements; i++) {

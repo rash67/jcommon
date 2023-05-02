@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.util.exceptions.ExceptionHandler;
@@ -20,12 +21,15 @@ import com.samrash.util.exceptions.ExceptionHandler;
 /**
  * Performs a blind cast from an exception of type S to an exception of type T.
  * NOTE: this should only be used if S will always be of type T.
+ *
  * @param <T>
  */
 public class CastingExceptionHandler<T extends Exception>
-  implements ExceptionHandler<T> {
+    implements ExceptionHandler<T>
+{
   @Override
-  public <S extends Exception> T handle(S e) {
+  public <S extends Exception> T handle(S e)
+  {
     return (T) e;
   }
 }

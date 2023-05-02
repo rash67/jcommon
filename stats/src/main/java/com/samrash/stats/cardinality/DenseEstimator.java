@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -33,7 +34,8 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 class DenseEstimator
-  implements Estimator {
+    implements Estimator
+{
   private static final int BITS_PER_BUCKET = 4;
   private static final int BUCKET_MAX_VALUE = (1 << BITS_PER_BUCKET) - 1;
   private static final int BUCKETS_PER_SLOT = Long.SIZE / BITS_PER_BUCKET;
@@ -48,10 +50,11 @@ class DenseEstimator
   private byte baseline; // the lower bound of the current window
   private short baselineCount; // the number of buckets who's value is at the lower bound
 
-  public DenseEstimator(int numberOfBuckets) {
+  public DenseEstimator(int numberOfBuckets)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
+        Numbers.isPowerOf2(numberOfBuckets),
+        "numberOfBuckets must be a power of 2"
     );
 
     this.numberOfBuckets = numberOfBuckets;
@@ -63,7 +66,8 @@ class DenseEstimator
     slots = new long[slotCount];
   }
 
-  public DenseEstimator(int[] bucketValues) {
+  public DenseEstimator(int[] bucketValues)
+  {
     this(bucketValues.length);
 
     // first, compute the baseline and count of baseline values
@@ -71,10 +75,10 @@ class DenseEstimator
     baselineCount = 0;
     for (int value : bucketValues) {
       Preconditions.checkArgument(
-        value >= 0 && value <= Byte.MAX_VALUE,
-        "values must be >= 0 and <= %s, found %s",
-        Byte.MAX_VALUE,
-        value
+          value >= 0 && value <= Byte.MAX_VALUE,
+          "values must be >= 0 and <= %s, found %s",
+          Byte.MAX_VALUE,
+          value
       );
       if (value < baseline) {
         baselineCount = 1;
@@ -95,17 +99,20 @@ class DenseEstimator
     }
   }
 
-  public int getNumberOfBuckets() {
+  public int getNumberOfBuckets()
+  {
     return numberOfBuckets;
   }
 
   @Override
-  public int getMaxAllowedBucketValue() {
+  public int getMaxAllowedBucketValue()
+  {
     return Byte.MAX_VALUE;
   }
 
   @Override
-  public boolean setIfGreater(int bucket, int highestBitPosition) {
+  public boolean setIfGreater(int bucket, int highestBitPosition)
+  {
     int relativeHighestBitPosition = highestBitPosition - baseline;
     if (relativeHighestBitPosition > BUCKET_MAX_VALUE) {
       // we can't fit this in BITS_PER_BUCKET, so truncate (it shouldn't affect results
@@ -132,7 +139,8 @@ class DenseEstimator
     return true;
   }
 
-  private void set(int bucket, int value) {
+  private void set(int bucket, int value)
+  {
     int slot = bucket / BUCKETS_PER_SLOT;
     int offset = bucket % BUCKETS_PER_SLOT;
 
@@ -148,14 +156,16 @@ class DenseEstimator
   /**
    * gets the value in the specified bucket relative to the current base
    */
-  private int get(int bucket) {
+  private int get(int bucket)
+  {
     int slot = bucket / BUCKETS_PER_SLOT;
     int offset = bucket % BUCKETS_PER_SLOT;
 
     return (int) ((slots[slot] >> (offset * BITS_PER_BUCKET)) & BUCKET_MASK);
   }
 
-  private void rescaleAndRecomputeBaseCountIfNeeded() {
+  private void rescaleAndRecomputeBaseCountIfNeeded()
+  {
     while (baselineCount == 0) {
       // no more values at the lower bound, so shift the window to the right
 
@@ -178,7 +188,8 @@ class DenseEstimator
   }
 
   @Override
-  public long estimate() {
+  public long estimate()
+  {
     double alpha = HyperLogLogUtil.computeAlpha(numberOfBuckets);
     double result = alpha * numberOfBuckets * numberOfBuckets / currentSum;
 
@@ -194,16 +205,19 @@ class DenseEstimator
   }
 
   @Override
-  public int estimateSizeInBytes() {
+  public int estimateSizeInBytes()
+  {
     return estimateSizeInBytes(numberOfBuckets);
   }
 
-  public static int estimateSizeInBytes(int numberOfBuckets) {
+  public static int estimateSizeInBytes(int numberOfBuckets)
+  {
     return (numberOfBuckets + BUCKETS_PER_SLOT - 1) / BUCKETS_PER_SLOT * Long.SIZE / 8
-      + INSTANCE_SIZE;
+           + INSTANCE_SIZE;
   }
 
-  public int[] buckets() {
+  public int[] buckets()
+  {
     int[] result = new int[numberOfBuckets];
 
     for (int i = 0; i < numberOfBuckets; ++i) {

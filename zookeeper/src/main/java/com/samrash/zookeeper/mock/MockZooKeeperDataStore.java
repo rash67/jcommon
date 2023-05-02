@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.mock;
 
 
@@ -41,17 +42,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 // TODO: what actions trigger version increments?
-public class MockZooKeeperDataStore {
+public class MockZooKeeperDataStore
+{
   private final AtomicLong nextSessionId = new AtomicLong(0);
   private final ZNode root = ZNode.createRoot();
   private final Map<String, RetrieveableSet<ContextedWatcher>> creationWatchers =
-    new HashMap<String, RetrieveableSet<ContextedWatcher>>();
+      new HashMap<String, RetrieveableSet<ContextedWatcher>>();
 
-  public long getUniqueSessionId() {
+  public long getUniqueSessionId()
+  {
     return nextSessionId.addAndGet(1);
   }
 
-  public synchronized void signalSessionEvent(long sessionId, WatchedEvent watchedEvent) {
+  public synchronized void signalSessionEvent(long sessionId, WatchedEvent watchedEvent)
+  {
     for (RetrieveableSet<ContextedWatcher> pathWatchers : creationWatchers.values()) {
       for (ContextedWatcher contextedWatcher : pathWatchers) {
         if (contextedWatcher.getSessionId() == sessionId) {
@@ -64,7 +68,8 @@ public class MockZooKeeperDataStore {
     }
   }
 
-  public synchronized void clearSession(long sessionId) {
+  public synchronized void clearSession(long sessionId)
+  {
     for (RetrieveableSet<ContextedWatcher> pathWatchers : creationWatchers.values()) {
       Iterator<ContextedWatcher> iter = pathWatchers.iterator();
       while (iter.hasNext()) {
@@ -80,26 +85,27 @@ public class MockZooKeeperDataStore {
   }
 
   public synchronized String create(
-    long sessionId, String path, byte[] data, List<ACL> acl, CreateMode createMode
-  ) throws KeeperException {
+      long sessionId, String path, byte[] data, List<ACL> acl, CreateMode createMode
+  ) throws KeeperException
+  {
     if (isRootPath(path)) {
       throw new KeeperException.NodeExistsException(path);
     }
     String relativePath = stripRootFromPath(path);
     String relativeChildPath =
-      root.createDescendant(
-        sessionId, relativePath, data, acl, createMode
-      );
+        root.createDescendant(
+            sessionId, relativePath, data, acl, createMode
+        );
     String absChildPath = addRootToPath(relativeChildPath);
 
     // Trigger any creation watches that may exist
     if (creationWatchers.containsKey(absChildPath)) {
       WatchedEvent watchedEvent =
-        new WatchedEvent(
-          EventType.NodeCreated,
-          KeeperState.SyncConnected,
-          absChildPath
-        );
+          new WatchedEvent(
+              EventType.NodeCreated,
+              KeeperState.SyncConnected,
+              absChildPath
+          );
       for (Watcher watcher : creationWatchers.get(absChildPath)) {
         watcher.process(watchedEvent);
       }
@@ -108,7 +114,8 @@ public class MockZooKeeperDataStore {
     return absChildPath;
   }
 
-  public synchronized void delete(String path, int expectedVersion) throws KeeperException {
+  public synchronized void delete(String path, int expectedVersion) throws KeeperException
+  {
     if (isRootPath(path)) {
       throw new KeeperException.BadArgumentsException(path);
     }
@@ -117,28 +124,30 @@ public class MockZooKeeperDataStore {
   }
 
   public synchronized Stat exists(long sessionId, String path, Watcher watcher)
-    throws KeeperException {
+      throws KeeperException
+  {
     try {
       ZNode node =
-        isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
+          isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
       if (watcher != null) {
         node.addWatcher(sessionId, watcher, WatchTriggerPolicy.WatchType.EXISTS);
       }
       Stat stat = new Stat();
       DataTree.copyStat(node.getStat(), stat);
       return stat;
-    } catch (KeeperException.NoNodeException e) {
+    }
+    catch (KeeperException.NoNodeException e) {
       if (watcher != null) {
         // Set a watch for this node when it gets created
         if (!creationWatchers.containsKey(path)) {
           creationWatchers.put(path, new RetrieveableSet<ContextedWatcher>());
         }
         ContextedWatcher contextedWatcher =
-          new ContextedWatcher(
-            watcher,
-            sessionId,
-            WatchTriggerPolicy.WatchType.EXISTS
-          );
+            new ContextedWatcher(
+                watcher,
+                sessionId,
+                WatchTriggerPolicy.WatchType.EXISTS
+            );
         if (!creationWatchers.get(path).contains(contextedWatcher)) {
           creationWatchers.get(path).add(contextedWatcher);
         }
@@ -148,9 +157,10 @@ public class MockZooKeeperDataStore {
   }
 
   public synchronized byte[] getData(long sessionId, String path, Watcher watcher, Stat stat)
-    throws KeeperException {
+      throws KeeperException
+  {
     ZNode node =
-      isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
+        isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
     if (watcher != null) {
       node.addWatcher(sessionId, watcher, WatchTriggerPolicy.WatchType.GETDATA);
     }
@@ -161,9 +171,10 @@ public class MockZooKeeperDataStore {
   }
 
   public synchronized Stat setData(String path, byte[] data, int expectedVersion)
-    throws KeeperException {
+      throws KeeperException
+  {
     ZNode node =
-      isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
+        isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
     node.setData(data, expectedVersion);
     Stat stat = new Stat();
     DataTree.copyStat(node.getStat(), stat);
@@ -171,20 +182,23 @@ public class MockZooKeeperDataStore {
   }
 
   public synchronized List<String> getChildren(long sessionId, String path, Watcher watcher)
-    throws KeeperException {
+      throws KeeperException
+  {
     ZNode node =
-      isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
+        isRootPath(path) ? root : root.findDescendant(stripRootFromPath(path));
     if (watcher != null) {
       node.addWatcher(sessionId, watcher, WatchTriggerPolicy.WatchType.GETCHILDREN);
     }
     return new ArrayList<String>(node.getChildren().keySet());
   }
 
-  private static boolean isRootPath(String path) {
+  private static boolean isRootPath(String path)
+  {
     return path.equals("/");
   }
 
-  private static String stripRootFromPath(String path) {
+  private static String stripRootFromPath(String path)
+  {
     if (!path.startsWith("/")) {
       throw new IllegalArgumentException("Does not have root: " + path);
     }
@@ -192,7 +206,8 @@ public class MockZooKeeperDataStore {
     return path.substring(1);
   }
 
-  private static String addRootToPath(String path) {
+  private static String addRootToPath(String path)
+  {
     if (path.startsWith("/")) {
       throw new IllegalArgumentException("Already has root: " + path);
     }
@@ -203,28 +218,29 @@ public class MockZooKeeperDataStore {
   /**
    * ZNode: basic node storage unit. Collectively, they form the mock ZooKeeper
    * data storage tree hierarchy.
-   *
+   * <p>
    * For each ZNode:
    * - Contains basic tree traversal algorithms stemming from the current ZNode
    * - Maintains and signals watches set on the node
    * - Capable of iterating across its entire sub-tree
-   *
+   * <p>
    * Assumptions:
    * - All paths will be specified relative to the current node. For example,
    * given the following tree:
-   *                                  A
-   *                                /  \
-   *                              B     C
-   *                            /  \
-   *                          D     E
-   *                        /
-   *                      F
-   *
+   * A
+   * /  \
+   * B     C
+   * /  \
+   * D     E
+   * /
+   * F
+   * <p>
    * If the current node is A, the path we specify to reach F will be: "B/D/F"
    * If the current node is B, the path we specify to reach F will be: "D/F"
    * Note: paths should never start or end with a '/'
    */
-  private static class ZNode implements Iterable<ZNode> {
+  private static class ZNode implements Iterable<ZNode>
+  {
     private final ZNode parent;
     private final String name;
     private byte[] data;
@@ -235,16 +251,17 @@ public class MockZooKeeperDataStore {
     private final AtomicInteger version = new AtomicInteger(0);
     private final Map<String, ZNode> children = new HashMap<String, ZNode>();
     private final RetrieveableSet<ContextedWatcher> contextedWatchers =
-      new RetrieveableSet<ContextedWatcher>();
+        new RetrieveableSet<ContextedWatcher>();
 
     private ZNode(
-      long sessionId,
-      ZNode parent,
-      String name,
-      byte[] data,
-      List<ACL> acl,
-      CreateMode createMode
-    ) {
+        long sessionId,
+        ZNode parent,
+        String name,
+        byte[] data,
+        List<ACL> acl,
+        CreateMode createMode
+    )
+    {
       this.parent = parent;
       this.name = name;
       this.data = data;
@@ -256,15 +273,17 @@ public class MockZooKeeperDataStore {
       stat.setVersion(version.get());
     }
 
-    public static ZNode createRoot() {
+    public static ZNode createRoot()
+    {
       return new ZNode(0, null, "", new byte[0], null, CreateMode.PERSISTENT);
     }
 
     public void addWatcher(
-      long sessionId, Watcher watcher, WatchTriggerPolicy.WatchType watchType
-    ) {
+        long sessionId, Watcher watcher, WatchTriggerPolicy.WatchType watchType
+    )
+    {
       ContextedWatcher contextedWatcher =
-        new ContextedWatcher(watcher, sessionId, watchType);
+          new ContextedWatcher(watcher, sessionId, watchType);
       if (contextedWatchers.contains(contextedWatcher)) {
         contextedWatchers.get(contextedWatcher).merge(contextedWatcher);
       } else {
@@ -272,10 +291,11 @@ public class MockZooKeeperDataStore {
       }
     }
 
-    public void clearSession(long sessionId) {
+    public void clearSession(long sessionId)
+    {
       // First remove all of your own watches
       Iterator<ContextedWatcher> iter = contextedWatchers.iterator();
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         if (iter.next().getSessionId() == sessionId) {
           iter.remove();
         }
@@ -284,14 +304,16 @@ public class MockZooKeeperDataStore {
       if (stat.getEphemeralOwner() == sessionId) {
         try {
           delete(-1);
-        } catch (KeeperException e) {
+        }
+        catch (KeeperException e) {
           throw new RuntimeException(e);
         }
       }
       // This session should not receive any callbacks as a result of clearing
     }
 
-    public void signalSessionEvent(long sessionId, WatchedEvent watchedEvent) {
+    public void signalSessionEvent(long sessionId, WatchedEvent watchedEvent)
+    {
       for (ContextedWatcher contextedWatcher : contextedWatchers) {
         if (contextedWatcher.getSessionId() == sessionId) {
           contextedWatcher.process(watchedEvent);
@@ -299,16 +321,17 @@ public class MockZooKeeperDataStore {
       }
     }
 
-    public void signalNodeEvent(EventType eventType) {
-      assert(eventType != EventType.None);
+    public void signalNodeEvent(EventType eventType)
+    {
+      assert (eventType != EventType.None);
       WatchedEvent watchedEvent =
-        new WatchedEvent(
-          eventType,
-          KeeperState.SyncConnected,
-          addRootToPath(getPath())
-        );
+          new WatchedEvent(
+              eventType,
+              KeeperState.SyncConnected,
+              addRootToPath(getPath())
+          );
       Iterator<ContextedWatcher> iter = contextedWatchers.iterator();
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         ContextedWatcher contextedWatcher = iter.next();
         if (contextedWatcher.shouldTrigger(eventType)) {
           iter.remove(); // Remove for one use
@@ -317,7 +340,8 @@ public class MockZooKeeperDataStore {
       }
     }
 
-    public ZNode findDescendant(String path) throws KeeperException {
+    public ZNode findDescendant(String path) throws KeeperException
+    {
       List<String> pathParts = Arrays.asList(path.split("/"));
       ZNode lastSeenZNode = this;
       for (String childName : pathParts) {
@@ -329,7 +353,8 @@ public class MockZooKeeperDataStore {
       return lastSeenZNode;
     }
 
-    public ZNode findLeafParent(String path) throws KeeperException {
+    public ZNode findLeafParent(String path) throws KeeperException
+    {
       if (!path.contains("/")) {
         // No slashes => this must be the parent
         return this;
@@ -337,7 +362,8 @@ public class MockZooKeeperDataStore {
       return findDescendant(getLeafParentPath(path));
     }
 
-    private static String getLeafParentPath(String path) {
+    private static String getLeafParentPath(String path)
+    {
       int idx = path.lastIndexOf("/");
       if (idx == -1) {
         throw new IllegalArgumentException("Path does not have parent: " + path);
@@ -345,7 +371,8 @@ public class MockZooKeeperDataStore {
       return path.substring(0, idx);
     }
 
-    public String getPath() {
+    public String getPath()
+    {
       ZNode currentNode = this;
       String path = "";
       while (!currentNode.isRoot()) {
@@ -358,34 +385,37 @@ public class MockZooKeeperDataStore {
       return path;
     }
 
-    private static String getLeafName(String path) {
+    private static String getLeafName(String path)
+    {
       int idx = path.lastIndexOf("/");
       if (idx == -1) {
         return path;
       }
-      return path.substring(idx+1);
+      return path.substring(idx + 1);
     }
 
     public String createDescendant(
-      long sessionId,
-      String path,
-      byte[] data,
-      List<ACL> acl,
-      CreateMode createMode
-    ) throws KeeperException {
+        long sessionId,
+        String path,
+        byte[] data,
+        List<ACL> acl,
+        CreateMode createMode
+    ) throws KeeperException
+    {
       ZNode parent = findLeafParent(path);
       String childName =
-        parent.createChild(sessionId, getLeafName(path), data, acl, createMode);
+          parent.createChild(sessionId, getLeafName(path), data, acl, createMode);
       return parent.isRoot() ? childName : parent.getPath() + "/" + childName;
     }
 
     public String createChild(
-      long sessionId,
-      String childName,
-      byte[] data,
-      List<ACL> acl,
-      CreateMode createMode
-    ) throws KeeperException {
+        long sessionId,
+        String childName,
+        byte[] data,
+        List<ACL> acl,
+        CreateMode createMode
+    ) throws KeeperException
+    {
       // Append a sequence number to path if sequential
       if (createMode.isSequential()) {
         childName += String.format("%08d", nextSeqNum.addAndGet(1));
@@ -396,7 +426,8 @@ public class MockZooKeeperDataStore {
       return childName;
     }
 
-    public void addChild(ZNode zNode) throws KeeperException {
+    public void addChild(ZNode zNode) throws KeeperException
+    {
       if (createMode.isEphemeral()) {
         throw new KeeperException.NoChildrenForEphemeralsException();
       }
@@ -410,12 +441,14 @@ public class MockZooKeeperDataStore {
     }
 
     public void deleteDescendant(String path, int expectedVersion)
-      throws KeeperException {
+        throws KeeperException
+    {
       findDescendant(path).delete(expectedVersion);
     }
 
-    public void delete(int expectedVersion) throws KeeperException {
-      assert(!isRoot());
+    public void delete(int expectedVersion) throws KeeperException
+    {
+      assert (!isRoot());
       if (!getChildren().isEmpty()) {
         throw new KeeperException.NotEmptyException();
       }
@@ -430,24 +463,29 @@ public class MockZooKeeperDataStore {
       getParent().signalNodeEvent(EventType.NodeChildrenChanged);
     }
 
-    public boolean isRoot() {
+    public boolean isRoot()
+    {
       return parent == null;
     }
 
-    public ZNode getParent() {
+    public ZNode getParent()
+    {
       return parent;
     }
 
-    public String getName() {
+    public String getName()
+    {
       return name;
     }
 
-    public byte[] getData() {
+    public byte[] getData()
+    {
       return data;
     }
 
     public void setData(byte[] newData, int expectedVersion)
-      throws KeeperException {
+        throws KeeperException
+    {
       if (expectedVersion != -1 && getStat().getVersion() != expectedVersion) {
         throw new KeeperException.BadVersionException();
       }
@@ -457,20 +495,24 @@ public class MockZooKeeperDataStore {
       signalNodeEvent(EventType.NodeDataChanged);
     }
 
-    public List<ACL> getAcl() {
+    public List<ACL> getAcl()
+    {
       return Collections.unmodifiableList(acl);
     }
 
-    public Stat getStat() {
+    public Stat getStat()
+    {
       return stat;
     }
 
-    public Map<String, ZNode> getChildren() {
+    public Map<String, ZNode> getChildren()
+    {
       return Collections.unmodifiableMap(children);
     }
 
     @Override
-    public Iterator<ZNode> iterator() {
+    public Iterator<ZNode> iterator()
+    {
       return new ZNodeTreeIterator(this);
     }
 
@@ -478,22 +520,25 @@ public class MockZooKeeperDataStore {
      * Iterates across all ZNodes in the sub-tree rooted at the specified node
      * (will also return the specified ZNode).
      */
-    private static class ZNodeTreeIterator implements Iterator<ZNode> {
+    private static class ZNodeTreeIterator implements Iterator<ZNode>
+    {
       private boolean selfReturned = false;
       private ZNode initialZNode;
       private Iterator<ZNode> childIter;
       private Iterator<ZNode> childTreeIter;
       private ZNode currentZNode;
 
-      private ZNodeTreeIterator(ZNode initialZNode) {
+      private ZNodeTreeIterator(ZNode initialZNode)
+      {
         this.initialZNode = initialZNode;
         List<ZNode> childrenCopy =
-          new ArrayList<ZNode>(initialZNode.getChildren().values());
+            new ArrayList<ZNode>(initialZNode.getChildren().values());
         childIter = childrenCopy.iterator();
       }
 
       @Override
-      public boolean hasNext() {
+      public boolean hasNext()
+      {
         if (!selfReturned) {
           return true;
         }
@@ -507,7 +552,8 @@ public class MockZooKeeperDataStore {
       }
 
       @Override
-      public ZNode next() {
+      public ZNode next()
+      {
         if (!selfReturned) {
           selfReturned = true;
           currentZNode = initialZNode;
@@ -521,10 +567,12 @@ public class MockZooKeeperDataStore {
       }
 
       @Override
-      public void remove() {
+      public void remove()
+      {
         try {
           currentZNode.delete(-1);
-        } catch (KeeperException e) {
+        }
+        catch (KeeperException e) {
           throw new RuntimeException(e);
         }
       }
@@ -534,37 +582,44 @@ public class MockZooKeeperDataStore {
   /**
    * Encapsulates a Watcher and the context in which it was created
    */
-  private static class ContextedWatcher implements Watcher {
+  private static class ContextedWatcher implements Watcher
+  {
     private final Watcher watcher;
     private final WatchContext watchContext;
 
     private ContextedWatcher(
-      Watcher watcher, long sessionId, WatchTriggerPolicy.WatchType watchType
-    ) {
+        Watcher watcher, long sessionId, WatchTriggerPolicy.WatchType watchType
+    )
+    {
       this.watcher = watcher;
       this.watchContext = new WatchContext(sessionId, watchType);
     }
 
-    public long getSessionId() {
+    public long getSessionId()
+    {
       return watchContext.getSessionId();
     }
 
-    public boolean shouldTrigger(EventType eventType) {
+    public boolean shouldTrigger(EventType eventType)
+    {
       return watchContext.shouldTrigger(eventType);
     }
 
-    public void merge(ContextedWatcher contextedWatcher) {
-      assert(watcher.equals(contextedWatcher.watcher));
+    public void merge(ContextedWatcher contextedWatcher)
+    {
+      assert (watcher.equals(contextedWatcher.watcher));
       watchContext.merge(contextedWatcher.watchContext);
     }
 
     @Override
-    public void process(WatchedEvent event) {
+    public void process(WatchedEvent event)
+    {
       watcher.process(event);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
       // Equality is only determined by the watcher
       if (this == o) {
         return true;
@@ -583,26 +638,31 @@ public class MockZooKeeperDataStore {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
       // Hash code only computed from the watcher
       return watcher.hashCode();
     }
 
-    private static class WatchContext {
+    private static class WatchContext
+    {
       private final Set<WatchTriggerPolicy.WatchType> watchTypeSet =
-        EnumSet.noneOf(WatchTriggerPolicy.WatchType.class);
+          EnumSet.noneOf(WatchTriggerPolicy.WatchType.class);
       private long sessionId;
 
-      private WatchContext(long sessionId, WatchTriggerPolicy.WatchType watchType) {
+      private WatchContext(long sessionId, WatchTriggerPolicy.WatchType watchType)
+      {
         this.sessionId = sessionId;
         watchTypeSet.add(watchType);
       }
 
-      public long getSessionId() {
+      public long getSessionId()
+      {
         return sessionId;
       }
 
-      public boolean shouldTrigger(EventType eventType) {
+      public boolean shouldTrigger(EventType eventType)
+      {
         for (WatchTriggerPolicy.WatchType watchType : watchTypeSet) {
           if (WatchTriggerPolicy.shouldTrigger(watchType, eventType)) {
             return true;
@@ -611,8 +671,9 @@ public class MockZooKeeperDataStore {
         return false;
       }
 
-      public void merge(WatchContext watchContext) {
-        assert(sessionId == watchContext.getSessionId());
+      public void merge(WatchContext watchContext)
+      {
+        assert (sessionId == watchContext.getSessionId());
         watchTypeSet.addAll(watchContext.watchTypeSet);
       }
     }
@@ -622,8 +683,10 @@ public class MockZooKeeperDataStore {
    * Defines the ZooKeeper policies for when a particular watch type should be
    * triggered.
    */
-  private static class WatchTriggerPolicy {
-    private enum WatchType {
+  private static class WatchTriggerPolicy
+  {
+    private enum WatchType
+    {
       EXISTS,
       GETDATA,
       GETCHILDREN;
@@ -631,32 +694,37 @@ public class MockZooKeeperDataStore {
 
     private static Map<WatchType, Set<EventType>> mapping = constructMapping();
 
-    private static Map<WatchType, Set<EventType>> constructMapping() {
+    private static Map<WatchType, Set<EventType>> constructMapping()
+    {
       Map<WatchType, Set<EventType>> mapping =
-        new EnumMap<WatchType, Set<EventType>>(WatchType.class);
-      mapping.put(WatchType.EXISTS,
-        EnumSet.of(
-          EventType.NodeCreated,
-          EventType.NodeDeleted,
-          EventType.NodeDataChanged
-        )
+          new EnumMap<WatchType, Set<EventType>>(WatchType.class);
+      mapping.put(
+          WatchType.EXISTS,
+          EnumSet.of(
+              EventType.NodeCreated,
+              EventType.NodeDeleted,
+              EventType.NodeDataChanged
+          )
       );
-      mapping.put(WatchType.GETDATA,
-        EnumSet.of(
-          EventType.NodeDeleted,
-          EventType.NodeDataChanged
-        )
+      mapping.put(
+          WatchType.GETDATA,
+          EnumSet.of(
+              EventType.NodeDeleted,
+              EventType.NodeDataChanged
+          )
       );
-      mapping.put(WatchType.GETCHILDREN,
-        EnumSet.of(
-          EventType.NodeChildrenChanged,
-          EventType.NodeDeleted
-        )
+      mapping.put(
+          WatchType.GETCHILDREN,
+          EnumSet.of(
+              EventType.NodeChildrenChanged,
+              EventType.NodeDeleted
+          )
       );
       return mapping;
     }
 
-    public static boolean shouldTrigger(WatchType watchType, EventType eventType) {
+    public static boolean shouldTrigger(WatchType watchType, EventType eventType)
+    {
       return mapping.get(watchType).contains(eventType);
     }
   }

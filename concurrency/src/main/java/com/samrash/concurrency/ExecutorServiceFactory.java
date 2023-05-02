@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.ExecutorService;
 
-public interface ExecutorServiceFactory<T extends ExecutorService> {
+public interface ExecutorServiceFactory<T extends ExecutorService>
+{
   T create();
 }

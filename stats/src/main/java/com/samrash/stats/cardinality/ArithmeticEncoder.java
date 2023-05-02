@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-import com.samrash.stats.cardinality.Model.SymbolInfo;
 import com.google.common.base.Preconditions;
+import com.samrash.stats.cardinality.Model.SymbolInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-class ArithmeticEncoder {
+class ArithmeticEncoder
+{
   private final Model model;
   private final OutputStream out;
 
@@ -31,7 +33,8 @@ class ArithmeticEncoder {
   private int underflowHighValue;
   private int underflowBytes;
 
-  public ArithmeticEncoder(Model model, OutputStream out) {
+  public ArithmeticEncoder(Model model, OutputStream out)
+  {
     Preconditions.checkNotNull(model, "model is null");
     Preconditions.checkNotNull(out, "out is null");
 
@@ -39,7 +42,8 @@ class ArithmeticEncoder {
     this.out = out;
   }
 
-  public void encode(int symbol) throws IOException {
+  public void encode(int symbol) throws IOException
+  {
     // lookup symbol data
     SymbolInfo symbolInfo = model.getSymbolInfo(symbol);
 
@@ -88,7 +92,8 @@ class ArithmeticEncoder {
     }
   }
 
-  public void close() throws IOException {
+  public void close() throws IOException
+  {
     // Write out the shortest value between the high and low values
 
 
@@ -148,7 +153,8 @@ class ArithmeticEncoder {
     }
   }
 
-  public static long removeUnderflowByte(long value, int backFillValue) {
+  public static long removeUnderflowByte(long value, int backFillValue)
+  {
     long highBits = (value & 0xFF0000000000L);
     long lowBits = (value & 0x0000FFFFFFFFL) << 8;
     long newValue = highBits | lowBits | backFillValue;

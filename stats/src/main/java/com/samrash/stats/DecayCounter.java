@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTime;
@@ -27,7 +28,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Note: all value is decayed as though it was added at the 'start' value.
  * This is best used to decay the counter value once it has been fixed
  */
-public class DecayCounter implements EventCounter {
+public class DecayCounter implements EventCounter
+{
   private final AtomicLong count = new AtomicLong(0);
   private final ReadableDateTime start;
   private final ReadableDateTime decayStart;
@@ -41,10 +43,11 @@ public class DecayCounter implements EventCounter {
    * @param decayRatePerSecond ex, 0.05 => 5% decay per second
    */
   public DecayCounter(
-    ReadableDateTime start,
-    ReadableDateTime decayStart,
-    ReadableDateTime end, float decayRatePerSecond
-  ) {
+      ReadableDateTime start,
+      ReadableDateTime decayStart,
+      ReadableDateTime end, float decayRatePerSecond
+  )
+  {
     this.start = start;
     this.decayStart = decayStart;
     this.end = end;
@@ -52,22 +55,25 @@ public class DecayCounter implements EventCounter {
   }
 
   public DecayCounter(
-    ReadableDateTime start, ReadableDateTime end, float decayRatePerSecond
-  ) {
+      ReadableDateTime start, ReadableDateTime end, float decayRatePerSecond
+  )
+  {
     this(start, start, end, decayRatePerSecond);
   }
 
   @Override
-  public void add(long delta) {
+  public void add(long delta)
+  {
     count.addAndGet(delta);
   }
 
   /**
    * @return counter value after computing exponential decay of the counter
-   *         value
+   * value
    */
   @Override
-  public long getValue() {
+  public long getValue()
+  {
     DateTime now = getNow();
 
     // don't start decay unless it's at least 1s after the decayStart
@@ -77,7 +83,7 @@ public class DecayCounter implements EventCounter {
 
       // compute total decay for millis / 1000 seconds
       double thisDecay =
-        Math.pow(1.0 - decayRatePerSecond, (double) (millis / (double) 1000));
+          Math.pow(1.0 - decayRatePerSecond, (double) (millis / (double) 1000));
 
       return (long) (count.get() * thisDecay);
     } else {
@@ -86,17 +92,20 @@ public class DecayCounter implements EventCounter {
   }
 
   @Override
-  public ReadableDateTime getStart() {
+  public ReadableDateTime getStart()
+  {
     return start;
   }
 
   @Override
-  public ReadableDateTime getEnd() {
+  public ReadableDateTime getEnd()
+  {
     return end;
   }
 
   @Override
-  public Duration getLength() {
+  public Duration getLength()
+  {
     return new Duration(start, end);
   }
 
@@ -109,17 +118,18 @@ public class DecayCounter implements EventCounter {
    * @return
    */
   @Override
-  public EventCounter merge(EventCounter counter) {
+  public EventCounter merge(EventCounter counter)
+  {
     ReadableDateTime mergedStart =
-      start.isBefore(counter.getStart()) ? start : counter.getStart();
+        start.isBefore(counter.getStart()) ? start : counter.getStart();
     ReadableDateTime mergedEnd =
-      end.isAfter(counter.getEnd()) ? end : counter.getEnd();
+        end.isAfter(counter.getEnd()) ? end : counter.getEnd();
     DateTime now = getNow();
     DecayCounter mergedCounter = new DecayCounter(
-      mergedStart,
-      now.isAfter(decayStart) ? now : decayStart,
-      mergedEnd,
-      decayRatePerSecond
+        mergedStart,
+        now.isAfter(decayStart) ? now : decayStart,
+        mergedEnd,
+        decayRatePerSecond
     );
 
     mergedCounter.add(getValue());
@@ -128,7 +138,8 @@ public class DecayCounter implements EventCounter {
     return mergedCounter;
   }
 
-  DateTime getNow() {
+  DateTime getNow()
+  {
     return new DateTime();
   }
 }

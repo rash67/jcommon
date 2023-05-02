@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.samrash.util.serialization.SerDeException;
@@ -23,7 +24,8 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-public class TestDatumSerDe {
+public class TestDatumSerDe
+{
 
   private DatumSerDe serDe;
   private BooleanDatum trueDatum;
@@ -38,7 +40,8 @@ public class TestDatumSerDe {
   private ListDatum listDatum;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     serDe = new DatumSerDe();
     trueDatum = new BooleanDatum(true);
     falseDatum = new BooleanDatum(false);
@@ -50,16 +53,17 @@ public class TestDatumSerDe {
     doubleDatum = new DoubleDatum(10.12312415211431);
     stringDatum = new StringDatum("Fuu");
     listDatum = new ListDatum(
-      Arrays.asList(
-        integerDatum,
-        longDatum,
-        stringDatum
-      )
+        Arrays.asList(
+            integerDatum,
+            longDatum,
+            stringDatum
+        )
     );
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     testValue(trueDatum);
     testValue(falseDatum);
     testValue(byteDatum);
@@ -72,9 +76,10 @@ public class TestDatumSerDe {
     testValue(listDatum);
   }
 
-  private void testValue(Datum datum) throws SerDeException {
+  private void testValue(Datum datum) throws SerDeException
+  {
     Datum processedValue = SerDeUtils.deserializeFromBytes(
-      SerDeUtils.serializeToBytes(datum, serDe), serDe
+        SerDeUtils.serializeToBytes(datum, serDe), serDe
     );
     Assert.assertEquals(processedValue, datum);
   }

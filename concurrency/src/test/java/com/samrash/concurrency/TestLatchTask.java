@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.testing.TestUtils;
@@ -23,32 +24,38 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TestLatchTask  {
+public class TestLatchTask
+{
   private LatchTask task;
   private ThreadHelper threadHelper;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     task = new LatchTask();
     threadHelper = new ThreadHelper();
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     final AtomicBoolean completed = new AtomicBoolean(false);
     Thread thread = threadHelper.doInThread(
-      new Runnable() {
-        @Override
-        public void run() {
-          try {
-            task.await();
-            completed.set(true);
-          } catch (InterruptedException e) {
-            Assert.fail("exception", e);
-            throw new RuntimeException(e);
+        new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            try {
+              task.await();
+              completed.set(true);
+            }
+            catch (InterruptedException e) {
+              Assert.fail("exception", e);
+              throw new RuntimeException(e);
+            }
           }
         }
-      }
     );
 
     // imperfect way to test for lock, but has to suffice

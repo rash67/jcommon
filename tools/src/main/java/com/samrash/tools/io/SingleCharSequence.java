@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
-class SingleCharSequence implements CharSequence {
+class SingleCharSequence implements CharSequence
+{
   private final char character;
 
-  SingleCharSequence(char character) {
+  SingleCharSequence(char character)
+  {
     this.character = character;
   }
 
   @Override
-  public int length() {
+  public int length()
+  {
     return 1;
   }
 
   @Override
-  public char charAt(int index) {
+  public char charAt(int index)
+  {
     if (index < 0 || index > 1) {
       throw new IndexOutOfBoundsException();
     }
@@ -37,7 +42,8 @@ class SingleCharSequence implements CharSequence {
   }
 
   @Override
-  public CharSequence subSequence(int start, int end) {
+  public CharSequence subSequence(int start, int end)
+  {
     if (start < 0 || end < 0 || start > end || end > 1) {
       throw new IndexOutOfBoundsException();
     }
@@ -46,7 +52,8 @@ class SingleCharSequence implements CharSequence {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return Character.toString(character);
   }
 }

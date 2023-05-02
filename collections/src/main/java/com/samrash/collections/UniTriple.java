@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 /**
@@ -21,8 +22,10 @@ package com.samrash.collections;
  *
  * @param <T>
  */
-public class UniTriple<T> extends Triple<T,T,T> {
-  public UniTriple(T t, T t1, T t2) {
+public class UniTriple<T> extends Triple<T, T, T>
+{
+  public UniTriple(T t, T t1, T t2)
+  {
     super(t, t1, t2);
   }
 }

@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
+
+import com.samrash.logging.Logger;
+import com.samrash.logging.LoggerImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +25,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.samrash.logging.Logger;
-import com.samrash.logging.LoggerImpl;
-
 /**
  * This was written to resemble some older libraries.  You may find
  * more functionality in StatsUtil.java.
- *
+ * <p>
  * See com.samrash.fb303.stats.HistoryManager for more info on how
  * this works.
- *
+ * <p>
  * The parameters "shortName" refer to a stat name such as "queries"
  * or "cpu_load", and "fullName" refer to the longer
  * "queries.sum.600", "cpu_load.avg.3600".
@@ -41,7 +42,8 @@ import com.samrash.logging.LoggerImpl;
  * each counter can be exported for different uses (ExportTypes). For
  * details see com.samrash.fb303.stats.HistoryManager.
  */
-public class StatsManager implements HistoryManager {
+public class StatsManager implements HistoryManager
+{
   private static Logger logger = LoggerImpl.getLogger(StatsManager.class);
 
   private ConcurrentHashMap<String, Integer> typeMap;
@@ -52,7 +54,8 @@ public class StatsManager implements HistoryManager {
    * Creates a StatsMgr instance with default settings for the internal
    * ConcurrentHashMaps.
    */
-  public StatsManager() {
+  public StatsManager()
+  {
     this(16, 0.75f, 16);
   }
 
@@ -64,22 +67,29 @@ public class StatsManager implements HistoryManager {
    * @param loadFactor:  load factor of the internal hash maps
    * @param concurrencyLevel:  estimated number of concurrently updating threads
    */
-  public StatsManager(int initialNumKeys,
-                      float loadFactor,
-                      int concurrencyLevel)
+  public StatsManager(
+      int initialNumKeys,
+      float loadFactor,
+      int concurrencyLevel
+  )
   {
     logger.trace("StatsMgr Created");
     this.typeMap =
-      new ConcurrentHashMap<String, Integer>(initialNumKeys,
-                                             loadFactor,
-                                             concurrencyLevel);
+        new ConcurrentHashMap<String, Integer>(
+            initialNumKeys,
+            loadFactor,
+            concurrencyLevel
+        );
     this.counterMap =
-      new ConcurrentHashMap<String, MultiWindowGauge>(initialNumKeys,
-                                                      loadFactor,
-                                                      concurrencyLevel);
+        new ConcurrentHashMap<String, MultiWindowGauge>(
+            initialNumKeys,
+            loadFactor,
+            concurrencyLevel
+        );
   }
 
-  private void ensureStat(String shortName) {
+  private void ensureStat(String shortName)
+  {
     if (counterMap.containsKey(shortName)) {
       return;
     }
@@ -92,12 +102,13 @@ public class StatsManager implements HistoryManager {
     } else {
       if (logger.isTraceEnabled()) {
         logger.trace("almost accidentally created stat" + shortName
-                + " twice.  phew...");
+                     + " twice.  phew...");
       }
     }
   }
 
-  private void ensureType(String shortName, ExportType etype) {
+  private void ensureType(String shortName, ExportType etype)
+  {
     boolean hasType = typeMap.containsKey(shortName);
     if (!hasType) {
       Integer prior = typeMap.putIfAbsent(shortName, etype.value());
@@ -122,14 +133,15 @@ public class StatsManager implements HistoryManager {
 
     if (logger.isTraceEnabled()) {
       logger.trace("Updated type for " + shortName + ", added " + etype
-          + ", was " + bitmask + ", now " + newValue + " (after " + tries
-          + " tries)");
+                   + ", was " + bitmask + ", now " + newValue + " (after " + tries
+                   + " tries)");
     }
     return;
   }
 
   @Override
-public void addStatExportType(String shortName, ExportType etype) {
+  public void addStatExportType(String shortName, ExportType etype)
+  {
     if (shortName == null) {
       logger.error("Null value passed as key");
       return;
@@ -143,7 +155,8 @@ public void addStatExportType(String shortName, ExportType etype) {
   }
 
   @Override
-public void addStatValue(String shortName, long delta) {
+  public void addStatValue(String shortName, long delta)
+  {
     if (!counterMap.containsKey(shortName)) {
       addStatExportType(shortName, ExportType.AVG);
     }
@@ -152,12 +165,13 @@ public void addStatValue(String shortName, long delta) {
   }
 
   // fb303
-  public long getCounter(String fullName) {
+  public long getCounter(String fullName)
+  {
     // todo: convert to a more intelligent table/map version
     int lastDot = fullName.lastIndexOf('.');
     if (lastDot <= 0) {
       throw new IllegalArgumentException("Stat name argument '" + fullName
-          + "' not found");
+                                         + "' not found");
     }
 
     int preLastDot = -1;
@@ -232,13 +246,14 @@ public void addStatValue(String shortName, long delta) {
       if (fullName.endsWith(".count")) {
         return counterMap.get(shortName).getAllTimeSamples();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new IllegalArgumentException("Stat name '" + shortName
-          + "' not found for '" + ending2 + "' or '" + ending + "'");
+                                         + "' not found for '" + ending2 + "' or '" + ending + "'");
     }
 
     throw new IllegalArgumentException("Stat name argument '" + fullName
-        + "' not found");
+                                       + "' not found");
   }
 
   /**
@@ -247,12 +262,14 @@ public void addStatValue(String shortName, long delta) {
    *
    * fb303-support
    */
-  public Map<String, Long> getSelectedCounters(List<String> keys) {
+  public Map<String, Long> getSelectedCounters(List<String> keys)
+  {
     Map<String, Long> result = new HashMap<String, Long>();
     for (String key : keys) {
       try {
         result.put(key, getCounter(key));
-      } catch (IllegalArgumentException e) {
+      }
+      catch (IllegalArgumentException e) {
         // okay, result will be missing for this
       }
     }
@@ -264,11 +281,13 @@ public void addStatValue(String shortName, long delta) {
    *
    * @param fullName:  key with the .sum.60 parts, etc
    */
-  public boolean hasCounter(String fullName) {
+  public boolean hasCounter(String fullName)
+  {
     try {
       getCounter(fullName);
       return true;
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       return false;
     }
   }
@@ -279,7 +298,8 @@ public void addStatValue(String shortName, long delta) {
    * @param shortName:  The stat name used with addStatExportType does
    *          NOT have the .sum.60 parts, etc
    */
-  public boolean containsKey(String shortName) {
+  public boolean containsKey(String shortName)
+  {
     return counterMap.containsKey(shortName);
   }
 
@@ -302,80 +322,80 @@ public void addStatValue(String shortName, long delta) {
         // minute
         fullname = String.format("%s.%s.60", name, type);
         switch (type) {
-        case SUM:
-          value = stat.getMinuteSum();
-          break;
-        case COUNT:
-          value = stat.getMinuteSamples();
-          break;
-        case AVG:
-          value = stat.getMinuteAvg();
-          break;
-        case RATE:
-          value = stat.getMinuteRate();
-          break;
-        default:
-          throw new IndexOutOfBoundsException("Bad type");
+          case SUM:
+            value = stat.getMinuteSum();
+            break;
+          case COUNT:
+            value = stat.getMinuteSamples();
+            break;
+          case AVG:
+            value = stat.getMinuteAvg();
+            break;
+          case RATE:
+            value = stat.getMinuteRate();
+            break;
+          default:
+            throw new IndexOutOfBoundsException("Bad type");
         }
         result.put(fullname, value);
 
         // 10 min
         fullname = String.format("%s.%s.600", name, type);
         switch (type) {
-        case SUM:
-          value = stat.getTenMinuteSum();
-          break;
-        case COUNT:
-          value = stat.getTenMinuteSamples();
-          break;
-        case AVG:
-          value = stat.getTenMinuteAvg();
-          break;
-        case RATE:
-          value = stat.getTenMinuteRate();
-          break;
-        default:
-          throw new IndexOutOfBoundsException("Bad type");
+          case SUM:
+            value = stat.getTenMinuteSum();
+            break;
+          case COUNT:
+            value = stat.getTenMinuteSamples();
+            break;
+          case AVG:
+            value = stat.getTenMinuteAvg();
+            break;
+          case RATE:
+            value = stat.getTenMinuteRate();
+            break;
+          default:
+            throw new IndexOutOfBoundsException("Bad type");
         }
         result.put(fullname, value);
 
         // hour
         fullname = String.format("%s.%s.3600", name, type);
         switch (type) {
-        case SUM:
-          value = stat.getHourSum();
-          break;
-        case COUNT:
-          value = stat.getHourSamples();
-          break;
-        case AVG:
-          value = stat.getHourAvg();
-          break;
-        case RATE:
-          value = stat.getHourRate();
-          break;
-        default:
-          throw new IndexOutOfBoundsException("Bad type");
+          case SUM:
+            value = stat.getHourSum();
+            break;
+          case COUNT:
+            value = stat.getHourSamples();
+            break;
+          case AVG:
+            value = stat.getHourAvg();
+            break;
+          case RATE:
+            value = stat.getHourRate();
+            break;
+          default:
+            throw new IndexOutOfBoundsException("Bad type");
         }
         result.put(fullname, value);
 
         // all time
         fullname = String.format("%s.%s", name, type);
         switch (type) {
-        case SUM:
-          value = stat.getAllTimeSum();
-          break;
-        case COUNT:
-          value = stat.getAllTimeSamples();
-          break;
-        case AVG:
-          value = stat.getAllTimeAvg();
-          break;
-        case RATE:
-          value = stat.getAllTimeRate();
-          break;
-        default:
-          throw new IndexOutOfBoundsException("Bad type");
+          case SUM:
+            value = stat.getAllTimeSum();
+            break;
+          case COUNT:
+            value = stat.getAllTimeSamples();
+            break;
+          case AVG:
+            value = stat.getAllTimeAvg();
+            break;
+          case RATE:
+            value = stat.getAllTimeRate();
+            break;
+          default:
+            throw new IndexOutOfBoundsException("Bad type");
         }
         result.put(fullname, value);
 

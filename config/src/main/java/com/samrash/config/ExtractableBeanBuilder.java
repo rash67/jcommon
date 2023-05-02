@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 // interface that both indicates annotated fields for how to construct a builder
 // fromJSON as well as a method to construct a specified object type (T)
-public interface ExtractableBeanBuilder<T> {
+public interface ExtractableBeanBuilder<T>
+{
   public T build();
 }

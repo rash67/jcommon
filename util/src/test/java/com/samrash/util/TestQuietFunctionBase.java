@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import com.samrash.util.exceptions.UncheckedCheckedException;
@@ -22,36 +23,44 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-public abstract class TestQuietFunctionBase {
+public abstract class TestQuietFunctionBase
+{
   @Test(groups = "fast")
-  public void testError() {
+  public void testError()
+  {
     testExceptionType(Error.class, Error.class);
   }
 
   @Test(groups = "fast")
-  public void testRuntimeException() {
+  public void testRuntimeException()
+  {
     testExceptionType(RuntimeException.class, RuntimeException.class);
   }
 
   @Test(groups = "fast")
-  public void testCheckedException() {
+  public void testCheckedException()
+  {
     testExceptionType(IOException.class, UncheckedCheckedException.class);
   }
 
   protected abstract void throwFromQuiet(Supplier<? extends Throwable> toThrow);
 
-  private void testExceptionType(Class<? extends Throwable> toThrow, Class<? extends Throwable> expectedCaughtType) {
+  private void testExceptionType(Class<? extends Throwable> toThrow, Class<? extends Throwable> expectedCaughtType)
+  {
     try {
       throwFromQuiet(() -> quietNewInstance(toThrow));
-    } catch (Throwable caught) {
+    }
+    catch (Throwable caught) {
       Assert.assertEquals(caught.getClass(), expectedCaughtType);
     }
   }
 
-  private <T> T quietNewInstance(Class<T> classToCreate) {
+  private <T> T quietNewInstance(Class<T> classToCreate)
+  {
     try {
       return classToCreate.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+    }
+    catch (InstantiationException | IllegalAccessException e) {
       throw new RuntimeException(e);
     }
   }

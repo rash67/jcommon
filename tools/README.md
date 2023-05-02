@@ -1,4 +1,5 @@
 ## What is it?
+
 jcommon-tools is a library for creating simple Java command-line tools.
 
 Inspired by python, it provides utilities for:
@@ -8,6 +9,7 @@ Inspired by python, it provides utilities for:
 * Terminal IO, made easier
 
 [optparse]: http://docs.python.org/2/library/optparse.html
+
 [argparse]: http://docs.python.org/2/library/argparse.html
 
 ## What does it depend on?
@@ -19,6 +21,7 @@ existing code base without worry of dependency conflicts. (So if you submit any 
 please try not to introduce any new dependencies.)
 
 ## Who should use it?
+
 Writing command-line tools in Java is a bad idea. Java is best for things like servers, i.e.,
 long-running processes that have lots of memory and CPU at their disposal. Java is bad at
 command-line tools:
@@ -43,7 +46,9 @@ but need pre-Java-7 compatibility or prefer less opinionated / more configurable
 [Apache Commons CLI]. These are all fine choices; use whatever fits your needs or suits your tastes.
 
 [Airline]: https://github.com/airlift/airline
+
 [JCommander]: http://jcommander.org/
+
 [Apache Commons CLI]: http://commons.apache.org/proper/commons-cli/usage.html
 
 ## Overview
@@ -60,8 +65,11 @@ easy to convert the strings into other types when it comes time to actually run 
 `com.samrash.tools.parser` section below for more details.
 
 [com.samrash.tools]: (src/main/java/com/facebook/tools)
+
 [CommandRunner]: (src/main/java/com/facebook/tools/CommandRunner.java)
+
 [CommandBuilder]: (src/main/java/com/facebook/tools/CommandBuilder.java)
+
 [CliParser]: (src/main/java/com/facebook/tools/parser/CliParser.java)
 
 ## Example Usage
@@ -75,7 +83,7 @@ There are a number of examples in the [com.samrash.tools.example] package in the
 The parser package contains all the classes for defining your command-line and extracting values
 from it. There are four different types of parameter:
 
-1.  Named Options
+1. Named Options
 
     - Usage
 
@@ -89,10 +97,10 @@ from it. There are four different types of parameter:
             .withMetavar("file")
             .withDescription("Input to process");
 
-    If there is no `withDefault(value)` then the parameter is required. If you want an optional
-    parameter but with no default value shown in the help, use `withDefault(null)`.
+   If there is no `withDefault(value)` then the parameter is required. If you want an optional
+   parameter but with no default value shown in the help, use `withDefault(null)`.
 
-2.  Flags
+2. Flags
 
     - Usage
 
@@ -104,9 +112,9 @@ from it. There are four different types of parameter:
           builder.addFlag("-d", "--debug")
             .withDescription("Enable debug mode");
 
-    Flags have a default value of `"false"`, which is set to `"true"` if the flag is present.
+   Flags have a default value of `"false"`, which is set to `"true"` if the flag is present.
 
-3.  Positional Parameters
+3. Positional Parameters
 
     - Usage
 
@@ -121,9 +129,9 @@ from it. There are four different types of parameter:
             .withMetavar("file")
             .withDescription("Destination file");
 
-    The name passed to `addParameter()` is used to refer to the parameter when using `CliParser`.
+   The name passed to `addParameter()` is used to refer to the parameter when using `CliParser`.
 
-4.  Trailing Parameters
+4. Trailing Parameters
 
     - Usage
 
@@ -133,7 +141,7 @@ from it. There are four different types of parameter:
 
           builder.allowTrailingParameters();
 
-    Trailing parameters are fetched using `CliParser.getTrailing()`.
+   Trailing parameters are fetched using `CliParser.getTrailing()`.
 
 Arguments are extracted using the `CliParser` passed to `runCommand`:
 
@@ -189,7 +197,7 @@ The `subprocess` package makes calling other programs easier. `SubprocessBuilder
    The command is guranteed to not block, but the amount of output is limited (e.g., first 10k).
 
 Which is to say, if you want to run a quick command that you expect to produce a fixed amount of
-output (e.g., `tail -10 some-file.txt`), then you want to use non-streaming mode.  If you want to
+output (e.g., `tail -10 some-file.txt`), then you want to use non-streaming mode. If you want to
 run a command that can produce a lot of data, (e.g., `tail -f some-other-file.txt`) then you want to
 use streaming mode.
 
@@ -197,8 +205,8 @@ Streaming commands are started by calling `subprocessBuilder.stream()`.
 Non-streaming commands are started by calling `subprocessBuilder.start()`.
 A streaming command can be turned into a non-streaming command by calling `subprocess.background()`.
 
-Stderr is always in non-streaming mode.  This ensures you never have to worry about your command
-blocking because you haven't read error output.  If you expect (and need to process) a lot of output
+Stderr is always in non-streaming mode. This ensures you never have to worry about your command
+blocking because you haven't read error output. If you expect (and need to process) a lot of output
 to stderr, then you need to call `subprocessBuilder.redirectStderrToStdout()`.
 
 See [CompareFiles] for an example.
@@ -218,5 +226,7 @@ The suprising details are described in an excellent [blog post] by the excellent
 part of the build process. Check it out, it's excellent.
 
 [blog post]: http://skife.org/java/unix/2011/06/20/really_executable_jars.html
+
 [Brian McCallister]: http://skife.org/about.html
+
 [maven plugin]: https://github.com/brianm/really-executable-jars-maven-plugin

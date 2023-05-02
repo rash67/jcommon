@@ -13,49 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.election;
 
-public class MockLeaderElectionCallback implements LeaderElectionCallback {
+public class MockLeaderElectionCallback implements LeaderElectionCallback
+{
   private boolean isElected = false;
   private boolean isRemoved = false;
   private Exception exception = null;
 
-  public boolean isElected() {
+  public boolean isElected()
+  {
     return isElected;
   }
 
-  public void resetElected() {
+  public void resetElected()
+  {
     isElected = false;
   }
 
-  public boolean isRemoved() {
+  public boolean isRemoved()
+  {
     return isRemoved;
   }
 
-  public void resetRemoved() {
+  public void resetRemoved()
+  {
     isRemoved = false;
   }
 
-  public Exception getException() {
+  public Exception getException()
+  {
     return exception;
   }
 
-  public void resetException() {
+  public void resetException()
+  {
     exception = null;
   }
 
   @Override
-  public void elected() {
+  public void elected()
+  {
     isElected = true;
   }
 
   @Override
-  public void removed() {
+  public void removed()
+  {
     isRemoved = true;
   }
 
   @Override
-  public void error(Exception exception) {
+  public void error(Exception exception)
+  {
     this.exception = exception;
   }
 }

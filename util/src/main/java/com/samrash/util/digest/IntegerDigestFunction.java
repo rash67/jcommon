@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
-public class IntegerDigestFunction implements DigestFunction<Integer> {
+public class IntegerDigestFunction implements DigestFunction<Integer>
+{
   private final MurmurHash hasher = new MurmurHash(MurmurHash.JCOMMON_SEED);
 
   @Override
-  public long computeDigest(Integer input) {
+  public long computeDigest(Integer input)
+  {
     return hasher.hash(input);
   }
 }

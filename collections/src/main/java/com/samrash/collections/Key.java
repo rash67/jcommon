@@ -13,42 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.reflect.TypeToken;
 
-public class Key<K, V> {
+public class Key<K, V>
+{
   private K name;
   private TypeToken<V> type;
 
-  public Key(K id, TypeToken<V> type) {
+  public Key(K id, TypeToken<V> type)
+  {
     this.name = id;
     this.type = type;
   }
 
-  public Key(K id, Class<V> clazz) {
+  public Key(K id, Class<V> clazz)
+  {
     this.name = id;
     this.type = TypeToken.of(clazz);
   }
 
-  public static <K, V> Key<K, V> get(K id, Class<V> clazz) {
+  public static <K, V> Key<K, V> get(K id, Class<V> clazz)
+  {
     return new Key<>(id, clazz);
   }
 
-  public static <K, V> Key<K, V> get(K id, TypeToken<V> clazz) {
+  public static <K, V> Key<K, V> get(K id, TypeToken<V> clazz)
+  {
     return new Key<>(id, clazz);
   }
 
-  public K getName() {
+  public K getName()
+  {
     return name;
   }
 
-  public TypeToken<V> getType() {
+  public TypeToken<V> getType()
+  {
     return type;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -69,7 +78,8 @@ public class Key<K, V> {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = name.hashCode();
     result = 31 * result + type.hashCode();
     return result;

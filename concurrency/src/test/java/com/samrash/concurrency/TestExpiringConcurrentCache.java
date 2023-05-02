@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.collections.Pair;
@@ -28,7 +29,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class TestExpiringConcurrentCache {
+public class TestExpiringConcurrentCache
+{
   private ExpiringConcurrentCache<String, ReapableString, RuntimeException> legacyCache;
   private static final String KEY = "key";
   private ReapableString reapableValue1;
@@ -37,55 +39,63 @@ public class TestExpiringConcurrentCache {
   private ConcurrentCacheTestHelper<String, ReapableString> testHelper;
   private MockExecutor mockExecutor;
   private ExpiringConcurrentCache<String, String, RuntimeException> cache;
-  private List<Pair<String,String>> evicted;
+  private List<Pair<String, String>> evicted;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     value1 = "value1";
     reapableValue1 = new ReapableString(value1);
     producer =
-      new BlockingValueProducer<ReapableString, RuntimeException>(reapableValue1);
+        new BlockingValueProducer<ReapableString, RuntimeException>(reapableValue1);
     mockExecutor = new MockExecutor();
     // arbitrary time for now
     DateTimeUtils.setCurrentMillisFixed(0);
     legacyCache = ExpiringConcurrentCache.createWithReapableValue(
-      new ValueFactory<String, ReapableString, RuntimeException>() {
-        @Override
-        public ReapableString create(String input) throws RuntimeException {
-          return producer.call();
-        }
-      },
-      30,
-      TimeUnit.MILLISECONDS,
-      RuntimeExceptionHandler.INSTANCE,
-      mockExecutor
+        new ValueFactory<String, ReapableString, RuntimeException>()
+        {
+          @Override
+          public ReapableString create(String input) throws RuntimeException
+          {
+            return producer.call();
+          }
+        },
+        30,
+        TimeUnit.MILLISECONDS,
+        RuntimeExceptionHandler.INSTANCE,
+        mockExecutor
     );
     evicted = new ArrayList<Pair<String, String>>();
     cache = new ExpiringConcurrentCache<String, String, RuntimeException>(
-      new ValueFactory<String, String, RuntimeException>() {
-        @Override
-        public String create(String input) throws RuntimeException {
-          return producer.call().toString();
-        }
-      },
-      30,
-      TimeUnit.MILLISECONDS,
-      new EvictionListener<String, String>() {
-        @Override
-        public void evicted(String key, String value) {
-          evicted.add(new Pair<String, String>(key, value));
-        }
-      },
-      RuntimeExceptionHandler.INSTANCE,
-      mockExecutor
+        new ValueFactory<String, String, RuntimeException>()
+        {
+          @Override
+          public String create(String input) throws RuntimeException
+          {
+            return producer.call().toString();
+          }
+        },
+        30,
+        TimeUnit.MILLISECONDS,
+        new EvictionListener<String, String>()
+        {
+          @Override
+          public void evicted(String key, String value)
+          {
+            evicted.add(new Pair<String, String>(key, value));
+          }
+        },
+        RuntimeExceptionHandler.INSTANCE,
+        mockExecutor
     );
     testHelper = new ConcurrentCacheTestHelper<String, ReapableString>(
-      legacyCache
+        legacyCache
     );
   }
 
   @Test(groups = "fast")
-  public void testExpiration() throws Exception {
+  public void testExpiration() throws Exception
+  {
     // add a value to the cache
     Assert.assertEquals(legacyCache.get(KEY), reapableValue1);
     Assert.assertEquals(producer.getCalledCount(), 1);
@@ -102,7 +112,8 @@ public class TestExpiringConcurrentCache {
   }
 
   @Test(groups = "fast")
-  public void testEvictionListener() throws Exception {
+  public void testEvictionListener() throws Exception
+  {
     // add a value to the cache
     Assert.assertEquals(cache.get(KEY), value1);
     Assert.assertEquals(producer.getCalledCount(), 1);
@@ -117,29 +128,35 @@ public class TestExpiringConcurrentCache {
   }
 
   @AfterMethod(alwaysRun = true)
-  public void tearDown() throws Exception {
+  public void tearDown() throws Exception
+  {
     DateTimeUtils.setCurrentMillisSystem();
   }
 
-  private static class ReapableString implements Reapable<RuntimeException>{
+  private static class ReapableString implements Reapable<RuntimeException>
+  {
     private final String value;
     private final AtomicLong shutdownCalled = new AtomicLong(0);
 
-    private ReapableString(String value) {
+    private ReapableString(String value)
+    {
       this.value = value;
     }
 
     @Override
-    public void shutdown() throws RuntimeException {
+    public void shutdown() throws RuntimeException
+    {
       shutdownCalled.incrementAndGet();
     }
 
-    public long getShutdownCalled() {
+    public long getShutdownCalled()
+    {
       return shutdownCalled.get();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
       if (this == o) {
         return true;
       }
@@ -157,12 +174,14 @@ public class TestExpiringConcurrentCache {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
       return value != null ? value.hashCode() : 0;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
       return value;
     }
   }

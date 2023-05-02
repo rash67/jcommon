@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.UnaryOperator;
 
-public interface ExtUnaryOperator<T, E extends Throwable> extends ExtFunction<T, T, E> {
-  static <T> UnaryOperator<T> quiet(ExtUnaryOperator<T, ?> unaryOperator) {
+public interface ExtUnaryOperator<T, E extends Throwable> extends ExtFunction<T, T, E>
+{
+  static <T> UnaryOperator<T> quiet(ExtUnaryOperator<T, ?> unaryOperator)
+  {
     return (a) -> ExtFunction.quiet(unaryOperator).apply(a);
   }
 }

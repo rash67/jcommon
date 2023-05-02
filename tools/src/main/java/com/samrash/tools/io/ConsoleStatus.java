@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.PrintWriter;
 
-class ConsoleStatus implements Status {
+class ConsoleStatus implements Status
+{
   private static final String ERASE_TO_END_OF_LINE = "\033[K";
   private static final String RESET_AND_ERASE_LINE = "\r\033[0m\033[2K";
   private static final String ERASE_LINE = "\r\033[2K";
@@ -28,12 +30,14 @@ class ConsoleStatus implements Status {
   private boolean currentLineIsStatus;
   private String color = STATUS_COLOR;
 
-  ConsoleStatus(PrintWriter out) {
+  ConsoleStatus(PrintWriter out)
+  {
     this.out = out;
   }
 
   @Override
-  public synchronized void status(String line) {
+  public synchronized void status(String line)
+  {
     eraseLine();
     out.print(line);
     out.flush();
@@ -41,59 +45,70 @@ class ConsoleStatus implements Status {
   }
 
   @Override
-  public void status(boolean value) {
+  public void status(boolean value)
+  {
     status(Boolean.toString(value));
   }
 
   @Override
-  public void status(char value) {
+  public void status(char value)
+  {
     status(Character.toString(value));
   }
 
   @Override
-  public void status(int value) {
+  public void status(int value)
+  {
     status(Integer.toString(value));
   }
 
   @Override
-  public void status(long value) {
+  public void status(long value)
+  {
     status(Long.toString(value));
   }
 
   @Override
-  public void status(float value) {
+  public void status(float value)
+  {
     status(Float.toString(value));
   }
 
   @Override
-  public void status(double value) {
+  public void status(double value)
+  {
     status(Double.toString(value));
   }
 
   @Override
-  public void status(char[] value) {
+  public void status(char[] value)
+  {
     status(new String(value));
   }
 
   @Override
-  public void status(Object value) {
+  public void status(Object value)
+  {
     status(String.valueOf(value));
   }
 
   @Override
-  public void statusf(String format, Object... args) {
+  public void statusf(String format, Object... args)
+  {
     status(String.format(format, args));
   }
 
   @Override
-  public synchronized void clearStatus() {
+  public synchronized void clearStatus()
+  {
     if (currentLineIsStatus) {
       currentLineIsStatus = false;
       eraseLine();
     }
   }
 
-  synchronized void setColor(String color) {
+  synchronized void setColor(String color)
+  {
     if (!this.color.equals(color)) {
       out.flush();
       out.write(color);
@@ -104,7 +119,8 @@ class ConsoleStatus implements Status {
     }
   }
 
-  private void eraseLine() {
+  private void eraseLine()
+  {
     out.flush();
 
     if (color.equals(STATUS_COLOR)) {

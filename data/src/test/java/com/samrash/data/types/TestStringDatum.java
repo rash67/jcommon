@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestStringDatum {
+public class TestStringDatum
+{
   private StringDatum emptyStringDatum;
   private StringDatum trueStringDatum1;
   private StringDatum trueStringDatum2;
@@ -37,7 +39,8 @@ public class TestStringDatum {
   private StringDatum floatingZeroDatum;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     emptyStringDatum = new StringDatum("");
     trueStringDatum1 = new StringDatum("1");
     trueStringDatum2 = new StringDatum("true");
@@ -56,7 +59,8 @@ public class TestStringDatum {
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     Assert.assertEquals(emptyStringDatum.asBoolean(), false);
     Assert.assertEquals(trueStringDatum1.asBoolean(), true);
     Assert.assertEquals(trueStringDatum2.asBoolean(), true);
@@ -74,7 +78,8 @@ public class TestStringDatum {
   }
 
   @Test(groups = "fast")
-  public void testCompare() throws Exception {
+  public void testCompare() throws Exception
+  {
     Assert.assertEquals(stringDatum1.compareTo(stringDatum3), -1);
     Assert.assertEquals(stringDatum1.compareTo(stringDatum1), 0);
     Assert.assertEquals(stringDatum1.compareTo(stringDatum2), 0);
@@ -82,52 +87,60 @@ public class TestStringDatum {
   }
 
   @Test(groups = "fast")
-  public void testEquals() throws Exception {
+  public void testEquals() throws Exception
+  {
     Assert.assertEquals(stringDatum1, stringDatum1);
     Assert.assertEquals(stringDatum1, stringDatum2);
   }
 
   @Test(groups = "fast")
-  public void testError() throws Exception {
+  public void testError() throws Exception
+  {
     try {
       stringDatum1.asByte();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
 
     try {
       stringDatum1.asShort();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
 
     try {
       stringDatum1.asInteger();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
 
     try {
       stringDatum1.asLong();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
 
     try {
       stringDatum1.asFloat();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
 
     try {
       stringDatum1.asDouble();
       Assert.fail();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       // expected
     }
   }

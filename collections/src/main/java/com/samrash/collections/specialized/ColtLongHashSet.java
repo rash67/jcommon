@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import cern.colt.list.LongArrayList;
@@ -30,39 +31,46 @@ import java.util.NoSuchElementException;
  * <p/>
  * to implement a memory efficient hash set of longs
  */
-public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSet<Long> {
+public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSet<Long>
+{
   private static final Object TRUE = new Object();
 
   private final OpenLongObjectHashMap map;
 
   private volatile long version = Long.MIN_VALUE;
 
-  ColtLongHashSet(OpenLongObjectHashMap map) {
+  ColtLongHashSet(OpenLongObjectHashMap map)
+  {
     this.map = map;
   }
 
-  public ColtLongHashSet(int initialCapacity) {
+  public ColtLongHashSet(int initialCapacity)
+  {
     this.map = new OpenLongObjectHashMap(initialCapacity);
   }
 
   @Override
-  public synchronized boolean add(Long aLong) {
+  public synchronized boolean add(Long aLong)
+  {
     version++;
 
     return map.put(aLong.longValue(), TRUE);
   }
 
   @Override
-  public Iterator<Long> iterator() {
+  public Iterator<Long> iterator()
+  {
     return new Iter();
   }
 
   @Override
-  public synchronized int size() {
+  public synchronized int size()
+  {
     return map.size();
   }
 
-  private class Iter implements Iterator<Long> {
+  private class Iter implements Iterator<Long>
+  {
     private final LongArrayList mapKeyList = map.keys();
 
     private int index = 0;
@@ -70,14 +78,16 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
     private boolean canRemove = false;
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNext()
+    {
       synchronized (ColtLongHashSet.this) {
         return index < mapKeyList.size();
       }
     }
 
     @Override
-    public Long next() {
+    public Long next()
+    {
       synchronized (ColtLongHashSet.this) {
         if (versionSnapshot != version) {
           throw new ConcurrentModificationException();
@@ -97,11 +107,12 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
       synchronized (ColtLongHashSet.this) {
         if (!canRemove) {
           throw new IllegalStateException(
-            "repeated remove() calls or next() not called"
+              "repeated remove() calls or next() not called"
           );
         }
 
@@ -114,7 +125,8 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
   }
 
   @Override
-  public SnapshotableSet<Long> makeSnapshot() {
+  public SnapshotableSet<Long> makeSnapshot()
+  {
     OpenLongObjectHashMap mapCopy = (OpenLongObjectHashMap) map.clone();
     ColtLongHashSet thisCopy = new ColtLongHashSet(mapCopy);
 
@@ -122,7 +134,8 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
   }
 
   @Override
-  public SnapshotableSet<Long> makeTransientSnapshot() {
+  public SnapshotableSet<Long> makeTransientSnapshot()
+  {
     return makeSnapshot();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 /**
@@ -20,22 +21,23 @@ package com.samrash.data.types;
  * itself along with methods to inspect attributes (getType, isNull).  The
  * idea is to cover all primitives and make lists and maps easy, and any
  * arbitrary extensions possible.
- *
+ * <p>
  * The definition of asBoolean() for say, a MapDatum, will be defined by that
  * class.  It may choose to throw an UnssupportedOperationException, or to
  * return true if the map is not empty.  Read each impl's documentation.
- *
+ * <p>
  * Certainly, if the underlying impl is a BooleanDatum, asBoolean()
  * should return true/false accordingly
- *
+ * <p>
  * Onte note: unless otherwise stated, implementations need NOT be thread safe
  */
 
-public interface Datum extends Comparable<Datum> {
+public interface Datum extends Comparable<Datum>
+{
 
   /**
    * all as*() methods will make a best effort to return the underlying Datum as the requested type
-   *
+   * <p>
    * ex:
    *
    * <pre>
@@ -67,20 +69,28 @@ public interface Datum extends Comparable<Datum> {
    * @return
    */
   boolean asBoolean();
+
   byte asByte();
+
   short asShort();
+
   int asInteger();
+
   long asLong();
+
   float asFloat();
+
   double asDouble();
+
   String asString();
 
   /**
    * what this returns really doesn't matter. It need only be deterministic
    * so that MurmurHash can take it as input and hash. It should probably
    * also be fast to make distinct counting fast
-   *
+   * <p>
    * many Datums don't yet implement this
+   *
    * @return
    */
   byte[] asBytes();
@@ -91,7 +101,7 @@ public interface Datum extends Comparable<Datum> {
    * <pre>
    *    datum.getType() == DatumType.NULL
    * </pre>
-   *
+   * <p>
    * kept for historical and conciseness reasons
    *
    * @return
@@ -100,6 +110,7 @@ public interface Datum extends Comparable<Datum> {
 
   /**
    * see {@link DatumType} for a list of valid values
+   *
    * @returns
    */
   DatumType getType();

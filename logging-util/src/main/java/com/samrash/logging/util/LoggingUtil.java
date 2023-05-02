@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging.util;
 
 import org.slf4j.Logger;
@@ -22,7 +23,8 @@ import org.slf4j.LoggerFactory;
  * Class that captures the convenient methods (that is not found in any of the third-party logging
  * frameworks) for logging.
  */
-public class LoggingUtil {
+public class LoggingUtil
+{
 
   /**
    * Returns a logger for the calling class or context.
@@ -36,7 +38,8 @@ public class LoggingUtil {
    *
    * @return a logger for the current scope
    */
-  public static Logger getClassLogger() {
+  public static Logger getClassLogger()
+  {
     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
     StackTraceElement element = stacktrace[2];
     String name = element.getClassName();

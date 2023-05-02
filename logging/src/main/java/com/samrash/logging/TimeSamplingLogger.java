@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/*
+ * modified by Sam Rash 2023
+ */
+
 package com.samrash.logging;
 
 import org.joda.time.DateTimeUtils;
@@ -21,31 +26,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * decorates a FacebookLogger with  the ability to sample logging at a specified window size
+ * decorates a LOgger with  the ability to sample logging at a specified window size
  * (1 per time specified)
- *
  */
-public class TimeSamplingLogger implements Logger {
+public class TimeSamplingLogger implements Logger
+{
   private final Logger logger;
   private final long windowSizeMillis;
   private final AtomicBoolean logToggle = new AtomicBoolean(false);
 
   private volatile long lastLoggedMillis = 0;
 
-  public TimeSamplingLogger(Logger logger, long time, TimeUnit timeUnit) {
+  public TimeSamplingLogger(Logger logger, long time, TimeUnit timeUnit)
+  {
     this.logger = logger;
     windowSizeMillis = timeUnit.toMillis(time);
   }
 
-  private boolean shouldLog() {
+  private boolean shouldLog()
+  {
     if (DateTimeUtils.currentTimeMillis() - lastLoggedMillis >= windowSizeMillis
-      && logToggle.compareAndSet(false, true)
-      ) {
+        && logToggle.compareAndSet(false, true)
+    ) {
       try {
         lastLoggedMillis = DateTimeUtils.currentTimeMillis();
 
         return true;
-      } finally {
+      }
+      finally {
         logToggle.set(false);
       }
     }
@@ -54,53 +62,62 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
-  public boolean isTraceEnabled() {
+  public boolean isTraceEnabled()
+  {
     return logger.isTraceEnabled();
   }
 
   @Override
-  public boolean isDebugEnabled() {
+  public boolean isDebugEnabled()
+  {
     return logger.isDebugEnabled();
   }
 
   @Override
-  public boolean isInfoEnabled() {
+  public boolean isInfoEnabled()
+  {
     return logger.isInfoEnabled();
   }
 
   @Override
-  public boolean isWarnEnabled() {
+  public boolean isWarnEnabled()
+  {
     return logger.isWarnEnabled();
   }
 
   @Override
-  public boolean isErrorEnabled() {
+  public boolean isErrorEnabled()
+  {
     return logger.isErrorEnabled();
   }
 
   @Override
-  public void trace(String format, Object... args) {
+  public void trace(String format, Object... args)
+  {
     if (shouldLog()) {
       logger.trace(format, args);
     }
   }
 
   @Override
-  public void trace(Throwable t, String format, Object... args) {
+  public void trace(Throwable t, String format, Object... args)
+  {
     if (shouldLog()) {
       logger.trace(t, format, args);
     }
   }
 
   @Override
-  public void debug(String format, Object... args) {
+  public void debug(String format, Object... args)
+  {
     if (shouldLog()) {
       logger.debug(format, args);
     }
   }
 
   @Override
-  public void debug(Throwable t, String format, Object... args) {
+  public void debug(Throwable t, String format, Object... args)
+  {
     if (shouldLog()) {
       logger.debug(t, format, args);
     }
@@ -108,21 +125,24 @@ public class TimeSamplingLogger implements Logger {
 
   @Override
   @Deprecated
-  public void debug(String message, Throwable throwable) {
+  public void debug(String message, Throwable throwable)
+  {
     if (shouldLog()) {
       logger.debug(message, throwable);
     }
   }
 
   @Override
-  public void info(String format, Object... args) {
+  public void info(String format, Object... args)
+  {
     if (shouldLog()) {
       logger.info(format, args);
     }
   }
 
   @Override
-  public void info(Throwable t, String format, Object... args) {
+  public void info(Throwable t, String format, Object... args)
+  {
     if (shouldLog()) {
       logger.info(t, format, args);
     }
@@ -130,21 +150,24 @@ public class TimeSamplingLogger implements Logger {
 
   @Override
   @Deprecated
-  public void info(String message, Throwable throwable) {
+  public void info(String message, Throwable throwable)
+  {
     if (shouldLog()) {
       logger.info(message, throwable);
     }
   }
 
   @Override
-  public void warn(String format, Object... args) {
+  public void warn(String format, Object... args)
+  {
     if (shouldLog()) {
       logger.warn(format, args);
     }
   }
 
   @Override
-  public void warn(Throwable t, String format, Object... args) {
+  public void warn(Throwable t, String format, Object... args)
+  {
     if (shouldLog()) {
       logger.warn(t, format, args);
     }
@@ -152,21 +175,24 @@ public class TimeSamplingLogger implements Logger {
 
   @Override
   @Deprecated
-  public void warn(String message, Throwable throwable) {
+  public void warn(String message, Throwable throwable)
+  {
     if (shouldLog()) {
       logger.warn(message, throwable);
     }
   }
 
   @Override
-  public void error(String format, Object... args) {
+  public void error(String format, Object... args)
+  {
     if (shouldLog()) {
       logger.error(format, args);
     }
   }
 
   @Override
-  public void error(Throwable t, String format, Object... args) {
+  public void error(Throwable t, String format, Object... args)
+  {
     if (shouldLog()) {
       logger.error(t, format, args);
     }
@@ -174,14 +200,16 @@ public class TimeSamplingLogger implements Logger {
 
   @Override
   @Deprecated
-  public void error(String message, Throwable throwable) {
+  public void error(String message, Throwable throwable)
+  {
     if (shouldLog()) {
       logger.error(message, throwable);
     }
   }
 
   @Override
-  public String getName() {
+  public String getName()
+  {
     return logger.getName();
   }
 }

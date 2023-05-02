@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
@@ -28,20 +29,24 @@ import java.util.regex.Pattern;
 /**
  * Provides JSON stored in a file
  */
-public class FileJSONProvider implements JSONProvider {
+public class FileJSONProvider implements JSONProvider
+{
   private static final Pattern COMMENT_LINE = Pattern.compile("^\\s*//.*");
 
   private final File file;
 
-  public FileJSONProvider(File file) {
+  public FileJSONProvider(File file)
+  {
     this.file = file;
   }
 
-  protected BufferedReader getReader() throws FileNotFoundException {
+  protected BufferedReader getReader() throws FileNotFoundException
+  {
     return new BufferedReader(new FileReader(file));
   }
 
-  private JSONObject fileToJSON() throws IOException, JSONException {
+  private JSONObject fileToJSON() throws IOException, JSONException
+  {
     StringBuilder sb = new StringBuilder(1024);
     BufferedReader in = null;
 
@@ -56,7 +61,8 @@ public class FileJSONProvider implements JSONProvider {
         }
       }
 
-    } finally {
+    }
+    finally {
       if (in != null) {
         in.close();
       }
@@ -66,10 +72,12 @@ public class FileJSONProvider implements JSONProvider {
   }
 
   @Override
-  public JSONObject get() throws JSONException {
+  public JSONObject get() throws JSONException
+  {
     try {
       return fileToJSON();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new JSONException(e);
     }
   }

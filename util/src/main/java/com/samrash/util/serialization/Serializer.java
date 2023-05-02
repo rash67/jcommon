@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.serialization;
 
 
@@ -24,6 +25,7 @@ import java.io.DataOutput;
  * of Class\<T\> in order to have access to private data
  */
 
-public interface Serializer<T> {
+public interface Serializer<T>
+{
   public void serialize(T value, DataOutput out) throws SerDeException;
 }

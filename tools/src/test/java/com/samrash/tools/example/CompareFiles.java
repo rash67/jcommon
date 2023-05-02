@@ -13,59 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.example;
 
 import com.samrash.tools.CommandBuilder;
 import com.samrash.tools.CommandRunner;
+import com.samrash.tools.io.IO;
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParser;
 import com.samrash.tools.subprocess.Subprocess;
-import com.samrash.tools.io.IO;
 
 import java.io.File;
 
-public class CompareFiles implements CommandBuilder {
+public class CompareFiles implements CommandBuilder
+{
   private final IO io;
 
-  public CompareFiles(IO io) {
+  public CompareFiles(IO io)
+  {
     this.io = io;
   }
 
   @Override
-  public CliCommand defineCommand() {
+  public CliCommand defineCommand()
+  {
     CliCommand.Builder builder = new CliCommand.Builder(
-      "compare-files",
-      "Stupid example that compares files side-by-side by calling diff -y."
+        "compare-files",
+        "Stupid example that compares files side-by-side by calling diff -y."
     );
     builder.addParameter("file1")
-      .withDescription("Left-hand-side file")
-      .withExample("/tmp/a.txt");
+           .withDescription("Left-hand-side file")
+           .withExample("/tmp/a.txt");
     builder.addParameter("file2")
-      .withDescription("Right-hand-side file")
-      .withExample("/tmp/b.txt");
+           .withDescription("Right-hand-side file")
+           .withExample("/tmp/b.txt");
     builder.addOption("--width")
-      .withMetavar("columns")
-      .withDefault("80")
-      .withDescription("Number of columns to show");
+           .withMetavar("columns")
+           .withDefault("80")
+           .withDescription("Number of columns to show");
 
     return builder.build();
   }
 
   @Override
-  public void runCommand(CliParser parser) {
+  public void runCommand(CliParser parser)
+  {
     compareFiles(
-      parser.get("file1", Converters.FILE),
-      parser.get("file2", Converters.FILE),
-      parser.get("--width", Converters.INT)
+        parser.get("file1", Converters.FILE),
+        parser.get("file2", Converters.FILE),
+        parser.get("--width", Converters.INT)
     );
   }
 
-  public void compareFiles(File leftHandSideFile, File rightHandSideFile, int width) {
+  public void compareFiles(File leftHandSideFile, File rightHandSideFile, int width)
+  {
     Subprocess diff = io.subprocess.forCommand("diff")
-      .withArguments("-y")
-      .withArguments("--width", width)
-      .withArguments(leftHandSideFile, rightHandSideFile)
-      .stream();
+                                   .withArguments("-y")
+                                   .withArguments("--width", width)
+                                   .withArguments(leftHandSideFile, rightHandSideFile)
+                                   .stream();
 
     for (String line : diff) {
       io.out.println(line);
@@ -76,7 +82,8 @@ public class CompareFiles implements CommandBuilder {
     }
   }
 
-  public static void main(String... args) {
+  public static void main(String... args)
+  {
     IO io = new IO();
     CommandRunner runner = new CommandRunner(io, new CompareFiles(io));
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.datumdigest;
 
 
@@ -23,14 +24,15 @@ import com.samrash.util.digest.MurmurHash;
 
 /**
  * takes Datums and delegates to a hash function pair:
- *  f1: long -> long
- *  f2: byte[] -> long
- *
- *  f2 has an option: internally, it produces 128 bit hash, so you can ask to use the upper or
- *  lower 8 bytes.  The default is the lower 8 bytes.  For random hashing, in practice it does
- *  not matter.
+ * f1: long -> long
+ * f2: byte[] -> long
+ * <p>
+ * f2 has an option: internally, it produces 128 bit hash, so you can ask to use the upper or
+ * lower 8 bytes.  The default is the lower 8 bytes.  For random hashing, in practice it does
+ * not matter.
  */
-public class DatumMurmur3Hash implements DatumDigest, DigestFunction<Datum> {
+public class DatumMurmur3Hash implements DatumDigest, DigestFunction<Datum>
+{
   // Since this digestfuncton needs to be deterministic, use some
   // fixed number to initialize it. This number cannot be changed in
   // future. Puma instances can go up and down, and the old data still
@@ -39,12 +41,14 @@ public class DatumMurmur3Hash implements DatumDigest, DigestFunction<Datum> {
   // applies only to to the hash(byte[]) where we have 128 bytes
   private final boolean useLsb;
 
-  private DatumMurmur3Hash(boolean useLsb) {
+  private DatumMurmur3Hash(boolean useLsb)
+  {
     this.useLsb = useLsb;
   }
 
 
-  public DatumMurmur3Hash() {
+  public DatumMurmur3Hash()
+  {
     this(true);
   }
 
@@ -54,7 +58,8 @@ public class DatumMurmur3Hash implements DatumDigest, DigestFunction<Datum> {
    *
    * @return digest that will use lower 8 bytes
    */
-  public static DatumMurmur3Hash useLsb() {
+  public static DatumMurmur3Hash useLsb()
+  {
     return new DatumMurmur3Hash(true);
   }
 
@@ -64,12 +69,14 @@ public class DatumMurmur3Hash implements DatumDigest, DigestFunction<Datum> {
    *
    * @return digest that will use upper 8 bytes
    */
-  public static DatumMurmur3Hash useMsb() {
+  public static DatumMurmur3Hash useMsb()
+  {
     return new DatumMurmur3Hash(false);
   }
 
   @Override
-  public long computeDigest(Datum input) {
+  public long computeDigest(Datum input)
+  {
     // optimization to use the faster hash on a long when the type is an integer (in the
     // mathematical sense, not java/C types)
     if (DatumType.isLongCompatible(input)) {

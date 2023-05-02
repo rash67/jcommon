@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import org.mockito.Matchers;
@@ -28,20 +29,23 @@ import static org.mockito.Mockito.anyVararg;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class TestSlf4jLoggerAdapter {
+public class TestSlf4jLoggerAdapter
+{
 
   @Test
-  public void testCallForwarding() throws Exception {
+  public void testCallForwarding() throws Exception
+  {
     for (Method method : Slf4jLoggerAdapter.class.getDeclaredMethods()) {
-        Logger mockLogger = Mockito.mock(Logger.class);
-        org.slf4j.Logger adapter = new Slf4jLoggerAdapter(mockLogger);
-        Object[] nullParams = new Object[method.getParameterTypes().length];
-        method.invoke(adapter, nullParams);
-        verifyCallForwarded(mockLogger, method);
+      Logger mockLogger = Mockito.mock(Logger.class);
+      org.slf4j.Logger adapter = new Slf4jLoggerAdapter(mockLogger);
+      Object[] nullParams = new Object[method.getParameterTypes().length];
+      method.invoke(adapter, nullParams);
+      verifyCallForwarded(mockLogger, method);
     }
   }
 
-  private void verifyCallForwarded(Logger mockLogger, Method method) {
+  private void verifyCallForwarded(Logger mockLogger, Method method)
+  {
     switch (method.getName()) {
       case "error":
         if (hasThrowableParam(method)) {
@@ -101,7 +105,8 @@ public class TestSlf4jLoggerAdapter {
     }
   }
 
-  private boolean hasThrowableParam(Method method) {
+  private boolean hasThrowableParam(Method method)
+  {
     for (Class<?> type : method.getParameterTypes()) {
       if (type.equals(Throwable.class)) {
         return true;

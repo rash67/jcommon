@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class ExecutorServiceFrontBuilder {
+public class ExecutorServiceFrontBuilder
+{
   private final ExecutorService coreExecutor;
   private int maxInstanceThreads = 1;
   private long maxTimeSlice = Long.MAX_VALUE;
@@ -31,7 +33,8 @@ public class ExecutorServiceFrontBuilder {
    *
    * @param coreExecutor
    */
-  public ExecutorServiceFrontBuilder(ExecutorService coreExecutor) {
+  public ExecutorServiceFrontBuilder(ExecutorService coreExecutor)
+  {
     this.coreExecutor = coreExecutor;
   }
 
@@ -43,12 +46,13 @@ public class ExecutorServiceFrontBuilder {
    * @param maxCoreThreads
    */
   public ExecutorServiceFrontBuilder(
-    ExecutorService coreExecutor, int maxCoreThreads
-  ) {
+      ExecutorService coreExecutor, int maxCoreThreads
+  )
+  {
     this.coreExecutor = new ExecutorServiceFront(
-      new LinkedBlockingQueue<Runnable>(),
-      coreExecutor,
-      maxCoreThreads
+        new LinkedBlockingQueue<Runnable>(),
+        coreExecutor,
+        maxCoreThreads
     );
   }
 
@@ -60,8 +64,9 @@ public class ExecutorServiceFrontBuilder {
    * @return
    */
   public ExecutorServiceFrontBuilder setMaxInstanceThreads(
-    int maxInstanceThreads
-  ) {
+      int maxInstanceThreads
+  )
+  {
     this.maxInstanceThreads = maxInstanceThreads;
     return this;
   }
@@ -71,7 +76,8 @@ public class ExecutorServiceFrontBuilder {
    *
    * @param name name to use
    */
-  public ExecutorServiceFrontBuilder setDrainerBaseName(String name) {
+  public ExecutorServiceFrontBuilder setDrainerBaseName(String name)
+  {
     this.drainerBaseName = name;
 
     return this;
@@ -86,21 +92,23 @@ public class ExecutorServiceFrontBuilder {
    * @return
    */
   public ExecutorServiceFrontBuilder setMaxTimeSlice(
-    long maxTimeSlice, TimeUnit maxTimeSliceUnit
-  ) {
+      long maxTimeSlice, TimeUnit maxTimeSliceUnit
+  )
+  {
     this.maxTimeSlice = maxTimeSlice;
     this.maxTimeSliceUnit = maxTimeSliceUnit;
     return this;
   }
 
-  public ExecutorServiceFront build() {
+  public ExecutorServiceFront build()
+  {
     return new ExecutorServiceFront(
-      new LinkedBlockingQueue<Runnable>(),
-      coreExecutor,
-      drainerBaseName,
-      maxInstanceThreads,
-      maxTimeSlice,
-      maxTimeSliceUnit
+        new LinkedBlockingQueue<Runnable>(),
+        coreExecutor,
+        drainerBaseName,
+        maxInstanceThreads,
+        maxTimeSlice,
+        maxTimeSliceUnit
     );
   }
 }

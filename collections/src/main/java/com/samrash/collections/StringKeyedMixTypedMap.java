@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Map;
@@ -22,11 +23,14 @@ import java.util.Map;
  *
  * @param <String>
  */
-public class StringKeyedMixTypedMap extends MixedTypeMap<String> {
-  public StringKeyedMixTypedMap(Map<Key<String, ?>, Object> map) {
+public class StringKeyedMixTypedMap extends MixedTypeMap<String>
+{
+  public StringKeyedMixTypedMap(Map<Key<String, ?>, Object> map)
+  {
     super(map);
   }
 
-  public StringKeyedMixTypedMap() {
+  public StringKeyedMixTypedMap()
+  {
   }
 }

@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.reflection;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-public class RobustProxy {
-  public static <T> T wrap(Class<T> clazz, final T instance) {
-    InvocationHandler handler = new InvocationHandler() { @Override
-      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+public class RobustProxy
+{
+  public static <T> T wrap(Class<T> clazz, final T instance)
+  {
+    InvocationHandler handler = new InvocationHandler()
+    {
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+      {
         if (instance != null) {
           return method.invoke(instance, args);
         } else if (method.getReturnType().equals(Void.class)) {

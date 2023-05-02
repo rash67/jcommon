@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
+
+import com.samrash.logging.Logger;
+import com.samrash.logging.LoggerImpl;
+import com.samrash.stats.MultiWindowDistribution;
+import com.samrash.stats.MultiWindowRate;
+import com.samrash.stats.MultiWindowSpread;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,13 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.samrash.logging.Logger;
-import com.samrash.logging.LoggerImpl;
-import com.samrash.stats.MultiWindowDistribution;
-import com.samrash.stats.MultiWindowRate;
-import com.samrash.stats.MultiWindowSpread;
-
-public class Stats implements StatsReader, StatsCollector {
+public class Stats implements StatsReader, StatsCollector
+{
   private static final Logger LOG = LoggerImpl.getClassLogger();
   private static final String ERROR_FLAG = "--ERROR--";
   private static final long ERROR_VALUE = -1;
@@ -41,19 +43,22 @@ public class Stats implements StatsReader, StatsCollector {
   private final ConcurrentMap<String, LongCounter> counters = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
-    new ConcurrentHashMap<>();
+      new ConcurrentHashMap<>();
 
-  public Stats(String prefix) {
+  public Stats(String prefix)
+  {
     this.prefix = prefix;
   }
 
-  public Stats() {
+  public Stats()
+  {
     this("");
   }
 
   private MultiWindowRate getMultiWindowRate(
-    String key, ConcurrentMap<String, MultiWindowRate> map
-  ) {
+      String key, ConcurrentMap<String, MultiWindowRate> map
+  )
+  {
     MultiWindowRate rate = map.get(key);
 
     if (rate == null) {
@@ -69,28 +74,29 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
-  public void exportCounters(Map<String, Long> counterMap) {
+  public void exportCounters(Map<String, Long> counterMap)
+  {
     for (Map.Entry<String, MultiWindowRate> entry : rates.entrySet()) {
       StatsUtil.addRateAndSumToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
+          prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
 
     for (Map.Entry<String, MultiWindowRate> entry : sums.entrySet()) {
       StatsUtil.addSumToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
+          prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
 
     for (Map.Entry<String, MultiWindowSpread> entry : spreads.entrySet()) {
       StatsUtil.addSpreadToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
+          prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
 
     for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
       StatsUtil.addQuantileToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
+          prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
 
@@ -105,59 +111,69 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
 
-
   @Override
-  public MultiWindowRate getRate(StatType statType) {
+  public MultiWindowRate getRate(StatType statType)
+  {
     return getRate(statType.getKey());
   }
 
   @Override
-  public MultiWindowRate getRate(String key) {
+  public MultiWindowRate getRate(String key)
+  {
     return getMultiWindowRate(key, rates);
   }
 
 
   @Override
-  public void incrementRate(StatType type, long delta) {
+  public void incrementRate(StatType type, long delta)
+  {
     getMultiWindowRate(type.getKey(), rates).add(delta);
   }
 
   @Override
-  public void incrementRate(String key, long delta) {
+  public void incrementRate(String key, long delta)
+  {
     getMultiWindowRate(key, rates).add(delta);
   }
 
   @Override
-  public MultiWindowRate getSum(StatType statType) {
+  public MultiWindowRate getSum(StatType statType)
+  {
     return getSum(statType.getKey());
   }
 
   @Override
-  public MultiWindowRate getSum(String key) {
+  public MultiWindowRate getSum(String key)
+  {
     return getMultiWindowRate(key, sums);
   }
 
   @Override
-  public void incrementSum(StatType type, long delta) {
+  public void incrementSum(StatType type, long delta)
+  {
     getMultiWindowRate(type.getKey(), sums).add(delta);
   }
 
   @Override
-  public void incrementSum(String key, long delta) {
+  public void incrementSum(String key, long delta)
+  {
     getMultiWindowRate(key, sums).add(delta);
   }
 
   @Override
-  public void incrementCounter(StatType key, long delta) {
+  public void incrementCounter(StatType key, long delta)
+  {
     internalIncrementCounter(key.getKey(), delta);
   }
 
   @Override
-  public void incrementCounter(String key, long delta) {
+  public void incrementCounter(String key, long delta)
+  {
     internalIncrementCounter(key, delta);
   }
 
-  private void internalIncrementCounter(String key, long delta) {
+  private void internalIncrementCounter(String key, long delta)
+  {
     LongCounter counter = counters.get(key);
 
     if (counter == null) {
@@ -174,89 +190,105 @@ public class Stats implements StatsReader, StatsCollector {
 
   @Override
   @Deprecated
-  public long setCounter(StatType statType, long value) {
+  public long setCounter(StatType statType, long value)
+  {
     return StatsUtil.setCounterValue(statType.getKey(), value, this);
   }
 
   @Override
   @Deprecated
-  public long setCounter(String key, long value) {
+  public long setCounter(String key, long value)
+  {
     return StatsUtil.setCounterValue(key, value, this);
   }
 
-  public long resetCounter(StatType key) {
+  public long resetCounter(StatType key)
+  {
     return internalResetCounter(key.getKey());
   }
 
   @Override
-  public long resetCounter(String key) {
+  public long resetCounter(String key)
+  {
     return internalResetCounter(key);
   }
 
-  private long internalResetCounter(String key) {
+  private long internalResetCounter(String key)
+  {
     LongCounter counter = counters.remove(key);
 
     return counter == null ? 0 : counter.get();
   }
 
-  public void incrementSpread(StatType type, long value) {
-    getMultiWindowSpread(type.getKey()).add(value);  }
+  public void incrementSpread(StatType type, long value)
+  {
+    getMultiWindowSpread(type.getKey()).add(value);
+  }
 
   @Override
-  public void incrementSpread(String key, long value) {
+  public void incrementSpread(String key, long value)
+  {
     getMultiWindowSpread(key).add(value);
   }
 
   @Override
-  public void updateDistribution(StatType type, long value) {
+  public void updateDistribution(StatType type, long value)
+  {
     getMultiWindowDistribution(type.getKey()).add(value);
   }
 
   @Override
-  public void updateDistribution(String key, long value) {
+  public void updateDistribution(String key, long value)
+  {
     getMultiWindowDistribution(key).add(value);
   }
 
   @Override
-  public long getCounter(StatType key) {
+  public long getCounter(StatType key)
+  {
     return internalGetCounter(key.getKey());
   }
 
   @Override
-  public long getCounter(String key) {
+  public long getCounter(String key)
+  {
     return internalGetCounter(key);
   }
 
   @Override
-  public MultiWindowSpread getSpread(StatType key) {
+  public MultiWindowSpread getSpread(StatType key)
+  {
     return getMultiWindowSpread(key.getKey());
   }
 
   @Override
-  public MultiWindowSpread getSpread(String key) {
+  public MultiWindowSpread getSpread(String key)
+  {
     return getMultiWindowSpread(key);
   }
 
   @Override
-  public MultiWindowDistribution getDistribution(StatType key) {
+  public MultiWindowDistribution getDistribution(StatType key)
+  {
     return getMultiWindowDistribution(key.getKey());
   }
 
   @Override
-  public MultiWindowDistribution getDistribution(String key) {
+  public MultiWindowDistribution getDistribution(String key)
+  {
     return getMultiWindowDistribution(key);
   }
 
   /**
    * Sets the dynamic counter if a counter with the specified key doesn't already exist
    *
-   * @param key the key for the dynamic counter
+   * @param key           the key for the dynamic counter
    * @param valueProducer the generator value for this counter
-   *
    * @return true if the counter was added. False, if a counter with the specified key exists
    * already
    */
-  public boolean addDynamicCounter(String key, Callable<Long> valueProducer) {
+  public boolean addDynamicCounter(String key, Callable<Long> valueProducer)
+  {
     return null == counters.putIfAbsent(key, new CallableLongCounter(key, valueProducer));
   }
 
@@ -267,38 +299,45 @@ public class Stats implements StatsReader, StatsCollector {
    * @param key the key for the counter
    * @return true if a counter with the specified key existed and was removed, false otherwise.
    */
-  public boolean removeCounter(String key) {
+  public boolean removeCounter(String key)
+  {
     return counters.remove(key) != null;
   }
 
-  private long internalGetCounter(String key) {
+  private long internalGetCounter(String key)
+  {
     LongCounter counter = counters.get(key);
 
     return counter == null ? 0 : counter.get();
   }
 
   @Override
-  public String getAttribute(StatType key) {
+  public String getAttribute(StatType key)
+  {
     return internalGetAttribute(key.getKey());
   }
 
   @Override
-  public void setAttribute(StatType key, String value) {
+  public void setAttribute(StatType key, String value)
+  {
     internalSetAttribute(key.getKey(), new StringProducer(value));
   }
 
   @Override
-  public void setAttribute(String key, String value) {
+  public void setAttribute(String key, String value)
+  {
     internalSetAttribute(key, new StringProducer(value));
   }
 
   @Override
-  public void setAttribute(StatType key, Callable<String> valueProducer) {
+  public void setAttribute(StatType key, Callable<String> valueProducer)
+  {
     internalSetAttribute(key.getKey(), valueProducer);
   }
 
   @Override
-  public void setAttribute(String key, Callable<String> valueProducer) {
+  public void setAttribute(String key, Callable<String> valueProducer)
+  {
     internalSetAttribute(key, valueProducer);
   }
 
@@ -308,30 +347,37 @@ public class Stats implements StatsReader, StatsCollector {
    * @param key the key for the attribute
    * @return true if an attribute with the specified key existed and was removed, false otherwise.
    */
-  public boolean removeAttribute(String key) {
+  public boolean removeAttribute(String key)
+  {
     return attributes.remove(key) != null;
   }
 
-  private void internalSetAttribute(String key, Callable<String> valueProducer) {
+  private void internalSetAttribute(String key, Callable<String> valueProducer)
+  {
     try {
       attributes.put(key, valueProducer);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("error in producer for key %s", key, e);
     }
   }
 
   @Override
-  public String getAttribute(String key) {
+  public String getAttribute(String key)
+  {
     return internalGetAttribute(key);
   }
 
   @Deprecated
   @Override
-  public Callable<Long> getDynamicCounter(StatType key) {
+  public Callable<Long> getDynamicCounter(StatType key)
+  {
     final LongCounter longCounter = counters.get(key.getKey());
-    return new Callable<Long>() {
+    return new Callable<Long>()
+    {
       @Override
-      public Long call() throws Exception {
+      public Long call() throws Exception
+      {
         return longCounter.get();
       }
     };
@@ -339,39 +385,47 @@ public class Stats implements StatsReader, StatsCollector {
 
   @Deprecated
   @Override
-  public Callable<Long> getDynamicCounter(String key) {
+  public Callable<Long> getDynamicCounter(String key)
+  {
     final LongCounter longCounter = counters.get(key);
-    return new Callable<Long>() {
+    return new Callable<Long>()
+    {
       @Override
-      public Long call() throws Exception {
+      public Long call() throws Exception
+      {
         return longCounter.get();
       }
     };
   }
 
-  private String internalGetAttribute(String key) {
+  private String internalGetAttribute(String key)
+  {
     try {
       Callable<String> callable = attributes.get(key);
 
       return callable == null ? null : callable.call();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("error producing value for key %s", key, e);
       return ERROR_FLAG;
     }
   }
 
   @Override
-  public Map<String, String> getAttributes() {
+  public Map<String, String> getAttributes()
+  {
     return materializeAttributes();
   }
 
-  private Map<String, String> materializeAttributes() {
+  private Map<String, String> materializeAttributes()
+  {
     Map<String, String> materializedAttributes = new HashMap<String, String>();
 
     for (Map.Entry<String, Callable<String>> entry : attributes.entrySet()) {
       try {
         materializedAttributes.put(entry.getKey(), entry.getValue().call());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         materializedAttributes.put(entry.getKey(), ERROR_FLAG);
         LOG.error("error producing value for key %s", entry.getKey(), e);
       }
@@ -379,14 +433,15 @@ public class Stats implements StatsReader, StatsCollector {
 
     for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
       StatsUtil.addHistogramToExportedValues(
-        entry.getKey(), entry.getValue(), materializedAttributes
+          entry.getKey(), entry.getValue(), materializedAttributes
       );
     }
 
     return materializedAttributes;
   }
 
-  private MultiWindowSpread getMultiWindowSpread(String key) {
+  private MultiWindowSpread getMultiWindowSpread(String key)
+  {
     MultiWindowSpread spread = spreads.get(key);
 
     if (spread == null) {
@@ -401,7 +456,8 @@ public class Stats implements StatsReader, StatsCollector {
     return spread;
   }
 
-  private MultiWindowDistribution getMultiWindowDistribution(String key) {
+  private MultiWindowDistribution getMultiWindowDistribution(String key)
+  {
     MultiWindowDistribution distribution = distributions.get(key);
 
     if (distribution == null) {
@@ -416,57 +472,70 @@ public class Stats implements StatsReader, StatsCollector {
     return distribution;
   }
 
-  private static class StringProducer implements Callable<String> {
+  private static class StringProducer implements Callable<String>
+  {
     private final String value;
 
-    private StringProducer(String value) {
+    private StringProducer(String value)
+    {
       this.value = value;
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() throws Exception
+    {
       return value;
     }
   }
 
-  private interface LongCounter {
+  private interface LongCounter
+  {
     void update(long delta);
+
     long get();
   }
 
-  private static class AtomicLongCounter implements LongCounter {
+  private static class AtomicLongCounter implements LongCounter
+  {
     private final AtomicLong value = new AtomicLong(0);
 
     @Override
-    public void update(long delta) {
+    public void update(long delta)
+    {
       value.addAndGet(delta);
     }
 
     @Override
-    public long get() {
+    public long get()
+    {
       return value.get();
     }
   }
 
-  private static class CallableLongCounter implements LongCounter {
+  private static class CallableLongCounter implements LongCounter
+  {
     private final String key;
     private Callable<Long> longCallable;
 
-    private CallableLongCounter(String key, Callable<Long> longCallable) {
+    private CallableLongCounter(String key, Callable<Long> longCallable)
+    {
       this.key = key;
       this.longCallable = longCallable;
     }
 
     @Override
-    public void update(long delta) {
+    public void update(long delta)
+    {
       //no-op
     }
 
     @Override
-    public long get() {
+    public long get()
+    {
       try {
         return longCallable.call();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.debug("Exception when generating dynamic counter value for %s", key, e);
 
         return ERROR_VALUE;

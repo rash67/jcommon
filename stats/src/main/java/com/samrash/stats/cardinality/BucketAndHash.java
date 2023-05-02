@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class BucketAndHash {
+public class BucketAndHash
+{
   private final int bucket;
   private final long hash;
 
-  BucketAndHash(int bucket, long hash) {
+  BucketAndHash(int bucket, long hash)
+  {
     this.bucket = bucket;
     this.hash = hash;
   }
 
   /**
    * Extracts the bucket and truncated hash from the given 64-bit hash.
-   *
+   * <p>
    * Only the 64-log2(numberOfBuckets) least significant bits of the resulting hash are usable
    */
   public static BucketAndHash fromHash(long hash, int numberOfBuckets)
@@ -52,11 +55,13 @@ public class BucketAndHash {
     return new BucketAndHash(bucket, hash);
   }
 
-  public int getBucket() {
+  public int getBucket()
+  {
     return bucket;
   }
 
-  public long getHash() {
+  public long getHash()
+  {
     return hash;
   }
 }

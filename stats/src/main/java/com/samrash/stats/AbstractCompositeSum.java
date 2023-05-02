@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDuration;
@@ -20,13 +21,16 @@ import org.joda.time.ReadableDuration;
 import java.util.Iterator;
 
 public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
-  extends AbstractCompositeCounter<C> {
+    extends AbstractCompositeCounter<C>
+{
 
-  protected AbstractCompositeSum(ReadableDuration maxLength, ReadableDuration maxChunkLength) {
+  protected AbstractCompositeSum(ReadableDuration maxLength, ReadableDuration maxChunkLength)
+  {
     super(maxLength, maxChunkLength);
   }
 
-  protected AbstractCompositeSum(ReadableDuration maxLength) {
+  protected AbstractCompositeSum(ReadableDuration maxLength)
+  {
     super(maxLength);
   }
 
@@ -38,7 +42,8 @@ public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
    * @return sum of counter in the range
    */
   @Override
-  public synchronized long getValue() {
+  public synchronized long getValue()
+  {
     trimIfNeeded();
 
     long value = 0L;

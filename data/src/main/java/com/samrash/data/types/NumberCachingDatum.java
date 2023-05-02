@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.google.common.base.Preconditions;
@@ -22,60 +23,71 @@ import com.google.common.base.Preconditions;
  * on cpu cost by caching the conversion to the number format with the highest
  * bit-width
  */
-public class NumberCachingDatum extends WrappedDatum {
+public class NumberCachingDatum extends WrappedDatum
+{
   private volatile Long longValue;
   private volatile Double doubleValue;
   private volatile boolean checkDone = false;
   private volatile DatumType datumType;
 
-  public NumberCachingDatum(Datum delegate) {
+  public NumberCachingDatum(Datum delegate)
+  {
     super(delegate);
   }
 
   @Override
-  public long asLong() {
+  public long asLong()
+  {
     return getAsLong();
   }
 
   @Override
-  public boolean asBoolean() {
+  public boolean asBoolean()
+  {
     return getAsLong() != 0;
   }
 
   @Override
-  public byte asByte() {
+  public byte asByte()
+  {
     return (byte) getAsLong();
   }
 
   @Override
-  public short asShort() {
+  public short asShort()
+  {
     return (short) getAsLong();
   }
 
   @Override
-  public int asInteger() {
+  public int asInteger()
+  {
     return (int) getAsLong();
   }
 
   @Override
-  public float asFloat() {
+  public float asFloat()
+  {
     return (float) getAsDouble();
   }
 
   @Override
-  public double asDouble() {
+  public double asDouble()
+  {
     return getAsDouble();
   }
 
   @Override
-  public DatumType getType() {
+  public DatumType getType()
+  {
     checkType();
 
     return datumType;
   }
 
   // does conversion to both long and double
-  private void checkType() {
+  private void checkType()
+  {
     DatumType type = super.getType();
 
     switch (type) {
@@ -104,23 +116,26 @@ public class NumberCachingDatum extends WrappedDatum {
     }
   }
 
-  private DatumType computeTypeOfString() {
+  private DatumType computeTypeOfString()
+  {
     Preconditions.checkState(
-      super.getType() == DatumType.STRING,
-      "only DatumType of STRING require special processing"
+        super.getType() == DatumType.STRING,
+        "only DatumType of STRING require special processing"
     );
 
     try {
-        getAsLong();
+      getAsLong();
 
-      } catch (NumberFormatException e) {
-        // ignore
-      }
-      try {
-        getAsDouble();
-      } catch (NumberFormatException e) {
-        //ignore
-      }
+    }
+    catch (NumberFormatException e) {
+      // ignore
+    }
+    try {
+      getAsDouble();
+    }
+    catch (NumberFormatException e) {
+      //ignore
+    }
 
     if (longValue != null && doubleValue != null) {
       // old school way to tell if a double you cast to a long can be represented as a long
@@ -138,7 +153,8 @@ public class NumberCachingDatum extends WrappedDatum {
   }
 
 
-  private double getAsDouble() {
+  private double getAsDouble()
+  {
     if (doubleValue == null) {
       doubleValue = super.asDouble();
     }
@@ -146,7 +162,8 @@ public class NumberCachingDatum extends WrappedDatum {
     return doubleValue;
   }
 
-  private long getAsLong() {
+  private long getAsLong()
+  {
     if (longValue == null) {
       longValue = super.asLong();
     }

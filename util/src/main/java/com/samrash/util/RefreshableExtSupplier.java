@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
-public interface RefreshableExtSupplier<T, E extends Throwable> extends ExtSupplier<T, E> {
+public interface RefreshableExtSupplier<T, E extends Throwable> extends ExtSupplier<T, E>
+{
   void reset();
 }
 

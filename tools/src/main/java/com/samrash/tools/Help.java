@@ -13,43 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
+import com.samrash.tools.io.IO;
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParameter;
 import com.samrash.tools.parser.CliParser;
-import com.samrash.tools.io.IO;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Help implements CommandBuilder {
+public class Help implements CommandBuilder
+{
   private final IO io;
   private final String group;
   // HACK create a delegate so that we can add "ourselves" to the commands list
   private final CommandBuilder delegate;
   private final List<CommandBuilder> commands;
 
-  public Help(IO io, String group, List<CommandBuilder> commands) {
+  public Help(IO io, String group, List<CommandBuilder> commands)
+  {
     this.io = io;
     this.group = group;
-    this.delegate = new CommandBuilder() {
+    this.delegate = new CommandBuilder()
+    {
       @Override
-      public CliCommand defineCommand() {
+      public CliCommand defineCommand()
+      {
         CliCommand.Builder builder = new CliCommand.Builder("help", "Displays help for commands");
 
         builder.addParameter("command_name")
-          .withDescription("Command to display help for")
-          .withDefault(null);
+               .withDescription("Command to display help for")
+               .withDefault(null);
         builder.allowTrailingParameters();
 
         return builder.build();
       }
 
       @Override
-      public void runCommand(CliParser parser) {
+      public void runCommand(CliParser parser)
+      {
         help(parser.get("command_name"), parser.getTrailing());
       }
     };
@@ -57,21 +63,25 @@ public class Help implements CommandBuilder {
     this.commands.add(delegate);
   }
 
-  public Help(IO io, List<CommandBuilder> commands) {
+  public Help(IO io, List<CommandBuilder> commands)
+  {
     this(io, null, commands);
   }
 
   @Override
-  public CliCommand defineCommand() {
+  public CliCommand defineCommand()
+  {
     return delegate.defineCommand();
   }
 
   @Override
-  public void runCommand(CliParser parser) {
+  public void runCommand(CliParser parser)
+  {
     delegate.runCommand(parser);
   }
 
-  public void help(String commandName, List<String> arguments) {
+  public void help(String commandName, List<String> arguments)
+  {
     List<CliCommand> cliCommands = new ArrayList<>(commands.size() + 1);
     CommandBuilder selectedCommand = null;
 
@@ -100,7 +110,8 @@ public class Help implements CommandBuilder {
     }
   }
 
-  private void printSummary(PrintStream out, List<CliCommand> cliCommands) {
+  private void printSummary(PrintStream out, List<CliCommand> cliCommands)
+  {
     for (CliCommand command : cliCommands) {
       if (group != null) {
         out.print(group);

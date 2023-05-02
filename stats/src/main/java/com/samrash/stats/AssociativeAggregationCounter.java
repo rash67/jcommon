@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.Duration;
@@ -20,7 +21,8 @@ import org.joda.time.ReadableDateTime;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class AssociativeAggregationCounter implements EventCounter {
+public class AssociativeAggregationCounter implements EventCounter
+{
   private final ReadableDateTime start;
   private final ReadableDateTime end;
   private final long initialValue;
@@ -28,11 +30,12 @@ public class AssociativeAggregationCounter implements EventCounter {
   protected final AtomicLong value;
 
   public AssociativeAggregationCounter(
-    ReadableDateTime start,
-    ReadableDateTime end,
-    AssociativeAggregation associativeAggregation,
-    long initialValue
-  ) {
+      ReadableDateTime start,
+      ReadableDateTime end,
+      AssociativeAggregation associativeAggregation,
+      long initialValue
+  )
+  {
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -45,34 +48,40 @@ public class AssociativeAggregationCounter implements EventCounter {
     this.value = new AtomicLong(initialValue);
   }
 
-  public void add(long delta) {
+  public void add(long delta)
+  {
     long val = value.get();
     while (
-      !value.compareAndSet(val, associativeAggregation.combine(val, delta))
-      ) {
+        !value.compareAndSet(val, associativeAggregation.combine(val, delta))
+    ) {
       val = value.get();
     }
   }
 
-  public long getValue() {
+  public long getValue()
+  {
     return value.get();
   }
 
-  public ReadableDateTime getStart() {
+  public ReadableDateTime getStart()
+  {
     return start;
   }
 
-  public ReadableDateTime getEnd() {
+  public ReadableDateTime getEnd()
+  {
     return end;
   }
 
   @Override
-  public Duration getLength() {
+  public Duration getLength()
+  {
     return new Duration(start, end);
   }
 
   @Override
-  public EventCounter merge(EventCounter counter) {
+  public EventCounter merge(EventCounter counter)
+  {
     ReadableDateTime mergedStart = start;
     ReadableDateTime mergedEnd = end;
 
@@ -85,7 +94,7 @@ public class AssociativeAggregationCounter implements EventCounter {
     }
 
     AssociativeAggregationCounter mergedCounter = new AssociativeAggregationCounter(
-      mergedStart, mergedEnd, associativeAggregation, initialValue
+        mergedStart, mergedEnd, associativeAggregation, initialValue
     );
 
     mergedCounter.add(associativeAggregation.combine(value.get(), counter.getValue()));

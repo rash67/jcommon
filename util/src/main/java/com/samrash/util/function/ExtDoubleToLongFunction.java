@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.DoubleToLongFunction;
 
-public interface ExtDoubleToLongFunction<E extends Throwable> {
+public interface ExtDoubleToLongFunction<E extends Throwable>
+{
   long applyAsLong(double value) throws E;
 
-  static DoubleToLongFunction quiet(ExtDoubleToLongFunction<?> doubleToLongFunction) {
+  static DoubleToLongFunction quiet(ExtDoubleToLongFunction<?> doubleToLongFunction)
+  {
     return (value) -> ExtLongSupplier.quiet(() -> doubleToLongFunction.applyAsLong(value)).getAsLong();
   }
 }

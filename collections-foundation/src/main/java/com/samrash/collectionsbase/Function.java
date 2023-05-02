@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 /**
@@ -23,6 +24,7 @@ package com.samrash.collectionsbase;
  * @param <V>
  * @param <E>
  */
-public interface Function<K, V, E extends Throwable> {
+public interface Function<K, V, E extends Throwable>
+{
   V execute(K input) throws E;
 }

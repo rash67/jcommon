@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import org.json.JSONArray;
@@ -26,7 +27,8 @@ import java.util.Map;
 /**
  * utility methods for operating on Datums
  */
-public class DatumUtils {
+public class DatumUtils
+{
 
   /**
    * recursively converts the mapDatum into a valid JSONObject
@@ -34,7 +36,8 @@ public class DatumUtils {
    * @param mapDatum
    * @return JSONObject
    */
-  public static JSONObject buildJSON(MapDatum mapDatum) {
+  public static JSONObject buildJSON(MapDatum mapDatum)
+  {
     JSONObject jsonObject = new JSONObject();
     Map<Datum, Datum> map = mapDatum.getMap();
 
@@ -53,7 +56,8 @@ public class DatumUtils {
       }
 
       return jsonObject;
-    } catch (JSONException e) {
+    }
+    catch (JSONException e) {
       throw new RuntimeException("error converting json object to string", e);
     }
 
@@ -65,7 +69,8 @@ public class DatumUtils {
    * @param listDatum
    * @return JSONArray
    */
-  public static JSONArray buildJSON(ListDatum listDatum) {
+  public static JSONArray buildJSON(ListDatum listDatum)
+  {
     JSONArray jsonArray = new JSONArray();
     List<Datum> datumList = listDatum.asList();
 
@@ -87,10 +92,11 @@ public class DatumUtils {
       }
 
       return jsonArray;
-    } catch (JSONException e) {
+    }
+    catch (JSONException e) {
       throw new RuntimeException(
-        "some element did not conform to JSON format: " + datumList,
-        e
+          "some element did not conform to JSON format: " + datumList,
+          e
       );
     }
   }
@@ -112,7 +118,8 @@ public class DatumUtils {
    * @param rawTuple - impressionTimestamp, adId
    * @return
    */
-  public static MapDatum toMapDatum(LongDatum[] rawTuple, StringDatum[] keyNames) {
+  public static MapDatum toMapDatum(LongDatum[] rawTuple, StringDatum[] keyNames)
+  {
     assert rawTuple.length == keyNames.length;
 
     Map<Datum, Datum> datumMap = new HashMap<Datum, Datum>(rawTuple.length);
@@ -130,10 +137,11 @@ public class DatumUtils {
    * @param numBytes 1 = byte, 2 short, 4 = int, 8 = long.  or try 5 for the heck of it.
    * @return
    */
-  public static byte[] toBytes(long value, int numBytes) {
+  public static byte[] toBytes(long value, int numBytes)
+  {
     byte[] bytes = new byte[numBytes];
 
-    for (int i = numBytes-1; i > 0; i--) {
+    for (int i = numBytes - 1; i > 0; i--) {
       bytes[i] = (byte) value;
       value >>>= 8;
     }

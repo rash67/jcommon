@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestStringOptions {
+public class TestStringOptions
+{
   private StringOptions options;
   private Option<String> option1;
   private Option<String> option2;
 
   @BeforeMethod(alwaysRun = true)
-  protected void setUp() throws Exception {
+  protected void setUp() throws Exception
+  {
     options = new StringOptions();
     option1 = options.getOption("test_option");
     option2 = options.getOption("test_option");
   }
 
   @Test(groups = "fast")
-  public void testSameOptionUpdates() throws Exception {
+  public void testSameOptionUpdates() throws Exception
+  {
     Assert.assertNull(option1.getValue());
     Assert.assertNull(option2.getValue());
     option1.setValue("foofoo");
@@ -41,7 +45,8 @@ public class TestStringOptions {
   }
 
   @Test(groups = "fast")
-  public void testSetOptionPropgates() throws Exception {
+  public void testSetOptionPropgates() throws Exception
+  {
     Assert.assertNull(option1.getValue());
     Assert.assertNull(option2.getValue());
     options.setOption("test_option", "foofoo");

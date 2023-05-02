@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.lifecycle;
+
+import com.samrash.logging.Logger;
+import com.samrash.logging.LoggerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.samrash.logging.Logger;
-import com.samrash.logging.LoggerImpl;
-
 /**
  * Runtime.addShutdownHook() has no guarantee of order.  This class
  * will run hooks by stage and in the order added within stages
  */
-public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
+public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T>
+{
   private static final Logger LOG = LoggerImpl.getLogger(ShutdownManagerImpl.class);
 
   private final Map<T, List<Runnable>> shutdownHooksByStage = new ConcurrentHashMap<>();
@@ -41,14 +43,15 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   private T currentStage;
   private boolean isShutdown = false;
 
-  public ShutdownManagerImpl(Class<T> enumClazz, T defaultStage) {
+  public ShutdownManagerImpl(Class<T> enumClazz, T defaultStage)
+  {
     this.defaultStage = defaultStage;
 
     if (!enumClazz.isEnum()) {
       throw new IllegalArgumentException(
-        String.format(
-          "%s is not an enum class", enumClazz.getName()
-        )
+          String.format(
+              "%s is not an enum class", enumClazz.getName()
+          )
       );
     }
 
@@ -66,25 +69,29 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     currentStage = firstStage;
     lastStage = stages[stages.length - 1];
     thread = new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          internalShutdown();
+        new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            internalShutdown();
+          }
         }
-      }
     );
   }
 
   @Override
-  public boolean tryAddShutdownHook(Runnable hook) {
+  public boolean tryAddShutdownHook(Runnable hook)
+  {
     return tryAddShutdownHook(defaultStage, hook);
   }
 
   @Override
-  public boolean tryAddShutdownHook(T stage, Runnable hook) {
+  public boolean tryAddShutdownHook(T stage, Runnable hook)
+  {
     if (stage == firstStage || stage == lastStage) {
       throw new IllegalArgumentException(
-        String.format("stage %s is reserved", stage)
+          String.format("stage %s is reserved", stage)
       );
     }
 
@@ -106,21 +113,24 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   }
 
   @Override
-  public void addShutdownHook(Runnable hook) {
+  public void addShutdownHook(Runnable hook)
+  {
     addShutdownHook(defaultStage, hook);
   }
 
   @Override
-  public void addShutdownHook(T stage, Runnable hook) {
+  public void addShutdownHook(T stage, Runnable hook)
+  {
     if (!tryAddShutdownHook(stage, hook)) {
       throw new IllegalStateException(
-        "trying to add a hook after shutdown started"
+          "trying to add a hook after shutdown started"
       );
     }
   }
 
   @Override
-  public void shutdown() {
+  public void shutdown()
+  {
     if (internalShutdown()) {
       // fb303.shutdown calls this, so remove the shutdown hook after we're done
       Runtime.getRuntime().removeShutdownHook(thread);
@@ -128,14 +138,16 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   }
 
   @Override
-  public Thread getAsThread() {
+  public Thread getAsThread()
+  {
     return thread;
   }
 
   /**
    * @return true if this executed the shutdown
    */
-  private boolean internalShutdown() {
+  private boolean internalShutdown()
+  {
     synchronized (shutdownLock) {
       if (isShutdown) {
         LOG.info("ignoring extra shutdown call");
@@ -157,7 +169,8 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
       for (Runnable hook : shutdownHooksByStage.get(stage)) {
         try {
           hook.run();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
           LOG.warn("error running hook", t);
         }
       }

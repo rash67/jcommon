@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 /**
  * Interface for providing JSON Objects
  */
-public interface JSONProvider {
+public interface JSONProvider
+{
   public JSONObject get() throws JSONException;
 }

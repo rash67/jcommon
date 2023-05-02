@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtSupplier;
+
 import java.util.function.DoubleFunction;
 
-public interface ExtDoubleFunction<R, E extends Throwable> {
+public interface ExtDoubleFunction<R, E extends Throwable>
+{
   R apply(double value) throws E;
 
-  static <R> DoubleFunction<R> quiet(ExtDoubleFunction<R, ?> doubleFunction) {
+  static <R> DoubleFunction<R> quiet(ExtDoubleFunction<R, ?> doubleFunction)
+  {
     return (value) -> ExtSupplier.quiet(() -> doubleFunction.apply(value)).get();
   }
 }

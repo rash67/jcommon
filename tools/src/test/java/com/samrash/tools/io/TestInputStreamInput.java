@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import org.testng.Assert;
@@ -23,9 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestInputStreamInput {
+public class TestInputStreamInput
+{
   @Test(groups = "fast")
-  public void testRead() throws Exception {
+  public void testRead() throws Exception
+  {
     ByteArrayInputStream inputStream = new ByteArrayInputStream("foo".getBytes());
     InputStreamInput input = new InputStreamInput(inputStream);
 
@@ -36,7 +39,8 @@ public class TestInputStreamInput {
   }
 
   @Test(groups = "fast")
-  public void testReadLine() throws Exception {
+  public void testReadLine() throws Exception
+  {
     ByteArrayInputStream inputStream = new ByteArrayInputStream("Foo bar\nHello".getBytes());
     InputStreamInput input = new InputStreamInput(inputStream);
 
@@ -46,9 +50,10 @@ public class TestInputStreamInput {
   }
 
   @Test(groups = "fast")
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     ByteArrayInputStream inputStream = new ByteArrayInputStream(
-      "This is\na test\nof iteration\n".getBytes()
+        "This is\na test\nof iteration\n".getBytes()
     );
     InputStreamInput input = new InputStreamInput(inputStream);
     List<String> lines = new ArrayList<>();

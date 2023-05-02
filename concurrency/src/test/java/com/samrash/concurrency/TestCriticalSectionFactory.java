@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.testing.TestUtils;
@@ -22,7 +23,8 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.CountDownLatch;
 
-public class TestCriticalSectionFactory {
+public class TestCriticalSectionFactory
+{
   private int count;
   private CountDownLatch criticalSectionLatch;
   private CountDownLatch entryLatch;
@@ -30,17 +32,21 @@ public class TestCriticalSectionFactory {
   private CriticalSectionFactory factory;
 
   @BeforeMethod(alwaysRun = true)
-  private void setup() {
+  private void setup()
+  {
     count = 0;
     criticalSectionLatch = new CountDownLatch(1);
     entryLatch = new CountDownLatch(1);
-    runnable = new Runnable() {
+    runnable = new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         try {
           entryLatch.countDown();
           criticalSectionLatch.await();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           Assert.fail("test interrupted");
         }
 
@@ -51,7 +57,8 @@ public class TestCriticalSectionFactory {
   }
 
   @Test(groups = "fast")
-  public void testCriticalSectionFactory() throws InterruptedException {
+  public void testCriticalSectionFactory() throws InterruptedException
+  {
     final Runnable criticalSection = factory.wrap(runnable);
 
     // t1 will stop in the critical section

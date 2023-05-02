@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SnapshotProvider;
@@ -27,19 +28,23 @@ import java.util.Set;
  * to get the scaled size as well as the size of the sample and the max
  * sample size that can be used.
  *
- *
- *
  * @param <T> type of element in the set
  */
 
 @ThreadSafe
-public interface SampledSet<T> extends Trackable, Set<T>, SnapshotProvider<SampledSet<T>> {
+public interface SampledSet<T> extends Trackable, Set<T>, SnapshotProvider<SampledSet<T>>
+{
 
   public boolean add(T element);
+
   public int getMaxSetSize();
+
   public int getScaledSize();
+
   public int getSize();
+
   public int getSampleRate();
+
   public Set<T> getEntries();
 
   /**
@@ -48,7 +53,7 @@ public interface SampledSet<T> extends Trackable, Set<T>, SnapshotProvider<Sampl
    * is presently stored
    *
    * @param rate - rate to sample at. Will only use this if it is higher than
-   * the existing sample rate (ie, it can't up-sample)
+   *             the existing sample rate (ie, it can't up-sample)
    * @return
    */
   public SampledSetSnapshot<T> sampleAt(int rate);

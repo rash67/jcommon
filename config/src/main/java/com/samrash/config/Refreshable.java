@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 /**
@@ -21,6 +22,7 @@ package com.samrash.config;
  * it for access.  It may implement this interface so that it may be
  * reloaded on-demand
  */
-public interface Refreshable {
+public interface Refreshable
+{
   public void refresh() throws ConfigException;
 }

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.memory;
 
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
-public class UnsafeAccessor {
+public class UnsafeAccessor
+{
   private static Unsafe UNSAFE = null;
 
   static {
@@ -27,12 +29,14 @@ public class UnsafeAccessor {
       Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
       field.setAccessible(true);
       UnsafeAccessor.UNSAFE = (sun.misc.Unsafe) field.get(null);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new AssertionError(e);
     }
   }
 
-  public static Unsafe get() {
+  public static Unsafe get()
+  {
     return UnsafeAccessor.UNSAFE;
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.samrash.collectionsbase.Lists;
@@ -23,34 +24,37 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestPackedByteArray {
+public class TestPackedByteArray
+{
   private byte[][] original;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     // NOTE: since 0,1 are special characters the byte values MUST be > 1
     // in practice, we require ascii printable characters
     original = new byte[][]{
-      new byte[]{2, 2, 3},
-      new byte[]{2, 3, 2},
-      new byte[]{3, 2},
-      new byte[]{10, 100, 50},
-      "a marginally long string this is".getBytes("UTF-8"),
-      new byte[]{2, 3},
-      new byte[]{3}
+        new byte[]{2, 2, 3},
+        new byte[]{2, 3, 2},
+        new byte[]{3, 2},
+        new byte[]{10, 100, 50},
+        "a marginally long string this is".getBytes("UTF-8"),
+        new byte[]{2, 3},
+        new byte[]{3}
     };
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     byte[] packed = PackedByteArray.pack(
-      original[0],
-      original[1],
-      original[2],
-      original[3],
-      original[4],
-      original[5],
-      original[6]
+        original[0],
+        original[1],
+        original[2],
+        original[3],
+        original[4],
+        original[5],
+        original[6]
     );
     byte[][] unpacked = PackedByteArray.unpack(packed);
 
@@ -62,43 +66,46 @@ public class TestPackedByteArray {
   }
 
   @Test(groups = "fast")
-  public void testCompare1() throws Exception {
+  public void testCompare1() throws Exception
+  {
     // {2, 3, 3}
     byte[] bytes1 = PackedByteArray.packComparable(
-      original[0]
+        original[0]
     );
     // {2, 3, 2}
     byte[] bytes2 = PackedByteArray.packComparable(
-      original[1]
+        original[1]
     );
     // => -1
     Assert.assertEquals(Lists.compareArrays(bytes1, bytes2), -1);
   }
 
   @Test(groups = "fast")
-  public void testCompare2() throws Exception {
+  public void testCompare2() throws Exception
+  {
     // { {0, 0, 1} }
     byte[] bytes1 = PackedByteArray.packComparable(
-      original[1]
+        original[1]
     );
     // {{0, 1}, {0} }
     byte[] bytes2 = PackedByteArray.packComparable(
-      original[5], original[6]
+        original[5], original[6]
     );
     // => 1
     Assert.assertEquals(Lists.compareArrays(bytes1, bytes2), 1);
   }
 
   @Test(groups = "fast")
-  public void testConversions() throws Exception {
+  public void testConversions() throws Exception
+  {
     byte[] packed = PackedByteArray.pack(
-      original[0],
-      original[1],
-      original[2],
-      original[3],
-      original[4],
-      original[5],
-      original[6]
+        original[0],
+        original[1],
+        original[2],
+        original[3],
+        original[4],
+        original[5],
+        original[6]
     );
     byte[][] unpacked = PackedByteArray.unpack(packed);
     byte[] comparablePacked = PackedByteArray.packComparable(unpacked);

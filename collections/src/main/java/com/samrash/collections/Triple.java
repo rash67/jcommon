@@ -13,35 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
-public class Triple<First, Second, Third> {
-  private final First  first;
+public class Triple<First, Second, Third>
+{
+  private final First first;
   private final Second second;
-  private final Third  third;
+  private final Third third;
 
   private volatile String toStringResult;
 
-  public Triple(First first, Second second, Third third) {
-    this.first  = first;
+  public Triple(First first, Second second, Third third)
+  {
+    this.first = first;
     this.second = second;
-    this.third  = third;
+    this.third = third;
   }
 
-  public First getFirst() {
+  public First getFirst()
+  {
     return first;
   }
 
-  public Second getSecond() {
+  public Second getSecond()
+  {
     return second;
   }
 
-  public Third getThird() {
+  public Third getThird()
+  {
     return third;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -68,7 +75,8 @@ public class Triple<First, Second, Third> {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = first != null ? first.hashCode() : 0;
 
     result = 31 * result + (second != null ? second.hashCode() : 0);
@@ -78,13 +86,14 @@ public class Triple<First, Second, Third> {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     if (toStringResult == null) {
       toStringResult = "Triple{" +
-        "first=" + first +
-        ", second=" + second +
-        ", third=" + third +
-        '}';
+                       "first=" + first +
+                       ", second=" + second +
+                       ", third=" + third +
+                       '}';
     }
 
     return toStringResult;

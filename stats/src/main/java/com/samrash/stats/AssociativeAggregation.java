@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 /**
@@ -20,6 +21,7 @@ package com.samrash.stats;
  * combinations. An aggregation is associative if the order in which the
  * operations are performed does not matter (e.g. sum, max, min).
  */
-public interface AssociativeAggregation {
+public interface AssociativeAggregation
+{
   public long combine(long l1, long l2);
 }

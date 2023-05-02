@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.topk;
 
 import com.google.common.base.Preconditions;
@@ -31,18 +32,21 @@ import java.util.PriorityQueue;
  * Space usage is O(n).
  * (n = keySpaceSize)
  */
-public class ArrayBasedIntegerTopK implements TopK<Integer> {
+public class ArrayBasedIntegerTopK implements TopK<Integer>
+{
   private final int k;
   // Java Language SE 7 spec, section 4.12.5 guarantees initial values of 0 for each entry
   private final long[] counts;
 
-  public ArrayBasedIntegerTopK(int keySpaceSize, int k) {
+  public ArrayBasedIntegerTopK(int keySpaceSize, int k)
+  {
     this.k = k;
     counts = new long[keySpaceSize];
   }
 
   @Override
-  public synchronized void add(Integer key, long count) {
+  public synchronized void add(Integer key, long count)
+  {
     Preconditions.checkNotNull(key, "key can't be null");
     Preconditions.checkElementIndex(key, counts.length, "key");
     Preconditions.checkArgument(count >= 0, "count to add must be non-negative, got %s", count);
@@ -51,9 +55,12 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
   }
 
   @Override
-  public List<Integer> getTopK() {
-    Comparator<Integer> comparator = new Comparator<Integer>() {
-      public int compare(Integer i, Integer j) {
+  public List<Integer> getTopK()
+  {
+    Comparator<Integer> comparator = new Comparator<Integer>()
+    {
+      public int compare(Integer i, Integer j)
+      {
         return Longs.compare(counts[i], counts[j]);
       }
     };

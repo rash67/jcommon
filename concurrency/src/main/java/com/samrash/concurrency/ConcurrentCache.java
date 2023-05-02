@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.Map;
@@ -24,14 +25,15 @@ import java.util.Map;
  * @param <K> key to use in the cache
  * @param <V> value of the cache
  * @param <E> exception that may be thrown when creating the value for the
- *  cache
+ *            cache
  */
 public interface ConcurrentCache<K, V, E extends Exception>
-  extends Iterable<Map.Entry<K, CallableSnapshot<V, E>>>{
+    extends Iterable<Map.Entry<K, CallableSnapshot<V, E>>>
+{
   /**
    * Returns a value associated with the specified key, creating a new value
    * if no previous mapping existed.
-   *
+   * <p>
    * NOTE: on exception, the exception will be cached as the result for all
    * future gets(...) on this key until this key is explicitly cleared with a
    * call to remove(...) or removeIfError(...).
@@ -60,7 +62,7 @@ public interface ConcurrentCache<K, V, E extends Exception>
    * @param key - key to remove from the cache
    * @return removed entry, null if not present
    * @throws E - may throw a creation exception if the create failed, but
-   * will still remove the cached result
+   *           will still remove the cached result
    */
   public V remove(K key) throws E;
 
@@ -92,7 +94,6 @@ public interface ConcurrentCache<K, V, E extends Exception>
   public void prune() throws E;
 
   /**
-   *
    * @return The number of keys stored in the map
    */
   public int size();

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
 import com.google.common.primitives.Longs;
@@ -25,22 +26,28 @@ import java.security.NoSuchAlgorithmException;
  * old class using MD5 to do hasing.  Better to use
  */
 @Deprecated
-public class LongDigestFunction implements DigestFunction<Long> {
+public class LongDigestFunction implements DigestFunction<Long>
+{
   private final ThreadLocal<MessageDigest> digest =
-    new ThreadLocal<MessageDigest>(){
-      @Override
-      protected MessageDigest initialValue() {
-        try {
-          MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+      new ThreadLocal<MessageDigest>()
+      {
+        @Override
+        protected MessageDigest initialValue()
+        {
+          try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
-          return messageDigest;
-        } catch (NoSuchAlgorithmException e) {
-          throw new RuntimeException(e);
+            return messageDigest;
+          }
+          catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+          }
         }
-      }
-    };
+      };
+
   @Override
-  public long computeDigest(Long input) {
+  public long computeDigest(Long input)
+  {
     byte[] bytes = Longs.toByteArray(input);
 
     return new BigInteger(digest.get().digest(bytes)).longValue();

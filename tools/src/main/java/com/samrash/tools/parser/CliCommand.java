@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ import java.util.Set;
  * Specifies valid command usage. See {@link com.samrash.tools.parser.CliCommand.Builder} for more
  * details.
  */
-public class CliCommand {
+public class CliCommand
+{
   private final String name;
   private final List<String> description;
   private final List<String> notes;
@@ -36,13 +38,14 @@ public class CliCommand {
   private final boolean allowsTrailingParameters;
 
   private CliCommand(
-    String name,
-    List<String> description,
-    List<String> notes,
-    List<CliOption> options,
-    List<CliParameter> parameters,
-    boolean allowsTrailingParameters
-  ) {
+      String name,
+      List<String> description,
+      List<String> notes,
+      List<CliOption> options,
+      List<CliParameter> parameters,
+      boolean allowsTrailingParameters
+  )
+  {
     this.name = name;
     this.description = new ArrayList<>(description);
     this.notes = new ArrayList<>(notes);
@@ -51,31 +54,38 @@ public class CliCommand {
     this.allowsTrailingParameters = allowsTrailingParameters;
   }
 
-  public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-  public List<String> getDescription() {
+  public List<String> getDescription()
+  {
     return description;
   }
 
-  public List<String> getNotes() {
+  public List<String> getNotes()
+  {
     return notes;
   }
 
-  public List<CliOption> getOptions() {
+  public List<CliOption> getOptions()
+  {
     return options;
   }
 
-  public List<CliParameter> getParameters() {
+  public List<CliParameter> getParameters()
+  {
     return parameters;
   }
 
-  public boolean allowsTrailingParameter() {
+  public boolean allowsTrailingParameter()
+  {
     return allowsTrailingParameters;
   }
 
-  public String getDocumentation() {
+  public String getDocumentation()
+  {
     StringBuilder result = new StringBuilder(80);
 
     appendDocumentation(result);
@@ -84,13 +94,15 @@ public class CliCommand {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return "CliCommandDefinition{" +
-      "name='" + name + '\'' +
-      '}';
+           "name='" + name + '\'' +
+           '}';
   }
 
-  public static class Builder {
+  public static class Builder
+  {
     private final String name;
     private final List<String> description;
     private final List<CliOption.Builder> options = new ArrayList<>();
@@ -106,7 +118,8 @@ public class CliCommand {
      * @param description     the description displayed when printing usage help
      * @param additionalLines syntactic sugar for multi-line descriptions
      */
-    public Builder(String name, String description, String... additionalLines) {
+    public Builder(String name, String description, String... additionalLines)
+    {
       this.name = name;
       this.description = new ArrayList<>();
       this.description.add(description);
@@ -120,7 +133,8 @@ public class CliCommand {
      * @param additionalLines
      * @return this builder
      */
-    public Builder withNotes(String notes, String... additionalLines) {
+    public Builder withNotes(String notes, String... additionalLines)
+    {
       this.notes = new ArrayList<>();
       this.notes.add(notes);
       this.notes.addAll(Arrays.asList(additionalLines));
@@ -135,7 +149,8 @@ public class CliCommand {
      * @param additionaSwitchNames synonyms for the name, e.g., {@code -i}
      * @return this builder
      */
-    public CliOption.SwitchBuilder addOption(String switchName, String... additionaSwitchNames) {
+    public CliOption.SwitchBuilder addOption(String switchName, String... additionaSwitchNames)
+    {
       CliOption.SwitchBuilder builder = new CliOption.SwitchBuilder();
 
       builder.withSwitch(switchName);
@@ -152,7 +167,8 @@ public class CliCommand {
      * @param additionaSwitchNames synonyms for the name, e.g., {@code -d}
      * @return this builder
      */
-    public CliOption.FlagBuilder addFlag(String switchName, String... additionaSwitchNames) {
+    public CliOption.FlagBuilder addFlag(String switchName, String... additionaSwitchNames)
+    {
       CliOption.FlagBuilder builder = new CliOption.FlagBuilder();
 
       builder.withSwitch(switchName);
@@ -172,7 +188,8 @@ public class CliCommand {
      * @param name the name used to refer to the parameter as this position
      * @return this builder
      */
-    public CliParameter.Builder addParameter(String name) {
+    public CliParameter.Builder addParameter(String name)
+    {
       CliParameter.Builder builder = CliParameter.Builder.withName(name);
 
       parameters.add(builder);
@@ -180,13 +197,15 @@ public class CliCommand {
       return builder;
     }
 
-    public Builder allowTrailingParameters() {
+    public Builder allowTrailingParameters()
+    {
       this.allowsTrailingParameters = true;
 
       return this;
     }
 
-    public CliCommand build() {
+    public CliCommand build()
+    {
       List<CliOption> options = new ArrayList<>();
       Set<String> names = new HashSet<>(this.options.size());
 
@@ -215,12 +234,13 @@ public class CliCommand {
       }
 
       return new CliCommand(
-        name, description, notes, options, parameters, allowsTrailingParameters
+          name, description, notes, options, parameters, allowsTrailingParameters
       );
     }
   }
 
-  private void appendDocumentation(StringBuilder result) {
+  private void appendDocumentation(StringBuilder result)
+  {
     result.append(getName());
 
     for (CliParameter parameter : getParameters()) {
@@ -249,7 +269,8 @@ public class CliCommand {
     }
   }
 
-  private void appendDocumentation(StringBuilder result, CliOption option) {
+  private void appendDocumentation(StringBuilder result, CliOption option)
+  {
     Iterator<String> switchNames = option.getSwitchNames().iterator();
 
     result.append("  ");

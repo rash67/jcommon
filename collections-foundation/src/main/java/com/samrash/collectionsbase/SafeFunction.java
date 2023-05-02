@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
 /**
@@ -23,6 +24,7 @@ package com.samrash.collectionsbase;
  * @param <K>
  * @param <V>
  */
-public interface SafeFunction<K, V> extends Function<K, V, RuntimeException> {
+public interface SafeFunction<K, V> extends Function<K, V, RuntimeException>
+{
   V execute(K input);
 }

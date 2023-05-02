@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 /**
  * Facebook logging interface that is similar to log4j, but adds delayed format processing
- *
  **/
 
-public interface Logger {
+public interface Logger
+{
   public boolean isTraceEnabled();
 
   public boolean isDebugEnabled();

@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RangeListConverter implements CliConverter<List<Integer>> {
+public class RangeListConverter implements CliConverter<List<Integer>>
+{
   @Override
-  public List<Integer> convert(String value) throws Exception {
+  public List<Integer> convert(String value) throws Exception
+  {
     if (value == null) {
       return null;
     }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.testng.Assert;
@@ -20,9 +21,11 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-public class TestStatsManager {
+public class TestStatsManager
+{
 
-  private static String toString(StatsManager s) {
+  private static String toString(StatsManager s)
+  {
     Map<String, Long> map = s.getCounters();
     StringBuilder result = new StringBuilder();
     for (Map.Entry<String, Long> entry : map.entrySet()) {
@@ -32,19 +35,21 @@ public class TestStatsManager {
     return result.toString();
   }
 
-  private void assertCounter(StatsManager stats, String name, long value) {
+  private void assertCounter(StatsManager stats, String name, long value)
+  {
     Assert.assertEquals(stats.getCounter(name), value);
     Assert.assertNotNull(stats.getCounters().get(name));
-    Assert.assertEquals((long)stats.getCounters().get(name), value);
+    Assert.assertEquals((long) stats.getCounters().get(name), value);
   }
 
-  @Test(groups="fast")
-  public void TestBasic() throws Exception {
+  @Test(groups = "fast")
+  public void TestBasic() throws Exception
+  {
     System.out.println("Basic Test");
     StatsManager stats = new StatsManager();
     long num = 100, amt = 6;
 
-    for (long i=0; i<num; i++) {
+    for (long i = 0; i < num; i++) {
       stats.addStatValue("basic", amt);
     }
     System.out.println(toString(stats));
@@ -55,20 +60,20 @@ public class TestStatsManager {
     assertCounter(stats, "basic.avg.3600", amt);
 
     stats.addStatExportType("test-sum", HistoryManager.ExportType.SUM);
-    for (int i=0; i<num; i++) {
+    for (int i = 0; i < num; i++) {
       stats.addStatValue("test-sum", amt);
     }
     System.out.println(toString(stats));
 
-    assertCounter(stats, "test-sum.sum", num*amt);
-    assertCounter(stats, "test-sum.sum.60", num*amt);
-    assertCounter(stats, "test-sum.sum.600", num*amt);
-    assertCounter(stats, "test-sum.sum.3600", num*amt);
+    assertCounter(stats, "test-sum.sum", num * amt);
+    assertCounter(stats, "test-sum.sum.60", num * amt);
+    assertCounter(stats, "test-sum.sum.600", num * amt);
+    assertCounter(stats, "test-sum.sum.3600", num * amt);
 
     stats.addStatExportType("test-rate", HistoryManager.ExportType.RATE);
     stats.addStatExportType("test-avg", HistoryManager.ExportType.AVG);
     stats.addStatExportType("test-count", HistoryManager.ExportType.COUNT);
-    for (int i=0; i<num; i++) {
+    for (int i = 0; i < num; i++) {
       stats.addStatValue("test-rate", amt);
       stats.addStatValue("test-avg", amt);
       stats.addStatValue("test-count", amt);
@@ -95,7 +100,7 @@ public class TestStatsManager {
     stats.addStatValue("test-all", amt);
 
     System.out.println(toString(stats));
-    assertCounter(stats, "test-all.sum", amt+amt);
+    assertCounter(stats, "test-all.sum", amt + amt);
     assertCounter(stats, "test-all.avg", amt);
     assertCounter(stats, "test-all.count", 2);
   }

@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
-public interface ReadableMultiWindowRate {
+public interface ReadableMultiWindowRate
+{
   public long getMinuteSum();
+
   public long getMinuteRate();
+
   public long getTenMinuteSum();
+
   public long getTenMinuteRate();
+
   public long getHourSum();
+
   public long getHourRate();
+
   public long getAllTimeSum();
+
   public long getAllTimeRate();
 }

@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/*
+ * modified by Sam Rash (rash67) 2023
+ */
+
 package com.samrash.collections.creation;
 
-public interface Prototype<X> {
-  public X copyOfMe();
+public interface Prototype<X>
+{
+  X copyOfMe();
 }

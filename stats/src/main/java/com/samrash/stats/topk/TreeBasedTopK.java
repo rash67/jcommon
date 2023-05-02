@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.topk;
 
-import com.samrash.collections.ComparablePair;
 import com.google.common.base.Preconditions;
+import com.samrash.collections.ComparablePair;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,14 +35,16 @@ import java.util.TreeSet;
  * Space usage is O(n + k).
  * (n = keySpaceSize)
  */
-public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
+public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T>
+{
   private final int k;
   private final Map<T, Long> counts = new HashMap<T, Long>();
   private final Set<T> topKeys;
   private final TreeSet<ComparablePair<Long, T>> topPairs = new TreeSet<ComparablePair<Long, T>>();
   private long smallestTopCount = Long.MAX_VALUE;
 
-  public TreeBasedTopK(int k) {
+  public TreeBasedTopK(int k)
+  {
     this.k = k;
     topKeys = new HashSet<T>(k);
   }
@@ -51,7 +54,8 @@ public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
    * the current top-k elements, O(1) otherwise.
    */
   @Override
-  public synchronized void add(T key, long count) {
+  public synchronized void add(T key, long count)
+  {
     Preconditions.checkNotNull(key, "key can't be null");
     Preconditions.checkArgument(count >= 0, "count to add must be non-negative, got %s", count);
 
@@ -87,7 +91,8 @@ public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
   }
 
   @Override
-  public synchronized List<T> getTopK() {
+  public synchronized List<T> getTopK()
+  {
     LinkedList<T> topK = new LinkedList<T>();
 
     for (ComparablePair<Long, T> pair : topPairs) {

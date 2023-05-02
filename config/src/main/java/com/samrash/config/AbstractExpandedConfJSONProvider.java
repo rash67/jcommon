@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,39 +31,42 @@ import java.util.Set;
 /**
  * Reads and expands a JSON config object through a series of includes.
  * Expects JSON config objects to consist of two top level keys: 'conf' and 'includes':
- *
+ * <p>
  * conf - key-value pairs to be consolidated in the returned JSONObject [req]
  * includes - list of JSON configs (of the same format) from which to pull and
- *    include key-value pairs [opt]
- *
+ * include key-value pairs [opt]
+ * <p>
  * JSON config file format:
  * {
- *  conf : {
- *    key1 : value1,
- *    key2 : value2
- *    ...
- *  },
- *  includes : [
- *    object1,
- *    object2
- *   ]
+ * conf : {
+ * key1 : value1,
+ * key2 : value2
+ * ...
+ * },
+ * includes : [
+ * object1,
+ * object2
+ * ]
  * }
- *
+ * <p>
  * Keys in the existing or closer config objects will take precedence over the same
  * key defined in more distantly included objects.
  */
-public abstract class AbstractExpandedConfJSONProvider implements JSONProvider {
+public abstract class AbstractExpandedConfJSONProvider implements JSONProvider
+{
   private static final Logger LOG = LoggerFactory.getLogger(AbstractExpandedConfJSONProvider.class);
   private static final String CONF_KEY = "conf";
   private static final String INCLUDES_KEY = "includes";
 
   private final String root;
 
-  public AbstractExpandedConfJSONProvider(String root) {
+  public AbstractExpandedConfJSONProvider(String root)
+  {
     this.root = root;
   }
 
-  private JSONObject getExpandedJSONConfig() throws JSONException {
+  private JSONObject getExpandedJSONConfig() throws JSONException
+  {
     Set<String> traversedFiles = new HashSet<>();
     Queue<String> toTraverse = new LinkedList<>();
 
@@ -103,7 +107,8 @@ public abstract class AbstractExpandedConfJSONProvider implements JSONProvider {
   }
 
   @Override
-  public JSONObject get() throws JSONException {
+  public JSONObject get() throws JSONException
+  {
     return getExpandedJSONConfig();
   }
 

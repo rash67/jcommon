@@ -16,31 +16,38 @@ package com.samrash.util;
  * limitations under the License.
  */
 //  NOTE: ADAPTED FROM: com.google.common.base.Supplier
-public class ExtSuppliers {
-  public static <T, E extends Throwable> ExtSupplier<T, E> memoize(ExtSupplier<T, E> supplier) {
+public class ExtSuppliers
+{
+  public static <T, E extends Throwable> ExtSupplier<T, E> memoize(ExtSupplier<T, E> supplier)
+  {
     return new MemoizingExtSupplier<>(supplier);
   }
 
-  public static <T, E extends Throwable> RefreshableExtSupplier<T, E> memoizeAllowRefresh(ExtSupplier<T, E> supplier) {
+  public static <T, E extends Throwable> RefreshableExtSupplier<T, E> memoizeAllowRefresh(ExtSupplier<T, E> supplier)
+  {
     return new MemoizingExtSupplier<>(supplier);
   }
 
-  public static <T, E extends Throwable> ExtSupplier<T, E> ofInstance(T instance) {
+  public static <T, E extends Throwable> ExtSupplier<T, E> ofInstance(T instance)
+  {
     return new InstanceExtSupplier<>(instance);
   }
 
-  private static class MemoizingExtSupplier<T, E extends Throwable> implements RefreshableExtSupplier<T, E> {
+  private static class MemoizingExtSupplier<T, E extends Throwable> implements RefreshableExtSupplier<T, E>
+  {
     private final ExtSupplier<T, E> delegate;
     private volatile boolean shouldCalculateValue = true;
     private T value;
 
-    private MemoizingExtSupplier(ExtSupplier<T, E> delegate) {
+    private MemoizingExtSupplier(ExtSupplier<T, E> delegate)
+    {
       this.delegate = delegate;
     }
 
     @SuppressWarnings({"DoubleCheckedLocking", "SynchronizeOnThis"})
     @Override
-    public T get() throws E {
+    public T get() throws E
+    {
       if (shouldCalculateValue) {
         synchronized (this) {
           if (shouldCalculateValue) {
@@ -58,18 +65,24 @@ public class ExtSuppliers {
     }
 
     @Override
-    public void reset() {
+    public void reset()
+    {
       shouldCalculateValue = true;
     }
   }
 
-  private static class InstanceExtSupplier<T, E extends Throwable> implements ExtSupplier<T, E> {
+  private static class InstanceExtSupplier<T, E extends Throwable> implements ExtSupplier<T, E>
+  {
     private final T instance;
 
-    private InstanceExtSupplier(T instance) {this.instance = instance;}
+    private InstanceExtSupplier(T instance)
+    {
+      this.instance = instance;
+    }
 
     @Override
-    public T get() throws E {
+    public T get() throws E
+    {
       return instance;
     }
   }

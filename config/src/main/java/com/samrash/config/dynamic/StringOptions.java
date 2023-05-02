@@ -13,28 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
 import com.google.common.collect.Maps;
-
-import java.util.concurrent.ConcurrentMap;
-
 import com.samrash.logging.Logger;
 import com.samrash.logging.LoggerImpl;
 
-public class StringOptions {
+import java.util.concurrent.ConcurrentMap;
+
+public class StringOptions
+{
   private static final Logger LOG = LoggerImpl.getLogger(StringOptions.class);
 
   private final ConcurrentMap<String, Option<String>> optionMap = Maps.newConcurrentMap();
 
-  public Option<String> getOption(String key) {
+  public Option<String> getOption(String key)
+  {
     Option<String> option = new OptionImpl<String>();
     Option<String> existing = optionMap.putIfAbsent(key, option);
 
     return existing == null ? option : existing;
   }
 
-  public void setOption(String key, String value) {
+  public void setOption(String key, String value)
+  {
     LOG.info("Setting option %s to %s", key, value);
 
     Option<String> option = getOption(key);

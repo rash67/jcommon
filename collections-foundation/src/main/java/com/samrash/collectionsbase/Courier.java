@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collectionsbase;
 
-public interface Courier<T> {
+public interface Courier<T>
+{
   boolean isSet();
+
   T get();
 }

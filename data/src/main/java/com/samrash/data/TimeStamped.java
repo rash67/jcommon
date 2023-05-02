@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data;
 
 import com.samrash.util.serialization.SerDe;
@@ -24,26 +25,31 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class TimeStamped<K> {
+public class TimeStamped<K>
+{
 
   private final DateTime dateKey;
   private final K key;
 
-  public TimeStamped(DateTime dateKey, K key) {
+  public TimeStamped(DateTime dateKey, K key)
+  {
     this.dateKey = dateKey;
     this.key = key;
   }
 
-  public DateTime getDateKey() {
+  public DateTime getDateKey()
+  {
     return dateKey;
   }
 
-  public K getKey() {
+  public K getKey()
+  {
     return key;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -64,48 +70,56 @@ public class TimeStamped<K> {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = dateKey != null ? dateKey.hashCode() : 0;
     result = 31 * result + (key != null ? key.hashCode() : 0);
     return result;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return "TimeStamped{" +
-      "dateKey=" + dateKey +
-      ", key=" + key +
-      '}';
+           "dateKey=" + dateKey +
+           ", key=" + key +
+           '}';
   }
 
   public static class SerDeImpl<K>
-    implements SerDe<TimeStamped<K>> {
+      implements SerDe<TimeStamped<K>>
+  {
     private final SerDe<K> keySerDe;
 
-    public SerDeImpl(SerDe<K> keySerDe) {
+    public SerDeImpl(SerDe<K> keySerDe)
+    {
       this.keySerDe = keySerDe;
     }
 
     @Override
-    public TimeStamped<K> deserialize(DataInput in) throws SerDeException {
+    public TimeStamped<K> deserialize(DataInput in) throws SerDeException
+    {
       try {
-        long dateKeyMillis= in.readLong();
+        long dateKeyMillis = in.readLong();
         DateTime dateKey = new DateTime(dateKeyMillis, DateTimeZone.UTC);
         K key = keySerDe.deserialize(in);
 
         return new TimeStamped<K>(dateKey, key);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(TimeStamped<K> value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       try {
         out.writeLong(value.dateKey.getMillis());
         keySerDe.serialize(value.key, out);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }

@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.example;
 
-import com.samrash.tools.parser.CliConverter;
 import com.google.common.net.HostAndPort;
+import com.samrash.tools.parser.CliConverter;
 
 import java.io.File;
 import java.util.List;
 
-public class Converters {
+public class Converters
+{
   public static CliConverter<Integer> INT = CliConverter.INT;
   public static CliConverter<List<Integer>> INT_LIST = CliConverter.INT_LIST;
   public static CliConverter<List<String>> LIST = CliConverter.LIST;
   public static CliConverter<Boolean> BOOLEAN = CliConverter.BOOLEAN;
-  public static CliConverter<File> FILE = new CliConverter<File>() {
+  public static CliConverter<File> FILE = new CliConverter<File>()
+  {
     @Override
-    public File convert(String value) throws Exception {
+    public File convert(String value) throws Exception
+    {
       return value == null ? null : new File(value);
     }
   };
-  public static CliConverter<HostAndPort> HOST_PORT = new CliConverter<HostAndPort>() {
+  public static CliConverter<HostAndPort> HOST_PORT = new CliConverter<HostAndPort>()
+  {
     @Override
-    public HostAndPort convert(String value) throws Exception {
+    public HostAndPort convert(String value) throws Exception
+    {
       return value == null ? null : HostAndPort.fromString(value);
     }
   };

@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-public class Utils {
-  public static int entropy(int[] histogram) {
+public class Utils
+{
+  public static int entropy(int[] histogram)
+  {
     int total = 0;
     for (int value : histogram) {
       total += value;
@@ -33,7 +36,8 @@ public class Utils {
     return (int) Math.ceil(-total * sum / Math.log(2));
   }
 
-  public static int[] histogram(int[] values) {
+  public static int[] histogram(int[] values)
+  {
     int[] frequencies = new int[255];
     for (int value : values) {
       frequencies[value]++;

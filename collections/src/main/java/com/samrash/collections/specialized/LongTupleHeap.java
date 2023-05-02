@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SimpleHeap;
@@ -20,7 +21,8 @@ import com.samrash.collections.SimpleHeap;
 /**
  * marker interface; also binds some return types more tightly (makeCopy)
  */
-public interface LongTupleHeap extends SimpleHeap<long[]>{
+public interface LongTupleHeap extends SimpleHeap<long[]>
+{
   @Override
   LongTupleHeap makeCopy();
 }

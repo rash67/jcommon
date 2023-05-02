@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public final class ExponentialDecay {
-  private ExponentialDecay() {
+public final class ExponentialDecay
+{
+  private ExponentialDecay()
+  {
   }
 
   /**
    * Compute the alpha decay factor such that the weight of an entry with age 'targetAgeInSeconds'
    * is targetWeight'
    */
-  public static double computeAlpha(double targetWeight, int targetAgeInSeconds) {
+  public static double computeAlpha(double targetWeight, int targetAgeInSeconds)
+  {
     checkArgument(targetAgeInSeconds > 0, "targetAgeInSeconds must be > 0");
     checkArgument(targetWeight > 0 && targetWeight < 1, "targetWeight must be in range (0, 1)");
 

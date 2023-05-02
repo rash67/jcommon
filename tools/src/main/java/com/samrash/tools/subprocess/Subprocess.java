@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.subprocess;
 
 import java.io.BufferedInputStream;
@@ -27,7 +28,8 @@ import java.util.List;
  *
  * @see SubprocessBuilder
  */
-public interface Subprocess extends Iterable<String>, AutoCloseable {
+public interface Subprocess extends Iterable<String>, AutoCloseable
+{
   /**
    * Returns the operating system command this subprocess is controlling, along with its arguments.
    *

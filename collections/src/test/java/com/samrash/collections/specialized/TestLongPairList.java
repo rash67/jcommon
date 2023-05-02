@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import org.testng.Assert;
@@ -25,14 +26,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class TestLongPairList {
+public class TestLongPairList
+{
 
   private LongPairList primes;
   private LongPairList squares;
   private LongPairList cubes;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     primes = new LongPairList(2);
     primes.add(toTuple(1, 7));
     primes.add(toTuple(2, 5));
@@ -50,19 +53,22 @@ public class TestLongPairList {
   }
 
   @Test(groups = "fast")
-  public void testShrinkBoundaryCase1() throws Exception {
-    cubes.add(toTuple(1,1));
+  public void testShrinkBoundaryCase1() throws Exception
+  {
+    cubes.add(toTuple(1, 1));
     cubes.shrink();
   }
 
   @Test(groups = "fast")
-  public void testFindMin() throws Exception {
+  public void testFindMin() throws Exception
+  {
     assertTuplesEqual(primes.peek(), toTuple(1, 7));
     assertTuplesEqual(squares.peek(), toTuple(1, 1));
   }
 
   @Test(groups = "fast")
-  public void testRemoveMin() throws Exception {
+  public void testRemoveMin() throws Exception
+  {
     long[] head = primes.poll();
     assertTuplesEqual(head, toTuple(1, 7));
     assertTuplesEqual(primes.peek(), toTuple(2, 5));
@@ -73,7 +79,8 @@ public class TestLongPairList {
   }
 
   @Test(groups = "fast")
-  public void testInsertAndDelete() throws Exception {
+  public void testInsertAndDelete() throws Exception
+  {
     assertTuplesEqual(primes.poll(), toTuple(1, 7));
     primes.add(toTuple(0, 0));
     assertTuplesEqual(primes.poll(), toTuple(0, 0));
@@ -93,7 +100,8 @@ public class TestLongPairList {
   }
 
   @Test(groups = "fast")
-  public void testInterleavedPollAdd() throws Exception {
+  public void testInterleavedPollAdd() throws Exception
+  {
     LongPairList list = new LongPairList(2);
 
     list.add(toTuple(10, 10));
@@ -114,7 +122,8 @@ public class TestLongPairList {
   }
 
   @Test(groups = "fast")
-  public void testFuu() throws Exception {
+  public void testFuu() throws Exception
+  {
     LongPairList list = new LongPairList(2);
 
     list.add(toTuple(1, 7));
@@ -125,40 +134,45 @@ public class TestLongPairList {
   }
 
   @Test(groups = "fast")
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     assertContentsViaIterator(
-      primes, toTuple(1, 7), toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
+        primes, toTuple(1, 7), toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
     );
     primes.poll();
 
     assertContentsViaIterator(
-      primes, toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
+        primes, toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
     );
 
     assertContentsViaIterator(
-      squares, toTuple(1, 1), toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
+        squares, toTuple(1, 1), toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
     );
     squares.poll();
 
     assertContentsViaIterator(
-      squares, toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
+        squares, toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
     );
   }
 
-  private void assertTuplesEqual(long[] actual, long[] exected) {
+  private void assertTuplesEqual(long[] actual, long[] exected)
+  {
     Assert.assertTrue(Arrays.equals(actual, exected));
   }
 
-  private void assertContentsViaIterator(LongPairList tupleList, long[]... results) {
+  private void assertContentsViaIterator(LongPairList tupleList, long[]... results)
+  {
     List<long[]> tmpList = new ArrayList<long[]>(tupleList.size());
 
     for (long[] tuple : tupleList) {
       tmpList.add(tuple);
     }
 
-    Collections.sort(tmpList, new Comparator<long[]>() {
+    Collections.sort(tmpList, new Comparator<long[]>()
+    {
       @Override
-      public int compare(long[] o1, long[] o2) {
+      public int compare(long[] o1, long[] o2)
+      {
         return Long.signum(o1[0] - o2[0]);
       }
     });
@@ -171,7 +185,8 @@ public class TestLongPairList {
     }
   }
 
-  private long[] toTuple(long... items) {
+  private long[] toTuple(long... items)
+  {
     return items;
   }
 }

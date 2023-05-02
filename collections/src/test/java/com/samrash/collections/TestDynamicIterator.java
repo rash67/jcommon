@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.collect.Sets;
@@ -36,17 +37,20 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-public class TestDynamicIterator {
+public class TestDynamicIterator
+{
 
   private DynamicIterator<Integer> iterator;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     iterator = new DynamicIterator<Integer>(100);
   }
 
   @Test(groups = "fast")
-  public void testAddSingle() throws InterruptedException {
+  public void testAddSingle() throws InterruptedException
+  {
     iterator.add(1);
     iterator.finish();
 
@@ -57,7 +61,8 @@ public class TestDynamicIterator {
   }
 
   @Test(groups = "fast")
-  public void testAddMultiple() throws InterruptedException {
+  public void testAddMultiple() throws InterruptedException
+  {
 
     List<Integer> expected = asList(1, 2, 3, 4, 5);
     for (Integer value : expected) {
@@ -74,7 +79,8 @@ public class TestDynamicIterator {
   }
 
   @Test(groups = "fast")
-  public void testInterleaved() throws InterruptedException {
+  public void testInterleaved() throws InterruptedException
+  {
     List<Integer> expected = asList(1, 2, 3, 4, 5);
     for (int value : expected) {
       iterator.add(value);
@@ -85,9 +91,10 @@ public class TestDynamicIterator {
     assertFalse(iterator.hasNext());
   }
 
-  @Test(groups= "fast", expectedExceptions = IllegalStateException.class,
-        expectedExceptionsMessageRegExp = ".*already finished.*")
-  public void testDoesNotAllowAddsAfterFinish() throws InterruptedException {
+  @Test(groups = "fast", expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*already finished.*")
+  public void testDoesNotAllowAddsAfterFinish() throws InterruptedException
+  {
     iterator.add(1);
     iterator.add(2);
     iterator.finish();
@@ -95,25 +102,28 @@ public class TestDynamicIterator {
     iterator.add(3);
   }
 
-  @Test (groups = "fast")
+  @Test(groups = "fast")
   public void testMultipleWriters()
-    throws ExecutionException, InterruptedException, TimeoutException {
+      throws ExecutionException, InterruptedException, TimeoutException
+  {
 
     ExecutorService executor = Executors.newCachedThreadPool(
-      new ThreadFactoryBuilder().setDaemon(true).build());
+        new ThreadFactoryBuilder().setDaemon(true).build());
 
     Future<Set<Integer>> consumer = executor.submit(
-      new Callable<Set<Integer>>() {
-        public Set<Integer> call() throws Exception {
-          return Sets.newHashSet(iterator);
+        new Callable<Set<Integer>>()
+        {
+          public Set<Integer> call() throws Exception
+          {
+            return Sets.newHashSet(iterator);
+          }
         }
-      }
     );
 
     //noinspection unchecked
     executor.invokeAll(asList(
-      producer(iterator, 0, 1, 2, 3, 4),
-      producer(iterator, 5, 6, 7, 8, 9)
+        producer(iterator, 0, 1, 2, 3, 4),
+        producer(iterator, 5, 6, 7, 8, 9)
     ), 1, TimeUnit.SECONDS); // failsafe in case there's a deadlock
 
     iterator.finish();
@@ -123,7 +133,8 @@ public class TestDynamicIterator {
   }
 
   @Test(groups = "fast", expectedExceptions = NoSuchElementException.class)
-  public void testNoSuchElement() throws Exception {
+  public void testNoSuchElement() throws Exception
+  {
     iterator.add(1);
     iterator.finish();
     iterator.next();
@@ -132,8 +143,10 @@ public class TestDynamicIterator {
 
   private Callable<Void> producer(final DynamicIterator<Integer> iterator, final int... values)
   {
-    return new Callable<Void>() {
-      public Void call() throws InterruptedException {
+    return new Callable<Void>()
+    {
+      public Void call() throws InterruptedException
+      {
         for (final int value : values) {
           iterator.add(value);
         }

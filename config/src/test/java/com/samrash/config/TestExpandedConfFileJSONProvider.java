@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
@@ -25,7 +26,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestExpandedConfFileJSONProvider {
+public class TestExpandedConfFileJSONProvider
+{
   private Map<File, JSONObject> mockFileParser = new HashMap<>();
 
   public final static String simpleAConfig = "simpleA.json";
@@ -37,12 +39,14 @@ public class TestExpandedConfFileJSONProvider {
   public final static String circularBConfig = "circularIncludeB.json";
 
   private JSONObject addInclude(JSONObject json, String include)
-    throws JSONException {
+      throws JSONException
+  {
     return json.append("includes", include);
   }
 
   private JSONObject addConf(JSONObject json, String key, String value)
-    throws JSONException {
+      throws JSONException
+  {
     if (!json.has("conf")) {
       json.put("conf", new JSONObject());
     }
@@ -51,21 +55,24 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private JSONObject buildSimpleAConfig() throws JSONException {
+  private JSONObject buildSimpleAConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addConf(json, "key1", "simpleA1");
     json = addConf(json, "key2", "simpleA2");
     return json;
   }
 
-  private JSONObject buildSimpleBConfig() throws JSONException {
+  private JSONObject buildSimpleBConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addConf(json, "key1", "simpleB1");
     json = addConf(json, "key3", "simpleB3");
     return json;
   }
 
-  private JSONObject buildSimpleIncludeConfig() throws JSONException {
+  private JSONObject buildSimpleIncludeConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addInclude(json, simpleAConfig);
     json = addConf(json, "key1", "simpleInclude1");
@@ -73,7 +80,8 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private JSONObject buildMultiIncludeConfig() throws JSONException {
+  private JSONObject buildMultiIncludeConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addInclude(json, simpleAConfig);
     json = addInclude(json, simpleBConfig);
@@ -82,7 +90,8 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private JSONObject buildChainedConfig() throws JSONException {
+  private JSONObject buildChainedConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addInclude(json, simpleIncludeConfig);
     json = addConf(json, "key1", "chainInclude1");
@@ -90,7 +99,8 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private JSONObject buildCircularIncludeAConfig() throws JSONException {
+  private JSONObject buildCircularIncludeAConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addInclude(json, circularBConfig);
     json = addConf(json, "key1", "circularA1");
@@ -98,7 +108,8 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private JSONObject buildCircularIncludeBConfig() throws JSONException {
+  private JSONObject buildCircularIncludeBConfig() throws JSONException
+  {
     JSONObject json = new JSONObject();
     json = addInclude(json, circularAConfig);
     json = addConf(json, "key1", "circularB1");
@@ -106,44 +117,51 @@ public class TestExpandedConfFileJSONProvider {
     return json;
   }
 
-  private String getStagingDirPath() {
+  private String getStagingDirPath()
+  {
     // Make it relative to the current user directory
     return new File("").getAbsolutePath() + "/tmp";
   }
 
 
-  private String buildFullPath(String fileName) {
+  private String buildFullPath(String fileName)
+  {
     return getStagingDirPath() + "/" + fileName;
   }
 
-  private void registerMockFile(String path, JSONObject json) {
+  private void registerMockFile(String path, JSONObject json)
+  {
     mockFileParser.put(new File(path), json);
   }
 
   @BeforeTest(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     registerMockFile(
-      buildFullPath(simpleAConfig), buildSimpleAConfig());
+        buildFullPath(simpleAConfig), buildSimpleAConfig());
     registerMockFile(
-      buildFullPath(simpleBConfig), buildSimpleBConfig());
+        buildFullPath(simpleBConfig), buildSimpleBConfig());
     registerMockFile(
-      buildFullPath(simpleIncludeConfig),buildSimpleIncludeConfig());
+        buildFullPath(simpleIncludeConfig), buildSimpleIncludeConfig());
     registerMockFile(
-      buildFullPath(multiIncludeConfig), buildMultiIncludeConfig());
+        buildFullPath(multiIncludeConfig), buildMultiIncludeConfig());
     registerMockFile(
-      buildFullPath(chainedConfig), buildChainedConfig());
+        buildFullPath(chainedConfig), buildChainedConfig());
     registerMockFile(
-      buildFullPath(circularAConfig), buildCircularIncludeAConfig());
+        buildFullPath(circularAConfig), buildCircularIncludeAConfig());
     registerMockFile(
-      buildFullPath(circularBConfig), buildCircularIncludeBConfig());
+        buildFullPath(circularBConfig), buildCircularIncludeBConfig());
   }
 
   // Return an anonymous inner class that simulates file reading
-  private ExpandedConfFileJSONProvider buildJSONProvider(String configPath) {
-    return new ExpandedConfFileJSONProvider(new File(configPath)) {
+  private ExpandedConfFileJSONProvider buildJSONProvider(String configPath)
+  {
+    return new ExpandedConfFileJSONProvider(new File(configPath))
+    {
       // Override file parsing so we can get contents w/o having actual files
       @Override
-      protected JSONObject load(String fileName) {
+      protected JSONObject load(String fileName)
+      {
         File file = new File(fileName);
         return mockFileParser.get(file);
       }
@@ -151,9 +169,10 @@ public class TestExpandedConfFileJSONProvider {
   }
 
   @Test(groups = "fast")
-  public void testSimpleConfig() throws Exception {
+  public void testSimpleConfig() throws Exception
+  {
     JSONObject json =
-      buildJSONProvider(buildFullPath(simpleAConfig)).get();
+        buildJSONProvider(buildFullPath(simpleAConfig)).get();
 
     Assert.assertTrue(json.has("key1"));
     Assert.assertEquals(json.getString("key1"), "simpleA1");
@@ -162,9 +181,10 @@ public class TestExpandedConfFileJSONProvider {
   }
 
   @Test(groups = "fast")
-  public void testSimpleIncludeConfig() throws Exception {
+  public void testSimpleIncludeConfig() throws Exception
+  {
     JSONObject json =
-      buildJSONProvider(buildFullPath(simpleIncludeConfig)).get();
+        buildJSONProvider(buildFullPath(simpleIncludeConfig)).get();
 
     Assert.assertTrue(json.has("key1"));
     Assert.assertEquals(json.getString("key1"), "simpleInclude1");
@@ -175,9 +195,10 @@ public class TestExpandedConfFileJSONProvider {
   }
 
   @Test(groups = "fast")
-  public void testMultiIncludeConfig() throws Exception {
+  public void testMultiIncludeConfig() throws Exception
+  {
     JSONObject json =
-      buildJSONProvider(buildFullPath(multiIncludeConfig)).get();
+        buildJSONProvider(buildFullPath(multiIncludeConfig)).get();
 
     Assert.assertTrue(json.has("key1"));
     Assert.assertEquals(json.getString("key1"), "multiInclude1");
@@ -190,9 +211,10 @@ public class TestExpandedConfFileJSONProvider {
   }
 
   @Test(groups = "fast")
-  public void testChainedConfig() throws Exception {
+  public void testChainedConfig() throws Exception
+  {
     JSONObject json =
-      buildJSONProvider(buildFullPath(chainedConfig)).get();
+        buildJSONProvider(buildFullPath(chainedConfig)).get();
 
     Assert.assertTrue(json.has("key1"));
     Assert.assertEquals(json.getString("key1"), "chainInclude1");
@@ -205,9 +227,10 @@ public class TestExpandedConfFileJSONProvider {
   }
 
   @Test(groups = "fast")
-  public void testCircularIncludeConfig() throws Exception {
+  public void testCircularIncludeConfig() throws Exception
+  {
     JSONObject json =
-      buildJSONProvider(buildFullPath(circularAConfig)).get();
+        buildJSONProvider(buildFullPath(circularAConfig)).get();
 
     Assert.assertTrue(json.has("key1"));
     Assert.assertEquals(json.getString("key1"), "circularA1");

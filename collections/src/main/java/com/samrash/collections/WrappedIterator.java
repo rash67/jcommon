@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Iterator;
 
-public class WrappedIterator<T> implements Iterator<T> {
+public class WrappedIterator<T> implements Iterator<T>
+{
   private final Iterator<T> delegate;
 
-  public WrappedIterator(Iterator<T> delegate) {
+  public WrappedIterator(Iterator<T> delegate)
+  {
     this.delegate = delegate;
   }
 
   @Override
-  public boolean hasNext() {
+  public boolean hasNext()
+  {
     return delegate.hasNext();
   }
 
   @Override
-  public T next() {
+  public T next()
+  {
     return delegate.next();
   }
 
   @Override
-  public void remove() {
+  public void remove()
+  {
     delegate.remove();
   }
 }

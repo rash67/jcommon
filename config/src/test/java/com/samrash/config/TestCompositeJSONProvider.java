@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONObject;
@@ -20,33 +21,35 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestCompositeJSONProvider {
+public class TestCompositeJSONProvider
+{
 
   private CompositeJSONProvider compositeJSONProvider2;
   private CompositeJSONProvider compositeJSONProvider1;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     JSONProvider jsonProvider1 = () -> {
       JSONObject jsonObject = new JSONObject()
-        .put("key1", "value1")
-        .put("key2", new JSONObject().put("key3", "value3"))
-        .put("key4", new JSONObject()
-          .put("key5", "value5")
-          .put("key7", "value7a")
-        );
+          .put("key1", "value1")
+          .put("key2", new JSONObject().put("key3", "value3"))
+          .put("key4", new JSONObject()
+              .put("key5", "value5")
+              .put("key7", "value7a")
+          );
 
       return jsonObject;
     };
 
     JSONProvider jsonProvider2 = () -> {
       JSONObject jsonObject = new JSONObject()
-        .put("key3", "value3")
-        .put("key2", "value2")
-        .put("key4", new JSONObject()
-          .put("key6", "value6")
-          .put("key7", "value7b")
-        );
+          .put("key3", "value3")
+          .put("key2", "value2")
+          .put("key4", new JSONObject()
+              .put("key6", "value6")
+              .put("key7", "value7b")
+          );
 
       return jsonObject;
     };
@@ -55,7 +58,8 @@ public class TestCompositeJSONProvider {
   }
 
   @Test
-  public void testOrder1() throws Exception {
+  public void testOrder1() throws Exception
+  {
     JSONObject jsonObject = compositeJSONProvider1.get();
 
     Assert.assertEquals(jsonObject.get("key1"), "value1");
@@ -68,7 +72,8 @@ public class TestCompositeJSONProvider {
   }
 
   @Test
-  public void testOrder2() throws Exception {
+  public void testOrder2() throws Exception
+  {
     JSONObject jsonObject = compositeJSONProvider2.get();
 
     Assert.assertEquals(jsonObject.get("key1"), "value1");

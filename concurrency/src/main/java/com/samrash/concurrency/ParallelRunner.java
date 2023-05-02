@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.google.common.collect.Iterators;
+import com.samrash.logging.Logger;
+import com.samrash.logging.LoggerImpl;
+import com.samrash.util.ExtRunnable;
+import com.samrash.util.exceptions.ExceptionHandler;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -24,17 +29,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.samrash.logging.Logger;
-import com.samrash.logging.LoggerImpl;
-import com.samrash.util.ExtRunnable;
-import com.samrash.util.exceptions.ExceptionHandler;
-
 /**
  * Utility class in order to execute tasks in parallel on top of an executor, but bound the
  * number of concurrent tasks used in that executor.  Note, if the executor itself has a bound
  * lower than specified, that bound will of course be used.
  */
-public class ParallelRunner {
+public class ParallelRunner
+{
   private static final Logger LOG = LoggerImpl.getLogger(ParallelRunner.class);
   private static final String DEFAULT_NAME_PREFIX = "ParallelRun-";
 
@@ -46,10 +47,11 @@ public class ParallelRunner {
   /**
    * Create an instance on top of an underlying executor
    *
-   * @param executor executor to wrap
+   * @param executor          executor to wrap
    * @param defaultNamePrefix borrowed threads will use this name prefix
    */
-  public ParallelRunner(ExecutorService executor, String defaultNamePrefix) {
+  public ParallelRunner(ExecutorService executor, String defaultNamePrefix)
+  {
     this.executor = executor;
     this.defaultNamePrefix = defaultNamePrefix;
   }
@@ -59,7 +61,8 @@ public class ParallelRunner {
    *
    * @param executor
    */
-  public ParallelRunner(ExecutorService executor) {
+  public ParallelRunner(ExecutorService executor)
+  {
     this(executor, DEFAULT_NAME_PREFIX);
   }
 
@@ -73,10 +76,11 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<? extends ExtRunnable<E>> tasks,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler
-  ) throws E {
+      Iterable<? extends ExtRunnable<E>> tasks,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler
+  ) throws E
+  {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler);
   }
 
@@ -90,15 +94,16 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<? extends ExtRunnable<E>> tasksIter,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler
-  ) throws E {
+      Iterator<? extends ExtRunnable<E>> tasksIter,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler
+  ) throws E
+  {
     parallelRunExt(
-      tasksIter,
-      numThreads,
-      exceptionHandler,
-      defaultNamePrefix + instanceNumber.getAndIncrement()
+        tasksIter,
+        numThreads,
+        exceptionHandler,
+        defaultNamePrefix + instanceNumber.getAndIncrement()
     );
   }
 
@@ -113,11 +118,12 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<? extends ExtRunnable<E>> tasks,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler,
-    String baseName
-  ) throws E {
+      Iterable<? extends ExtRunnable<E>> tasks,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler,
+      String baseName
+  ) throws E
+  {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler, baseName);
   }
 
@@ -126,7 +132,7 @@ public class ParallelRunner {
    * will be used to guarantee type E is thrown, and only one, the "first" exception will be
    * thrown. The system is fail-fast in that once a task execution observes an exception has
    * occurred, it does not run additional tasks.
-   *
+   * <p>
    * It has the same contract as far as executing tasks as they are extracted from the Iterator
    *
    * @param tasksIter
@@ -137,14 +143,15 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<? extends ExtRunnable<E>> tasksIter,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler,
-    String baseName
-  ) throws E {
+      Iterator<? extends ExtRunnable<E>> tasksIter,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler,
+      String baseName
+  ) throws E
+  {
     final AtomicReference<E> exception = new AtomicReference<E>();
     Iterator<Runnable> wrappedIterator =
-      Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
+        Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 
     parallelRun(wrappedIterator, numThreads, baseName);
 
@@ -159,20 +166,23 @@ public class ParallelRunner {
    * @param tasks
    * @param numThreads
    */
-  public void parallelRun(Iterable<? extends Runnable> tasks, int numThreads) {
+  public void parallelRun(Iterable<? extends Runnable> tasks, int numThreads)
+  {
     parallelRun(tasks.iterator(), numThreads);
   }
 
   /**
    * helper method with default name prefix ParallelRunner.DEFAULT_NAME_PREFIX
+   *
    * @param tasksIter
    * @param numThreads
    */
-  public void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads) {
+  public void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads)
+  {
     parallelRun(
-      tasksIter,
-      numThreads,
-      defaultNamePrefix + instanceNumber.getAndIncrement()
+        tasksIter,
+        numThreads,
+        defaultNamePrefix + instanceNumber.getAndIncrement()
     );
   }
 
@@ -184,8 +194,9 @@ public class ParallelRunner {
    * @param baseName
    */
   public void parallelRun(
-    Iterable<? extends Runnable> tasks, int numThreads, String baseName
-  ) {
+      Iterable<? extends Runnable> tasks, int numThreads, String baseName
+  )
+  {
     parallelRun(tasks.iterator(), numThreads, baseName);
   }
 
@@ -194,12 +205,12 @@ public class ParallelRunner {
    * often it is desirable to begin execution of tasks before the entire set has been created.  In
    * this way, task are started immediately as they are pulled off of the iterator than than
    * draining the iterator and then executing them.
-   *
+   * <p>
    * Clients may use this fact and create Iterators that are more of a "queue" and take advantage
    * of this fact. Another way to look at this is as this is a consumer of tasks that come from a
    * producer (iterator). The expectation is that eventually, most use cases will eventually quit
    * producing tasks, and hence taskIter.hasNext() return false.
-   *
+   * <p>
    * There is nothing in the implementation that requires this, however, and if a client
    * constructs an unbounded Iterator, this will function correctly.
    *
@@ -208,21 +219,22 @@ public class ParallelRunner {
    * @param baseName
    */
   public void parallelRun(
-    Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
-  ) {
+      Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
+  )
+  {
     ExecutorService executorForInvocation;
 
     // create a virtual executor that bounds the # of threads we can use
     // for this run
     executorForInvocation =
-      new UnstoppableExecutorService(
-        new ExecutorServiceFront(
-          new LinkedBlockingQueue<Runnable>(),
-          executor,
-          baseName,
-          numThreads
-        )
-      );
+        new UnstoppableExecutorService(
+            new ExecutorServiceFront(
+                new LinkedBlockingQueue<Runnable>(),
+                executor,
+                baseName,
+                numThreads
+            )
+        );
 
     int totalTasks = 0;
 
@@ -237,10 +249,10 @@ public class ParallelRunner {
     try {
       while (!executorForInvocation.awaitTermination(10, TimeUnit.SECONDS)) {
         LOG.info(
-          "(%d) %s waited 10s for %d tasks, waiting some more",
-          Thread.currentThread().getId(),
-          baseName,
-          totalTasks
+            "(%d) %s waited 10s for %d tasks, waiting some more",
+            Thread.currentThread().getId(),
+            baseName,
+            totalTasks
         );
       }
 
@@ -249,7 +261,8 @@ public class ParallelRunner {
           Thread.currentThread().getId(),
           baseName
       );
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       Thread.currentThread().interrupt();
 
       LOG.warn("interrupted waiting for tasks to complete", e);

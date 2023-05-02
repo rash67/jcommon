@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.reflection;
 
 import com.google.common.base.Function;
@@ -22,25 +23,30 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 
-public class TestForwardReferenceProxy {
+public class TestForwardReferenceProxy
+{
 
   private ForwardReferenceProxy<TestFunction> proxy;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     proxy = new ForwardReferenceProxy<>(TestFunction.class);
   }
 
   @Test
-  public void testBasic() throws Exception {
+  public void testBasic() throws Exception
+  {
     TestFunction testFunction = proxy.setInstance(
-      new TestFunction() {
-        @Nullable
-        @Override
-        public Integer apply(String input) {
-          return Integer.parseInt(input);
+        new TestFunction()
+        {
+          @Nullable
+          @Override
+          public Integer apply(String input)
+          {
+            return Integer.parseInt(input);
+          }
         }
-      }
     ).get();
 
     int result = testFunction.apply("123");
@@ -49,19 +55,22 @@ public class TestForwardReferenceProxy {
   }
 
   @Test(expectedExceptions = NullPointerException.class)
-  public void testInstanceNotSet() throws Exception {
+  public void testInstanceNotSet() throws Exception
+  {
     TestFunction testFunction = proxy.get();
     testFunction.apply("don't care");
   }
 
   @Test
-  public void testPartialProxy() throws Exception {
+  public void testPartialProxy() throws Exception
+  {
     TestFunction testFunction = proxy.get();
 
     Assert.assertNotNull(testFunction);
   }
 
-  private interface TestFunction extends Function<String, Integer> {
+  private interface TestFunction extends Function<String, Integer>
+  {
     @Override
     Integer apply(@Nullable String input);
   }

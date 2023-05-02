@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
+import com.samrash.tools.io.IO;
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParser;
-import com.samrash.tools.io.IO;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CommandDispatcher {
+public class CommandDispatcher
+{
   private final Map<String, CommandBuilder> commandBuilderMap;
   private final Help help;
   private final CliCommand dispatchCommand;
   private final IO io;
 
-  public CommandDispatcher(IO io, String group, List<CommandBuilder> commands) {
+  public CommandDispatcher(IO io, String group, List<CommandBuilder> commands)
+  {
     this.io = io;
     commandBuilderMap = new LinkedHashMap<>();
 
@@ -50,19 +53,23 @@ public class CommandDispatcher {
     this.dispatchCommand = dispatchCommand.build();
   }
 
-  public CommandDispatcher(IO io, List<CommandBuilder> commands) {
+  public CommandDispatcher(IO io, List<CommandBuilder> commands)
+  {
     this(io, null, commands);
   }
 
-  public CommandDispatcher(IO io, CommandBuilder... commands) {
+  public CommandDispatcher(IO io, CommandBuilder... commands)
+  {
     this(io, Arrays.asList(commands));
   }
 
-  public int run(String... arguments) {
+  public int run(String... arguments)
+  {
     return run(Arrays.asList(arguments));
   }
 
-  public int run(List<String> arguments) {
+  public int run(List<String> arguments)
+  {
     CliParser dispatchParser = new CliParser(dispatchCommand, arguments);
     String commandName = dispatchParser.get("command");
     boolean printStackTraces = "-X".equals(commandName);
@@ -92,7 +99,8 @@ public class CommandDispatcher {
     return commandRunner.run(commandArguments);
   }
 
-  public void help(List<String> arguments) {
+  public void help(List<String> arguments)
+  {
     CommandRunner helpCommandRunner = new CommandRunner(io, help);
 
     helpCommandRunner.run(arguments);

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 /**
@@ -20,7 +21,7 @@ package com.samrash.collections;
  * implement data structures on top of them seeming to use "Objects", with auto[un]boxing,
  * but the backing storage may be primitive arrays in order to save memory
  * (ex: hash tables implemented in terms of arrays)
- *
+ * <p>
  * While this interface doesn't 100% enforce that implementations will be a class array,
  * the implementation should have array-like properties in terms of memory usage and time
  * of operations:  get/setshould be O(1).  resize should be O(n).  append() should be O(1)
@@ -31,11 +32,12 @@ package com.samrash.collections;
  * the array is full
  *
  * @param <T> type of the array. T = Long may in fact mean the backing storage
- * could be long[] which saves 24 bytes per entry (the pointer + 2w overhead)
- *
- * Each implementation defines if it's thread safe or not
+ *            could be long[] which saves 24 bytes per entry (the pointer + 2w overhead)
+ *            <p>
+ *            Each implementation defines if it's thread safe or not
  */
-public interface Array<T> extends Iterable<T>{
+public interface Array<T> extends Iterable<T>
+{
   /**
    * gets element at position i.  For the love of all that is good and
    * holy, please make this O(1) in all your implementations
@@ -64,7 +66,7 @@ public interface Array<T> extends Iterable<T>{
   /**
    * replace a value.  i must be < capacity()
    *
-   * @param i location
+   * @param i     location
    * @param value value to place, may NOT be null
    * @return previous value, null if nada
    * @throws IndexOutOfBoundsException i is >= size or i is negative
@@ -76,13 +78,13 @@ public interface Array<T> extends Iterable<T>{
    *
    * <pre>simpleArray.set(simpleArray.size(), value) </pre>
    * (with an exception, see below)
-   *
+   * <p>
    * this is useful when you want to use the array like queue or stack, and in practice some
    * one-off impls of classes like this did "append" only.
-   *
+   * <p>
    * with the difference that if size() == capacity(), the array it is automatically grown
    * to accommodate the new value
-   *
+   * <p>
    * In the case if a value has been set past the "end" of contiguous values, this will continue
    * and skip over set values and set the first empty value
    *
@@ -106,7 +108,7 @@ public interface Array<T> extends Iterable<T>{
    * the idea here is that want to grow the array, and give a 'hint'. Note,
    * underlying implementations may not be able to create an array of the exact size
    * For example, asking for 2 * size() might result in a slightly different size.
-   *
+   * <p>
    * For shrinking: one should copy to a smaller array. Because shrinking would have unknown
    * effects on the indices of values known to the caller, there is not much value in having
    * the ability to shrink internalized

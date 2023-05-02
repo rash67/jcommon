@@ -13,37 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-public class TerminalPrintStream extends PrintStream {
+public class TerminalPrintStream extends PrintStream
+{
   private final boolean interactive;
   private boolean currentLineIsStatus = false;
 
-  private TerminalPrintStream(OutputStream out, boolean interactive) {
+  private TerminalPrintStream(OutputStream out, boolean interactive)
+  {
     super(out, true);
     this.interactive = interactive;
   }
 
-  public static TerminalPrintStream interactive(OutputStream out) {
+  public static TerminalPrintStream interactive(OutputStream out)
+  {
     return new TerminalPrintStream(out, true);
   }
 
-  public static TerminalPrintStream noninteractive(OutputStream out) {
+  public static TerminalPrintStream noninteractive(OutputStream out)
+  {
     return new TerminalPrintStream(out, false);
   }
 
   @Override
-  public void write(int b) {
+  public void write(int b)
+  {
     eraseStatusLine();
     super.write(b);
   }
 
   @Override
-  public void write(byte[] buffer, int offset, int length) {
+  public void write(byte[] buffer, int offset, int length)
+  {
     if (currentLineIsStatus) {
       // HACK eraseStatusLine() modifies buffer, so we need to copy/restore
       byte[] bufferCopy = Arrays.copyOf(buffer, buffer.length);
@@ -55,12 +62,14 @@ public class TerminalPrintStream extends PrintStream {
     super.write(buffer, offset, length);
   }
 
-  public void printfln(String format, Object... args) {
+  public void printfln(String format, Object... args)
+  {
     printf(format, args);
     println();
   }
 
-  public void status(String line) {
+  public void status(String line)
+  {
     if (interactive) {
       print(line);
       flush();
@@ -68,43 +77,53 @@ public class TerminalPrintStream extends PrintStream {
     }
   }
 
-  public void status(boolean b) {
+  public void status(boolean b)
+  {
     status(Boolean.toString(b));
   }
 
-  public void status(char c) {
+  public void status(char c)
+  {
     status(Character.toString(c));
   }
 
-  public void status(int i) {
+  public void status(int i)
+  {
     status(Integer.toString(i));
   }
 
-  public void status(long l) {
+  public void status(long l)
+  {
     status(Long.toString(l));
   }
 
-  public void status(float f) {
+  public void status(float f)
+  {
     status(Float.toString(f));
   }
 
-  public void status(double d) {
+  public void status(double d)
+  {
     status(Double.toString(d));
   }
 
-  public void status(char[] s) {
+  public void status(char[] s)
+  {
     status(new String(s));
   }
 
-  public void status(Object obj) {
+  public void status(Object obj)
+  {
     status(String.valueOf(obj));
   }
 
-  public void statusf(String format, Object... args) {
+  public void statusf(String format, Object... args)
+  {
     status(String.format(format, args));
   }
 
-  private void eraseStatusLine() {
+  private void eraseStatusLine()
+  {
     if (currentLineIsStatus) {
       currentLineIsStatus = false;
       flush();

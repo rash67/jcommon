@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import org.testng.Assert;
@@ -23,14 +24,17 @@ import java.util.Arrays;
 import static org.testng.Assert.assertEquals;
 
 public class TestSparseEstimator
-  extends TestEstimator {
+    extends TestEstimator
+{
   @Override
-  protected Estimator getEstimator() {
+  protected Estimator getEstimator()
+  {
     return new SparseEstimator(1024);
   }
 
   @Test
-  public void testRoundtrip() {
+  public void testRoundtrip()
+  {
     Estimator estimator = getEstimator();
 
     for (int i = 0; i < estimator.getNumberOfBuckets(); i++) {
@@ -42,7 +46,8 @@ public class TestSparseEstimator
   }
 
   @Test
-  public void testBucketsConstructor() {
+  public void testBucketsConstructor()
+  {
     int[] buckets = new int[1024];
 
     for (int bucket = 0; bucket < buckets.length; ++bucket) {

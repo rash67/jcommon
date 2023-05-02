@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.util.exceptions.ExceptionHandler;
@@ -24,9 +25,11 @@ import com.samrash.util.exceptions.ExceptionHandler;
  * @param <T>
  */
 public class NullExceptionHandler<T extends Exception> implements
-  ExceptionHandler<T> {
+    ExceptionHandler<T>
+{
   @Override
-  public <S extends Exception> T handle(S e) {
+  public <S extends Exception> T handle(S e)
+  {
     return null;
   }
 }

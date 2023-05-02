@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import java.io.ByteArrayOutputStream;
@@ -25,10 +26,12 @@ import java.util.Arrays;
 /**
  * Various helper functions
  */
-public class Convert {
+public class Convert
+{
   private static final Charset UTF8 = Charset.forName("UTF-8");
 
-  public static ByteBuffer toByteBuffer(final String str) {
+  public static ByteBuffer toByteBuffer(final String str)
+  {
     if (str == null) {
       return null;
     }
@@ -38,11 +41,13 @@ public class Convert {
   }
 
   // just to make it consistent with the other conversion functions
-  public static ByteBuffer toByteBuffer(final byte[] bytes) {
+  public static ByteBuffer toByteBuffer(final byte[] bytes)
+  {
     return ByteBuffer.wrap(bytes);
   }
 
-  public static String toString(final ByteBuffer bb) {
+  public static String toString(final ByteBuffer bb)
+  {
     // Don't use Bytes.toString() here since there can be an extra array copy
     // to convert ByteBuffer to Bytes (see Convert.toBytes())
 
@@ -60,25 +65,27 @@ public class Convert {
    * resulting byte array directly. If you want a writable copy, please use
    * org.apache.hadoop.hbase.util.Bytes.toBytes(ByteBuffer).
    *
-   * @param bb  the byte buffer
+   * @param bb the byte buffer
    * @return a reference to a byte array that contains the same content as the
-   *         given ByteBuffer
+   * given ByteBuffer
    */
-  public static byte[] toBytes(final ByteBuffer bb) {
+  public static byte[] toBytes(final ByteBuffer bb)
+  {
     // we cannot call array() on read only or direct ByteBuffers
     if (bb.isReadOnly() || bb.isDirect()) {
       try {
         ByteArrayOutputStream out = new ByteArrayOutputStream(bb.limit());
         Channels.newChannel(out).write(bb);
         return out.toByteArray();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new RuntimeException(e); // memory error
       }
     } else if (bb.array().length == bb.limit()) {
       return bb.array();
     } else {
       return Arrays.copyOfRange(
-        bb.array(), bb.arrayOffset(), bb.arrayOffset() + bb.limit()
+          bb.array(), bb.arrayOffset(), bb.arrayOffset() + bb.limit()
       );
     }
   }

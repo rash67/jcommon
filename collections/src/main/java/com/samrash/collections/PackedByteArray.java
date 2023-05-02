@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PackedByteArray {
+public class PackedByteArray
+{
   private static final byte DEFAULT_DELIMITER = 1;
   private static final byte DEFAULT_TERMINAL_DELIMITER = 0;
   private static final int MAGIC_INITIAL_BYTE_ARRAY_SIZE = 256;
@@ -36,7 +38,8 @@ public class PackedByteArray {
    * @return
    * @see #pack(java.util.List)
    */
-  public static byte[] pack(byte[]... arrays) {
+  public static byte[] pack(byte[]... arrays)
+  {
     return pack(Arrays.asList(arrays));
   }
 
@@ -50,9 +53,10 @@ public class PackedByteArray {
    * @throws IOException
    */
   public static byte[] readByteArray(
-    DataInput in, byte terminalDelimiter
+      DataInput in, byte terminalDelimiter
   )
-    throws IOException {
+      throws IOException
+  {
 
     // 256 magic number--just guessing it won't be bigger. If it is,
     // ArrayList will resize
@@ -77,9 +81,10 @@ public class PackedByteArray {
    * @see #packComparable(java.util.List, byte, byte)  for format
    */
   public static List<byte[]> readByteArrayList(
-    DataInput in, byte delimiter, byte terminalDelimiter
+      DataInput in, byte delimiter, byte terminalDelimiter
   )
-    throws IOException {
+      throws IOException
+  {
 
     // 256 magic number--just guessing it won't be bigger. If it is,
     // ArrayList will resize
@@ -93,17 +98,19 @@ public class PackedByteArray {
     byteList.add(terminalDelimiter);
 
     return unpackComparable(
-      byteListToArray(byteList), delimiter, terminalDelimiter
+        byteListToArray(byteList), delimiter, terminalDelimiter
     );
   }
 
-  public static byte[] packComparable(byte[]... arrays) {
+  public static byte[] packComparable(byte[]... arrays)
+  {
     return packComparable(Arrays.asList(arrays));
   }
 
-  public static byte[] packComparable(List<byte[]> arrays) {
+  public static byte[] packComparable(List<byte[]> arrays)
+  {
     return packComparable(
-      arrays, DEFAULT_DELIMITER, DEFAULT_TERMINAL_DELIMITER
+        arrays, DEFAULT_DELIMITER, DEFAULT_TERMINAL_DELIMITER
     );
   }
 
@@ -113,21 +120,22 @@ public class PackedByteArray {
    * value in the byte array.  Defaults used in helper methods are 0 and 1.
    * These values in the packed byte[] to make it comparable as an unsigned
    * byte []
-   *
+   * <p>
    * A future extension would use duplication/padding (0 -> 00, 00 -> 000, etc)
    * in order to handle this, but it's not needed yet.
-   *
+   * <p>
    * In practice, the byte values are for printable ascii chars and binary data
    * may be base64 encoded as long as all values are byte values > 1
    *
-   * @param arrays array of byte[] to pack
-   * @param delimiter recommend 0
+   * @param arrays            array of byte[] to pack
+   * @param delimiter         recommend 0
    * @param terminalDelimiter recommend 1
    * @return
    */
   public static byte[] packComparable(
-    List<byte[]> arrays, byte delimiter, byte terminalDelimiter
-  ) {
+      List<byte[]> arrays, byte delimiter, byte terminalDelimiter
+  )
+  {
     // item1,delim,item2,delim, ..., terminalDelmiter
     int packedSize = 0; // terminal delim length included below by overcount
 
@@ -136,7 +144,7 @@ public class PackedByteArray {
     }
 
     ByteArrayOutputStream byteArrayOutputStream =
-      new ByteArrayOutputStream(packedSize);
+        new ByteArrayOutputStream(packedSize);
     DataOutput output = new DataOutputStream(byteArrayOutputStream);
 
     try {
@@ -153,7 +161,8 @@ public class PackedByteArray {
 
       output.write(terminalDelimiter);
 
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException("no reason we should see this", e);
     }
 
@@ -162,16 +171,18 @@ public class PackedByteArray {
     return bytes;
   }
 
-  public static List<byte[]> unpackComparable(byte[] packedArray) {
-    return unpackComparable(packedArray, (byte)1, (byte)0);
+  public static List<byte[]> unpackComparable(byte[] packedArray)
+  {
+    return unpackComparable(packedArray, (byte) 1, (byte) 0);
   }
 
   public static List<byte[]> unpackComparable(
-    byte[] packedArray, byte delimiter, byte terminalDelimiter
-  ) {
+      byte[] packedArray, byte delimiter, byte terminalDelimiter
+  )
+  {
     List<byte[]> results = new ArrayList<byte[]>();
     List<Byte> currentToken =
-      new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE); // very magic
+        new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE); // very magic
 
     for (int i = 0; i < packedArray.length; i++) {
       if (packedArray[i] == terminalDelimiter) {
@@ -200,7 +211,8 @@ public class PackedByteArray {
    * @param arrayList
    * @return packed byte array
    */
-  public static byte[] pack(List<byte[]> arrays) {
+  public static byte[] pack(List<byte[]> arrays)
+  {
     // numItems(short) + len1(int) + len2 + ...
     int packedSize = 2 + 4 * arrays.size();
 
@@ -208,7 +220,7 @@ public class PackedByteArray {
       packedSize += array.length;
     }
     ByteArrayOutputStream byteArrayOutputStream =
-      new ByteArrayOutputStream(packedSize);
+        new ByteArrayOutputStream(packedSize);
     DataOutput output = new DataOutputStream(byteArrayOutputStream);
 
     try {
@@ -222,7 +234,8 @@ public class PackedByteArray {
         output.write(array);
       }
 
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException("no reason we should see this", e);
     }
 
@@ -238,10 +251,11 @@ public class PackedByteArray {
    * @return
    * @see #pack(byte[]...)
    */
-  public static byte[][] unpack(byte[] packedArray) {
+  public static byte[][] unpack(byte[] packedArray)
+  {
     try {
       DataInput input = new DataInputStream(
-        new ByteArrayInputStream(packedArray)
+          new ByteArrayInputStream(packedArray)
       );
 
       short numItems = input.readShort();
@@ -262,7 +276,8 @@ public class PackedByteArray {
       }
 
       return arrays;
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException("shouldn't see this either", e);
     }
   }
@@ -275,15 +290,16 @@ public class PackedByteArray {
    * @return
    * @see #pack(byte[]...)
    */
-  public static byte[] getElement(byte[] packedArray, int pos) {
+  public static byte[] getElement(byte[] packedArray, int pos)
+  {
     short numItems = (short) ((packedArray[0] << 8) | packedArray[1]);
 
     if (pos > numItems - 1) {
       throw new IllegalArgumentException(
-        String.format(
-          "index %d is greater than max %d",
-          pos, numItems - 1
-        )
+          String.format(
+              "index %d is greater than max %d",
+              pos, numItems - 1
+          )
       );
     }
 
@@ -317,15 +333,17 @@ public class PackedByteArray {
    * @param i
    * @return
    */
-  public static int byteToIntAlt(byte[] bytes, int i) {
+  public static int byteToIntAlt(byte[] bytes, int i)
+  {
     DataInputStream stream = new DataInputStream(
-      new ByteArrayInputStream(bytes, i, 4)
+        new ByteArrayInputStream(bytes, i, 4)
     );
     int value;
 
     try {
       value = stream.readInt();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException(e);
     }
 
@@ -333,7 +351,8 @@ public class PackedByteArray {
   }
 
 
-  public static byte[] byteListToArray(List<Byte> byteList) {
+  public static byte[] byteListToArray(List<Byte> byteList)
+  {
     byte[] result = new byte[byteList.size()];
 
     int i = 0;
@@ -353,10 +372,11 @@ public class PackedByteArray {
    * @param offset offset where 4-byte integer starts
    * @return
    */
-  public static int byteToInt(byte[] bytes, int offset) {
+  public static int byteToInt(byte[] bytes, int offset)
+  {
     return ((bytes[offset + 3] & 0xFF)) +
-      ((bytes[offset + 2] & 0xFF) << 8) +
-      ((bytes[offset + 1] & 0xFF) << 16) +
-      ((bytes[offset]) << 24);
+           ((bytes[offset + 2] & 0xFF) << 8) +
+           ((bytes[offset + 1] & 0xFF) << 16) +
+           ((bytes[offset]) << 24);
   }
 }

@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-interface Estimator {
+interface Estimator
+{
   boolean setIfGreater(int bucket, int highestBitPosition);
+
   long estimate();
+
   int estimateSizeInBytes();
+
   int[] buckets();
+
   int getNumberOfBuckets();
+
   int getMaxAllowedBucketValue();
 }

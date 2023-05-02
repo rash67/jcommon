@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtRunnable;
+
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public interface ExtBiConsumer<T, U, E extends Throwable> {
+public interface ExtBiConsumer<T, U, E extends Throwable>
+{
   void accept(T t, U u) throws E;
 
-  default ExtBiConsumer<T, U, E> andThen(ExtBiConsumer<? super T, ? super U, E> after) {
+  default ExtBiConsumer<T, U, E> andThen(ExtBiConsumer<? super T, ? super U, E> after)
+  {
     Objects.requireNonNull(after);
     return (l, r) -> {
       accept(l, r);
@@ -30,7 +34,8 @@ public interface ExtBiConsumer<T, U, E extends Throwable> {
     };
   }
 
-  static <T, U> BiConsumer<T, U> quiet(ExtBiConsumer<T, U, ?> biConsumer) {
+  static <T, U> BiConsumer<T, U> quiet(ExtBiConsumer<T, U, ?> biConsumer)
+  {
     return (t, u) -> ExtRunnable.quiet(() -> biConsumer.accept(t, u)).run();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import java.util.Map;
@@ -39,26 +40,32 @@ import java.util.logging.Logger;
  *
  */
 
-public class CounterCacher {
-  private static class ThreadFactory implements java.util.concurrent.ThreadFactory {
+public class CounterCacher
+{
+  private static class ThreadFactory implements java.util.concurrent.ThreadFactory
+  {
     long count = 0;
 
-    public Thread newThread(Runnable r) {
-      count ++;
+    public Thread newThread(Runnable r)
+    {
+      count++;
       return new Thread(threadGroup, r, threadGroup.getName() + "-" + count);
     }
   }
 
-  private class CounterCacherRunner implements Runnable {
+  private class CounterCacherRunner implements Runnable
+  {
     private final long minWait;
     private final long maxWait;
 
-    public CounterCacherRunner(long minWait, long maxWait) {
+    public CounterCacherRunner(long minWait, long maxWait)
+    {
       this.minWait = minWait;
       this.maxWait = maxWait;
     }
 
-    public void run() {
+    public void run()
+    {
       final Logger log = Logger.getLogger(CounterCacher.class.getCanonicalName());
       wantRunning = true;
       running = true;
@@ -66,23 +73,26 @@ public class CounterCacher {
       log.log(Level.INFO, "Cacheing counters every " + minWait + " - " + maxWait + " msec");
 
       try {
-        while(wantRunning) {
+        while (wantRunning) {
           try {
             long startTime = System.currentTimeMillis();
             counters = reporter.makeCounters();
             Thread.sleep(minWait);
             long runTime = System.currentTimeMillis() - startTime;
             long remainingWait = maxWait - runTime;
-            if(remainingWait > 0) {
+            if (remainingWait > 0) {
               Thread.sleep(remainingWait);
             }
-          } catch(InterruptedException iex) {
+          }
+          catch (InterruptedException iex) {
             wantRunning = false;
           }
         }
-      } catch(RuntimeException rex) {
+      }
+      catch (RuntimeException rex) {
         log.log(Level.SEVERE, "RuntimeException thrown while running makeCounters()", rex);
-      } finally {
+      }
+      finally {
         running = false;
       }
     }
@@ -102,34 +112,38 @@ public class CounterCacher {
   private volatile Map<String, Long> counters;
 
   /**
-   * @param  FacebookStatsReporter    Your service
-   * @param  long minWait             Minimum time to wait between calls
-   *                                  to makeCounters (default=1000, or 1s)
-   * @param  long maxWait             Maximum time to wait between calls
-   *                                  to makeCounters (default=1000, or 1s)
-   *
-   * Example:
-   *
-   * If it takes 2 seconds to make your counters, minWait is 1 second,
-   * and maxWait is 10 seconds then there will be an 8 second delay
-   * between calls. If it takes 15 seconds to make your counters, there
-   * will be a 1 second delay.
+   * @param FacebookStatsReporter Your service
+   * @param long                  minWait             Minimum time to wait between calls
+   *                              to makeCounters (default=1000, or 1s)
+   * @param long                  maxWait             Maximum time to wait between calls
+   *                              to makeCounters (default=1000, or 1s)
+   *                              <p>
+   *                              Example:
+   *                              <p>
+   *                              If it takes 2 seconds to make your counters, minWait is 1 second,
+   *                              and maxWait is 10 seconds then there will be an 8 second delay
+   *                              between calls. If it takes 15 seconds to make your counters, there
+   *                              will be a 1 second delay.
    */
-  public CounterCacher(final FacebookStatsReporter reporter, long minWait, long maxWait) {
+  public CounterCacher(final FacebookStatsReporter reporter, long minWait, long maxWait)
+  {
     runnable = new CounterCacherRunner(minWait, maxWait);
     this.reporter = reporter;
   }
 
-  public CounterCacher(FacebookStatsReporter reporter, long minWait) {
+  public CounterCacher(FacebookStatsReporter reporter, long minWait)
+  {
     this(reporter, minWait, minWait);
   }
 
-  public CounterCacher(FacebookStatsReporter reporter) {
+  public CounterCacher(FacebookStatsReporter reporter)
+  {
     this(reporter, 1000);
   }
 
-  public void start() {
-    if(running) {
+  public void start()
+  {
+    if (running) {
       throw new IllegalStateException("start() called while already running!");
     }
 
@@ -137,8 +151,9 @@ public class CounterCacher {
     thread.start();
   }
 
-  public void stop() {
-    if(!running) {
+  public void stop()
+  {
+    if (!running) {
       throw new IllegalStateException("stop() called while not running!");
     }
 
@@ -146,11 +161,14 @@ public class CounterCacher {
     thread.interrupt();
     try {
       thread.join();
-    } catch(InterruptedException iex) { }
+    }
+    catch (InterruptedException iex) {
+    }
     thread = null;
   }
 
-  public Map<String, Long> getCounters() {
+  public Map<String, Long> getCounters()
+  {
     return counters;
   }
 }

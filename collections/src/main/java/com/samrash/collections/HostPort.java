@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 /**
  * utility class that holds a host:port.
  * static factory method handles creating from a stirng
  */
-public class HostPort {
+public class HostPort
+{
   private final String host;
   private final int port;
 
   private volatile String toStringResult;
 
-  public static HostPort fromString(String str) {
+  public static HostPort fromString(String str)
+  {
     String[] parts = str.split(":");
 
     if (parts.length != 2) {
@@ -35,21 +38,25 @@ public class HostPort {
     return new HostPort(parts[0], Integer.valueOf(parts[1]));
   }
 
-  public HostPort(String host, int port) {
+  public HostPort(String host, int port)
+  {
     this.host = host;
     this.port = port;
   }
 
-  public String getHost() {
+  public String getHost()
+  {
     return host;
   }
 
-  public int getPort() {
+  public int getPort()
+  {
     return port;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -72,7 +79,8 @@ public class HostPort {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = host != null ? host.hashCode() : 0;
 
     result = 31 * result + port;
@@ -81,7 +89,8 @@ public class HostPort {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     if (toStringResult == null) {
       toStringResult = host + ":" + port;
     }

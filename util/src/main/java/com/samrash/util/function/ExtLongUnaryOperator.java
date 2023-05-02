@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.LongUnaryOperator;
 
-public interface ExtLongUnaryOperator<E extends Throwable> {
+public interface ExtLongUnaryOperator<E extends Throwable>
+{
   long applyAsLong(long operand) throws E;
 
-  default ExtLongUnaryOperator<E> compose(ExtLongUnaryOperator<E> before) {
+  default ExtLongUnaryOperator<E> compose(ExtLongUnaryOperator<E> before)
+  {
     Objects.requireNonNull(before);
     return (operand) -> applyAsLong(before.applyAsLong(operand));
   }
 
-  default ExtLongUnaryOperator<E> andThen(ExtLongUnaryOperator<E> after) {
+  default ExtLongUnaryOperator<E> andThen(ExtLongUnaryOperator<E> after)
+  {
     Objects.requireNonNull(after);
     return (operand) -> after.applyAsLong(applyAsLong(operand));
   }
 
-  static LongUnaryOperator quiet(ExtLongUnaryOperator<?> longUnaryOperator) {
+  static LongUnaryOperator quiet(ExtLongUnaryOperator<?> longUnaryOperator)
+  {
     return (operand) -> ExtLongSupplier.quiet(() -> longUnaryOperator.applyAsLong(operand)).getAsLong();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -24,7 +25,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
-public class StandardObjectMapper {
+public class StandardObjectMapper
+{
   public static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
@@ -46,7 +48,8 @@ public class StandardObjectMapper {
     MAPPER.registerModule(new JodaModule());
   }
 
-  private StandardObjectMapper() {
+  private StandardObjectMapper()
+  {
     throw new AssertionError();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
 import com.google.common.base.Function;
@@ -22,15 +23,19 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestOptionTranslator {
+public class TestOptionTranslator
+{
   private Option<String> stringOption;
   private Option<Integer> integerOption;
 
   @BeforeMethod(alwaysRun = true)
-  protected void setUp() throws Exception {
-    Function<String, Integer> translator = new Function<String, Integer>() {
+  protected void setUp() throws Exception
+  {
+    Function<String, Integer> translator = new Function<String, Integer>()
+    {
       @Override
-      public Integer apply(String input) {
+      public Integer apply(String input)
+      {
         return input == null ? -1 : Integer.parseInt(input);
       }
     };
@@ -40,23 +45,28 @@ public class TestOptionTranslator {
   }
 
   @Test(groups = "fast")
-  public void testGetValueUninitialized() throws Exception {
+  public void testGetValueUninitialized() throws Exception
+  {
     Assert.assertEquals(integerOption.getValue().intValue(), -1);
   }
 
   @Test(groups = "fast")
-  public void testGetValue() throws Exception {
+  public void testGetValue() throws Exception
+  {
     stringOption.setValue("123");
     Assert.assertEquals(integerOption.getValue().intValue(), 123);
   }
 
   @Test(groups = "fast")
-  public void testWatcher() throws Exception {
+  public void testWatcher() throws Exception
+  {
     final AtomicInteger integerValue = new AtomicInteger();
     final AtomicInteger updatedCount = new AtomicInteger();
-    OptionWatcher<Integer> watcher = new OptionWatcher<Integer>() {
+    OptionWatcher<Integer> watcher = new OptionWatcher<Integer>()
+    {
       @Override
-      public void propertyUpdated(Integer value) throws Exception {
+      public void propertyUpdated(Integer value) throws Exception
+      {
         integerValue.set(value);
         updatedCount.incrementAndGet();
       }

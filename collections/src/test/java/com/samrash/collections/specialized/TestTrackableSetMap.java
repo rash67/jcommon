@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.ConcurrentSetMap;
@@ -22,19 +23,22 @@ import org.testng.annotations.Test;
 
 import java.util.Set;
 
-public class TestTrackableSetMap {
+public class TestTrackableSetMap
+{
   private TrackableSetMap<Integer, Integer, Set<Integer>> trackableSetMap;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     trackableSetMap = new TrackableSetMap<Integer, Integer, Set<Integer>>(
-      new ConcurrentSetMap<Integer, Integer>()
+        new ConcurrentSetMap<Integer, Integer>()
     );
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
-  	Assert.assertEquals(trackableSetMap.hasChanged(), false);
+  public void testSanity() throws Exception
+  {
+    Assert.assertEquals(trackableSetMap.hasChanged(), false);
     trackableSetMap.add(1, 1);
     Assert.assertEquals(trackableSetMap.hasChanged(), true);
     Assert.assertEquals(trackableSetMap.hasChanged(), false);

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import com.google.common.io.PatternFilenameFilter;
@@ -20,16 +21,19 @@ import com.google.common.io.PatternFilenameFilter;
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class FileUtils {
-  private FileUtils() {
+public class FileUtils
+{
+  private FileUtils()
+  {
     throw new AssertionError("not instantiable");
   }
 
-  public static String backtrackToFile(String startDir, String targetFile) {
+  public static String backtrackToFile(String startDir, String targetFile)
+  {
     FilenameFilter filenameFilter = new PatternFilenameFilter(targetFile);
     File currentDir = new File(startDir).getAbsoluteFile();
 
-    while (currentDir.getParentFile() != null){
+    while (currentDir.getParentFile() != null) {
       String[] files = currentDir.list(filenameFilter);
       if (files.length == 1) {
         return currentDir.getAbsolutePath();

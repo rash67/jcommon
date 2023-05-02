@@ -13,26 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
 /**
  * adapter for the "repeatable murmur3 hash", MurmurHash createRepeatableHasher()
  */
-public class LongMurmur3Hash implements DigestFunction<Long> {
+public class LongMurmur3Hash implements DigestFunction<Long>
+{
   private static final LongMurmur3Hash INSTANCE = new LongMurmur3Hash();
 
   private final MurmurHash hasher = MurmurHash.createRepeatableHasher();
 
   /**
    * optionally use a singleton instance as the hasher is stateless, and hence thread safe
+   *
    * @return
    */
-  public static LongMurmur3Hash getInstance() {
+  public static LongMurmur3Hash getInstance()
+  {
     return INSTANCE;
   }
 
   @Override
-  public long computeDigest(Long input) {
+  public long computeDigest(Long input)
+  {
     return hasher.hash(input);
   }
 }

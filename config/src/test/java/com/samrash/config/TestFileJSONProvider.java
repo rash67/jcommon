@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONObject;
@@ -26,37 +27,42 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TestFileJSONProvider {
+public class TestFileJSONProvider
+{
 
   private AtomicReference<BufferedReader> readerReference;
   private FileJSONProvider jsonProvider;
   private String jsonWithComments;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     readerReference = new AtomicReference<BufferedReader>();
-    jsonProvider = new FileJSONProvider(null) {
+    jsonProvider = new FileJSONProvider(null)
+    {
       @Override
-      protected BufferedReader getReader() throws FileNotFoundException {
+      protected BufferedReader getReader() throws FileNotFoundException
+      {
         return readerReference.get();
       }
     };
     jsonWithComments = "{\n" +
-      "\tkey : \"value\",\n" +
-      "\t// comment 1\n" +
-      "\tnested : { x : 1 }\n" +
-      "\t//nested2 : { y : 2 }\n" +
-      "// comment 2\n" +
-      "\t// comment 3\n" +
-      "}";
+                       "\tkey : \"value\",\n" +
+                       "\t// comment 1\n" +
+                       "\tnested : { x : 1 }\n" +
+                       "\t//nested2 : { y : 2 }\n" +
+                       "// comment 2\n" +
+                       "\t// comment 3\n" +
+                       "}";
   }
 
   @Test(groups = "fast")
-  public void testComment() throws Exception {
+  public void testComment() throws Exception
+  {
     BufferedReader reader = new BufferedReader(
-      new InputStreamReader(
-        new ByteArrayInputStream(jsonWithComments.getBytes())
-      )
+        new InputStreamReader(
+            new ByteArrayInputStream(jsonWithComments.getBytes())
+        )
     );
     readerReference.set(reader);
 

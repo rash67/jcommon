@@ -13,51 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class CompositeMax extends AbstractCompositeCounter<EventCounter>
-  implements EventCounter {
+    implements EventCounter
+{
 
   public CompositeMax(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
-  ) {
+      ReadableDuration maxLength, ReadableDuration maxChunkLength
+  )
+  {
     super(maxLength, maxChunkLength);
   }
 
-  public CompositeMax(ReadableDuration maxLength) {
+  public CompositeMax(ReadableDuration maxLength)
+  {
     super(maxLength);
   }
 
   @Override
-  public EventCounter merge(EventCounter counter) {
+  public EventCounter merge(EventCounter counter)
+  {
     if (counter instanceof CompositeMax) {
       return internalMerge(
-        ((CompositeMax) counter).getEventCounters(),
-        new CompositeMax(getMaxLength(), getMaxChunkLength())
+          ((CompositeMax) counter).getEventCounters(),
+          new CompositeMax(getMaxLength(), getMaxChunkLength())
       );
     } else {
       return internalMerge(
-        Arrays.asList(counter),
-        new CompositeMax(getMaxLength(), getMaxChunkLength())
+          Arrays.asList(counter),
+          new CompositeMax(getMaxLength(), getMaxChunkLength())
       );
     }
   }
 
   @Override
   protected EventCounter nextCounter(
-    ReadableDateTime start, ReadableDateTime end
-  ) {
+      ReadableDateTime start, ReadableDateTime end
+  )
+  {
     return new MaxEventCounter(start, end);
   }
 
   @Override
-  public synchronized long getValue() {
+  public synchronized long getValue()
+  {
     trimIfNeeded();
 
     long max = Long.MIN_VALUE;

@@ -13,233 +13,279 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.PrintStream;
 import java.util.Locale;
 
-class NoninteractiveStatusPrintStream extends StatusPrintStream {
+class NoninteractiveStatusPrintStream extends StatusPrintStream
+{
   private final PrintStream printStream;
 
-  NoninteractiveStatusPrintStream(PrintStream printStream) {
+  NoninteractiveStatusPrintStream(PrintStream printStream)
+  {
     super(NullOutputStream.INSTANCE);
     this.printStream = printStream;
   }
 
   @Override
-  public void printfln(String format, Object... args) {
+  public void printfln(String format, Object... args)
+  {
     printf(format, args);
     println();
   }
 
   @Override
-  public void status(String line) {
+  public void status(String line)
+  {
   }
 
   @Override
-  public void status(boolean value) {
+  public void status(boolean value)
+  {
   }
 
   @Override
-  public void status(char value) {
+  public void status(char value)
+  {
   }
 
   @Override
-  public void status(int value) {
+  public void status(int value)
+  {
   }
 
   @Override
-  public void status(long value) {
+  public void status(long value)
+  {
   }
 
   @Override
-  public void status(float value) {
+  public void status(float value)
+  {
   }
 
   @Override
-  public void status(double value) {
+  public void status(double value)
+  {
   }
 
   @Override
-  public void status(char[] value) {
+  public void status(char[] value)
+  {
   }
 
   @Override
-  public void status(Object value) {
+  public void status(Object value)
+  {
   }
 
   @Override
-  public void statusf(String format, Object... args) {
+  public void statusf(String format, Object... args)
+  {
   }
 
   @Override
-  public void clearStatus() {
+  public void clearStatus()
+  {
   }
 
   @Override
-  public void flush() {
+  public void flush()
+  {
     printStream.flush();
   }
 
   @Override
-  public void close() {
+  public void close()
+  {
     printStream.close();
   }
 
   @Override
-  public boolean checkError() {
+  public boolean checkError()
+  {
     return printStream.checkError();
   }
 
   @Override
-  public void write(int b) {
+  public void write(int b)
+  {
     printStream.write(b);
   }
 
   @Override
-  public void write(byte[] buffer, int offset, int length) {
+  public void write(byte[] buffer, int offset, int length)
+  {
     printStream.write(buffer, offset, length);
   }
 
   @Override
-  public void print(boolean b) {
+  public void print(boolean b)
+  {
     printStream.print(b);
   }
 
   @Override
-  public void print(char c) {
+  public void print(char c)
+  {
     printStream.print(c);
   }
 
   @Override
-  public void print(int i) {
+  public void print(int i)
+  {
     printStream.print(i);
   }
 
   @Override
-  public void print(long l) {
+  public void print(long l)
+  {
     printStream.print(l);
   }
 
   @Override
-  public void print(float f) {
+  public void print(float f)
+  {
     printStream.print(f);
   }
 
   @Override
-  public void print(double d) {
+  public void print(double d)
+  {
     printStream.print(d);
   }
 
   @Override
-  public void print(char[] s) {
+  public void print(char[] s)
+  {
     printStream.print(s);
   }
 
   @Override
-  public void print(String s) {
+  public void print(String s)
+  {
     printStream.print(s);
   }
 
   @Override
-  public void print(Object obj) {
+  public void print(Object obj)
+  {
     printStream.print(obj);
   }
 
   @Override
-  public void println() {
+  public void println()
+  {
     printStream.println();
   }
 
   @Override
-  public void println(boolean value) {
+  public void println(boolean value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(char value) {
+  public void println(char value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(int value) {
+  public void println(int value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(long value) {
+  public void println(long value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(float value) {
+  public void println(float value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(double value) {
+  public void println(double value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(char[] value) {
+  public void println(char[] value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(String value) {
+  public void println(String value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public void println(Object value) {
+  public void println(Object value)
+  {
     printStream.println(value);
   }
 
   @Override
-  public PrintStream printf(String format, Object... args) {
+  public PrintStream printf(String format, Object... args)
+  {
     printStream.printf(format, args);
 
     return this;
   }
 
   @Override
-  public PrintStream printf(Locale locale, String format, Object... args) {
+  public PrintStream printf(Locale locale, String format, Object... args)
+  {
     printStream.printf(locale, format, args);
 
     return this;
   }
 
   @Override
-  public PrintStream format(String format, Object... args) {
+  public PrintStream format(String format, Object... args)
+  {
     printStream.format(format, args);
 
     return this;
   }
 
   @Override
-  public PrintStream format(Locale locale, String format, Object... args) {
+  public PrintStream format(Locale locale, String format, Object... args)
+  {
     printStream.format(locale, format, args);
 
     return this;
   }
 
   @Override
-  public PrintStream append(CharSequence sequence) {
+  public PrintStream append(CharSequence sequence)
+  {
     printStream.append(sequence);
 
     return this;
   }
 
   @Override
-  public PrintStream append(CharSequence sequence, int start, int end) {
+  public PrintStream append(CharSequence sequence, int start, int end)
+  {
     printStream.append(sequence, start, end);
 
     return this;
   }
 
   @Override
-  public PrintStream append(char c) {
+  public PrintStream append(char c)
+  {
     printStream.append(c);
 
     return this;

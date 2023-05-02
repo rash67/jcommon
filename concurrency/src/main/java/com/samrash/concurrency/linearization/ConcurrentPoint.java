@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * modified by Sam Rash (rash67) 2023
+ */
+
 package com.samrash.concurrency.linearization;
 
 /**
  * Effectively a read lock. Once start() is called, any call to
  * LinearizationPoint.start() will block
- *
+ * <p>
  * NOTE: use start/complete in a try/finally block the same as Lock
  */
-public interface ConcurrentPoint {
-  public void start();
-  public void complete();
+public interface ConcurrentPoint
+{
+  void start();
+
+  void complete();
 }

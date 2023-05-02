@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 /**
  * Marker interface for objects that implement both Refreshable
  * and ConfigProvider
  */
-public interface RefreshableConfigProvider extends Refreshable, ConfigProvider {
+public interface RefreshableConfigProvider extends Refreshable, ConfigProvider
+{
 }

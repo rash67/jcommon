@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtRunnable;
+
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
 
-public interface ExtDoubleConsumer<E extends Throwable> {
+public interface ExtDoubleConsumer<E extends Throwable>
+{
   void accept(double value);
 
-  default ExtDoubleConsumer<E> andThen(ExtDoubleConsumer<E> after) {
+  default ExtDoubleConsumer<E> andThen(ExtDoubleConsumer<E> after)
+  {
     Objects.requireNonNull(after);
     return (t) -> {
       accept(t);
@@ -30,7 +34,8 @@ public interface ExtDoubleConsumer<E extends Throwable> {
     };
   }
 
-  static DoubleConsumer quiet(ExtDoubleConsumer<?> doubleConsumer) {
+  static DoubleConsumer quiet(ExtDoubleConsumer<?> doubleConsumer)
+  {
     return (value) -> ExtRunnable.quiet(() -> doubleConsumer.accept(value)).run();
   }
 }

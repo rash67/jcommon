@@ -13,45 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.Closeable;
 import java.io.PrintStream;
 
-class ConsoleAppender implements Appendable, Closeable {
+class ConsoleAppender implements Appendable, Closeable
+{
   private final PrintStream delegate;
   private final ConsoleStatus status;
   private final String color;
 
-  ConsoleAppender(PrintStream delegate, ConsoleStatus status, String color) {
+  ConsoleAppender(PrintStream delegate, ConsoleStatus status, String color)
+  {
     this.delegate = delegate;
     this.status = status;
     this.color = color;
   }
 
   @Override
-  public ConsoleAppender append(CharSequence sequence) {
+  public ConsoleAppender append(CharSequence sequence)
+  {
     appendSequences(sequence);
 
     return this;
   }
 
   @Override
-  public ConsoleAppender append(CharSequence sequence, int start, int end) {
+  public ConsoleAppender append(CharSequence sequence, int start, int end)
+  {
     return appendSequences(sequence.subSequence(start, end));
   }
 
   @Override
-  public Appendable append(char c) {
+  public Appendable append(char c)
+  {
     return appendSequences(new SingleCharSequence(c));
   }
 
   @Override
-  public void close() {
+  public void close()
+  {
     delegate.close();
   }
 
-  ConsoleAppender appendSequences(CharSequence... sequences) {
+  ConsoleAppender appendSequences(CharSequence... sequences)
+  {
     synchronized (status) {
       status.clearStatus();
       status.setColor(color);
@@ -64,7 +72,8 @@ class ConsoleAppender implements Appendable, Closeable {
     return this;
   }
 
-  ConsoleAppender appendBytes(byte[] bytes, int offset, int length) {
+  ConsoleAppender appendBytes(byte[] bytes, int offset, int length)
+  {
     synchronized (status) {
       status.clearStatus();
       status.setColor(color);
@@ -74,11 +83,13 @@ class ConsoleAppender implements Appendable, Closeable {
     return this;
   }
 
-  boolean checkError() {
+  boolean checkError()
+  {
     return delegate.checkError();
   }
 
-  void flush() {
+  void flush()
+  {
     delegate.flush();
   }
 }

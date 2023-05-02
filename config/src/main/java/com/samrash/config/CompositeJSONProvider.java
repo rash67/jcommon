@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
@@ -22,19 +23,23 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class CompositeJSONProvider implements JSONProvider {
+public class CompositeJSONProvider implements JSONProvider
+{
   private final List<JSONProvider> jsonProviderList;
 
-  public CompositeJSONProvider(List<JSONProvider> jsonProviderList) {
+  public CompositeJSONProvider(List<JSONProvider> jsonProviderList)
+  {
     this.jsonProviderList = jsonProviderList;
   }
 
-  public CompositeJSONProvider(JSONProvider... jsonProviders) {
+  public CompositeJSONProvider(JSONProvider... jsonProviders)
+  {
     this(Arrays.asList(jsonProviders));
   }
 
   @Override
-  public JSONObject get() throws JSONException {
+  public JSONObject get() throws JSONException
+  {
     JSONObject mergedJsonObject = new JSONObject();
 
     for (JSONProvider jsonProvider : jsonProviderList) {
@@ -46,7 +51,8 @@ public class CompositeJSONProvider implements JSONProvider {
     return mergedJsonObject;
   }
 
-  private JSONObject mergeInto(JSONObject destinationJsonObject, JSONObject sourceJsonObject) throws JSONException {
+  private JSONObject mergeInto(JSONObject destinationJsonObject, JSONObject sourceJsonObject) throws JSONException
+  {
     Iterator keys = sourceJsonObject.keys();
 
     while (keys.hasNext()) {
@@ -54,12 +60,12 @@ public class CompositeJSONProvider implements JSONProvider {
       Object sourceValue = sourceJsonObject.get(sourceKey);
 
       if (sourceValue instanceof JSONObject &&
-        destinationJsonObject.has(sourceKey) &&
-        destinationJsonObject.get(sourceKey) instanceof JSONObject
-        ) {
+          destinationJsonObject.has(sourceKey) &&
+          destinationJsonObject.get(sourceKey) instanceof JSONObject
+      ) {
         destinationJsonObject.put(
-          sourceKey,
-          mergeInto((JSONObject) destinationJsonObject.get(sourceKey), (JSONObject) sourceValue)
+            sourceKey,
+            mergeInto((JSONObject) destinationJsonObject.get(sourceKey), (JSONObject) sourceValue)
         );
       } else {
         destinationJsonObject.put(sourceKey, sourceValue);

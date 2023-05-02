@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SetFactory;
 
 import java.util.Set;
 
-public class SnapshotableSetImplFactory<T> implements SetFactory<T, SnapshotableSet<T>> {
+public class SnapshotableSetImplFactory<T> implements SetFactory<T, SnapshotableSet<T>>
+{
 
   private final SetFactory<T, Set<T>> factory;
 
-  public SnapshotableSetImplFactory(SetFactory<T, Set<T>> factory) {
+  public SnapshotableSetImplFactory(SetFactory<T, Set<T>> factory)
+  {
     this.factory = factory;
   }
 
   @Override
-  public SnapshotableSet<T> create() {
+  public SnapshotableSet<T> create()
+  {
     return new SnapshotableSetImpl<T>(factory.create(), this);
   }
 }

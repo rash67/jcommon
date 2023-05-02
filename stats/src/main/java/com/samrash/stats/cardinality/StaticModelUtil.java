@@ -13,38 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 
-final class StaticModelUtil {
+final class StaticModelUtil
+{
   public static final int COUNT_BITS = 12;
   public static final int MAX_COUNT = 1 << COUNT_BITS;
 
   // this is a little bigger than 1.0 / MAX_COUNT
   public static final double SMALLEST_PROBABILITY = 2.5e-4;
 
-  private StaticModelUtil() {
+  private StaticModelUtil()
+  {
   }
 
-  public static double[] weightsToProbabilities(double[] weights) {
+  public static double[] weightsToProbabilities(double[] weights)
+  {
     return weightsToProbabilities(weights, Integer.MAX_VALUE);
   }
 
-  public static double[] weightsToProbabilities(double[] weights, int iterationLimit) {
+  public static double[] weightsToProbabilities(double[] weights, int iterationLimit)
+  {
     Preconditions.checkNotNull(weights, "weights is null");
     Preconditions.checkArgument(weights.length > 0, "weights is empty");
 
     return weightsToProbabilities(
-      Arrays.copyOf(weights, weights.length), sum(weights), iterationLimit
+        Arrays.copyOf(weights, weights.length), sum(weights), iterationLimit
     );
   }
 
   private static strictfp double[] weightsToProbabilities(
-    double[] weights, double sum, int iterationLimit
-  ) {
+      double[] weights, double sum, int iterationLimit
+  )
+  {
     int iterationCount = 0;
 
     do {
@@ -73,7 +79,8 @@ final class StaticModelUtil {
     return weights;
   }
 
-  private static strictfp double sum(double[] values) {
+  private static strictfp double sum(double[] values)
+  {
     double sum = 0;
     for (double value : values) {
       sum += value;

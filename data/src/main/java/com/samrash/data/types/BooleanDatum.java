@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 
@@ -24,91 +25,109 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 @SuppressWarnings({"NumericCastThatLosesPrecision"})
-public class BooleanDatum implements Datum {
+public class BooleanDatum implements Datum
+{
   private final boolean value;
 
-  public BooleanDatum(boolean value) {
+  public BooleanDatum(boolean value)
+  {
     this.value = value;
   }
 
   @Override
-  public boolean asBoolean() {
+  public boolean asBoolean()
+  {
     return value;
   }
 
   @Override
-  public byte asByte() {
+  public byte asByte()
+  {
     return (byte) (value ? 1 : 0);
   }
 
   @Override
-  public short asShort() {
+  public short asShort()
+  {
     return (short) (value ? 1 : 0);
   }
 
   @Override
-  public int asInteger() {
+  public int asInteger()
+  {
     return value ? 1 : 0;
   }
 
   @Override
-  public long asLong() {
+  public long asLong()
+  {
     return value ? 1 : 0;
   }
 
   @Override
-  public float asFloat() {
+  public float asFloat()
+  {
     return value ? 1 : 0;
   }
 
   @Override
-  public double asDouble() {
+  public double asDouble()
+  {
     return value ? 1 : 0;
   }
 
   @Override
-  public String asString() {
+  public String asString()
+  {
     return String.valueOf(value);
   }
 
   @Override
-  public byte[] asBytes() {
+  public byte[] asBytes()
+  {
     return new byte[]{asByte()};
   }
 
   @Override
-  public boolean isNull() {
+  public boolean isNull()
+  {
     return false;
   }
 
   @Override
-  public DatumType getType() {
+  public DatumType getType()
+  {
     return DatumType.BOOLEAN;
   }
 
   @Override
-  public Object asRaw() {
+  public Object asRaw()
+  {
     return value;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return asString();
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     return value ? 1 : 0;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(Object obj)
+  {
     return obj != null && obj instanceof Datum &&
-      value == ((Datum) obj).asBoolean();
+           value == ((Datum) obj).asBoolean();
   }
 
   @Override
-  public int compareTo(Datum o) {
+  public int compareTo(Datum o)
+  {
     if (o == null) {
       return 1;
     }
@@ -116,25 +135,30 @@ public class BooleanDatum implements Datum {
     return (o.asBoolean() == value ? 0 : (value ? 1 : -1));
   }
 
-  public static class SerDeImpl implements SerDe<Datum> {
+  public static class SerDeImpl implements SerDe<Datum>
+  {
     @Override
     public Datum deserialize(
-      DataInput
-        in
-    ) throws SerDeException {
+        DataInput
+            in
+    ) throws SerDeException
+    {
       try {
         return new BooleanDatum(in.readBoolean());
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(Datum value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       try {
         out.writeBoolean(value.asBoolean());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw new SerDeException(e);
       }
     }

@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
-public enum YesNo {
+public enum YesNo
+{
   @Answer({"y", "yes"})
   YES,
 
   @Answer({"n", "no"})
   NO;
 
-  public boolean isYes() {
+  public boolean isYes()
+  {
     return this == YES;
   }
 
-  public boolean isNo() {
+  public boolean isNo()
+  {
     return this == NO;
   }
 }

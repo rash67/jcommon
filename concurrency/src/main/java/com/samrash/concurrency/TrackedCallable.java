@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.Callable;
 
-public interface TrackedCallable<V> extends Callable<V>, Completable {
+public interface TrackedCallable<V> extends Callable<V>, Completable
+{
 }

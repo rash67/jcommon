@@ -13,46 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public class LatchTask implements Runnable {
+public class LatchTask implements Runnable
+{
   private final CountDownLatch startedLatch = new CountDownLatch(1);
   private final CountDownLatch hasRunLatch = new CountDownLatch(1);
   private final CountDownLatch canRunLatch;
   private final Semaphore canComplete = new Semaphore(1);
   private final Runnable task;
 
-  private LatchTask(boolean canRun, Runnable task) {
+  private LatchTask(boolean canRun, Runnable task)
+  {
     this.canRunLatch = new CountDownLatch(canRun ? 0 : 1); // 0 => latch won't block
     this.task = task;
   }
 
-  public LatchTask(Runnable work) {
+  public LatchTask(Runnable work)
+  {
     this(true, work);
   }
 
-  public LatchTask() {
+  public LatchTask()
+  {
     this(true, NoOp.INSTANCE);
   }
 
-  public static LatchTask createPaused() {
+  public static LatchTask createPaused()
+  {
     return new LatchTask(false, NoOp.INSTANCE);
   }
 
-  public static LatchTask createPaused(Runnable task) {
+  public static LatchTask createPaused(Runnable task)
+  {
     return new LatchTask(false, task);
   }
 
   @Override
-  public void run() {
+  public void run()
+  {
     try {
       startedLatch.countDown();
       canRunLatch.await();
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
 
@@ -61,18 +70,22 @@ public class LatchTask implements Runnable {
 
     try {
       canComplete.acquire(1);
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException(e);
-    } finally {
+    }
+    finally {
       canComplete.release(1);
     }
   }
 
-  public synchronized void pauseAfterCompletion() {
+  public synchronized void pauseAfterCompletion()
+  {
     canComplete.drainPermits();
   }
 
-  public synchronized LatchTask resumeAfterCompletion() {
+  public synchronized LatchTask resumeAfterCompletion()
+  {
     canComplete.release(1);
 
     return this;
@@ -81,28 +94,33 @@ public class LatchTask implements Runnable {
   /**
    * if paused, signals the task to proceed
    */
-  public LatchTask proceed() {
+  public LatchTask proceed()
+  {
     canRunLatch.countDown();
 
     return this;
   }
 
-  public void waitForStart() throws InterruptedException {
+  public void waitForStart() throws InterruptedException
+  {
     startedLatch.await();
   }
 
-  public boolean hasStarted() {
+  public boolean hasStarted()
+  {
     return startedLatch.getCount() == 0;
   }
 
-  public void await() throws InterruptedException {
+  public void await() throws InterruptedException
+  {
     hasRunLatch.await();
   }
 
   /**
    * @see CountDownLatch
    */
-  public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+  public boolean await(long timeout, TimeUnit unit) throws InterruptedException
+  {
     return hasRunLatch.await(timeout, unit);
   }
 }

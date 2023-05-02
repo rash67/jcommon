@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTime;
@@ -21,9 +22,10 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
-public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMultiWindowStat {
+public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMultiWindowStat
+{
   private static final ReadableDuration COUNTER_GRANULARITY =
-    Duration.standardSeconds(6);
+      Duration.standardSeconds(6);
 
   private final Object rollLock = new Object();
   private final CompositeMin allTimeCounter;
@@ -33,11 +35,12 @@ public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMulti
   private volatile EventCounterIf<EventCounter> currentCounter;
 
   MultiWindowMin(
-    CompositeMin allTimeCounter,
-    CompositeMin hourCounter,
-    CompositeMin tenMinuteCounter,
-    CompositeMin minuteCounter
-  ) {
+      CompositeMin allTimeCounter,
+      CompositeMin hourCounter,
+      CompositeMin tenMinuteCounter,
+      CompositeMin minuteCounter
+  )
+  {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
     this.tenMinuteCounter = tenMinuteCounter;
@@ -45,46 +48,53 @@ public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMulti
     currentCounter = addNewCurrentCounter();
   }
 
-  public MultiWindowMin() {
+  public MultiWindowMin()
+  {
     this(
-      new CompositeMin(Duration.standardMinutes(Integer.MAX_VALUE)),
-      new CompositeMin(Duration.standardMinutes(60)),
-      new CompositeMin(Duration.standardMinutes(10)),
-      new CompositeMin(Duration.standardMinutes(1))
+        new CompositeMin(Duration.standardMinutes(Integer.MAX_VALUE)),
+        new CompositeMin(Duration.standardMinutes(60)),
+        new CompositeMin(Duration.standardMinutes(10)),
+        new CompositeMin(Duration.standardMinutes(1))
     );
   }
 
   @Override
-  public void add(long value) {
+  public void add(long value)
+  {
     rollCurrentIfNeeded();
     currentCounter.add(value);
   }
 
   @Override
-  public long getMinuteValue() {
+  public long getMinuteValue()
+  {
     rollCurrentIfNeeded();
     return minuteCounter.getValue();
   }
 
   @Override
-  public long getTenMinuteValue() {
+  public long getTenMinuteValue()
+  {
     rollCurrentIfNeeded();
     return tenMinuteCounter.getValue();
   }
 
   @Override
-  public long getHourValue() {
+  public long getHourValue()
+  {
     rollCurrentIfNeeded();
     return hourCounter.getValue();
   }
 
   @Override
-  public long getAllTimeValue() {
+  public long getAllTimeValue()
+  {
     rollCurrentIfNeeded();
     return allTimeCounter.getValue();
   }
 
-  private void rollCurrentIfNeeded() {
+  private void rollCurrentIfNeeded()
+  {
     //do outside the synchronized block
     long now = DateTimeUtils.currentTimeMillis();
     // this is false for the majority of calls, so skip lock acquisition
@@ -98,12 +108,13 @@ public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMulti
     }
   }
 
-  private MinEventCounter addNewCurrentCounter() {
+  private MinEventCounter addNewCurrentCounter()
+  {
     ReadableDateTime now = new DateTime();
 
     MinEventCounter minEventCounter = new MinEventCounter(
-      now,
-      now.toDateTime().plus(COUNTER_GRANULARITY)
+        now,
+        now.toDateTime().plus(COUNTER_GRANULARITY)
     );
 
     allTimeCounter.addEventCounter(minEventCounter);
@@ -114,12 +125,13 @@ public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMulti
     return minEventCounter;
   }
 
-  public MultiWindowMin merge(MultiWindowMin other) {
+  public MultiWindowMin merge(MultiWindowMin other)
+  {
     return new MultiWindowMin(
-      (CompositeMin) allTimeCounter.merge(other.allTimeCounter),
-      (CompositeMin) hourCounter.merge(other.hourCounter),
-      (CompositeMin) tenMinuteCounter.merge(other.tenMinuteCounter),
-      (CompositeMin) minuteCounter.merge(other.minuteCounter)
+        (CompositeMin) allTimeCounter.merge(other.allTimeCounter),
+        (CompositeMin) hourCounter.merge(other.hourCounter),
+        (CompositeMin) tenMinuteCounter.merge(other.tenMinuteCounter),
+        (CompositeMin) minuteCounter.merge(other.minuteCounter)
     );
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.connection;
 
 import com.samrash.zookeeper.ZooKeeperIface;
@@ -23,7 +24,8 @@ import org.apache.zookeeper.ZooKeeper;
  * The ZkConnectionManager initiates a connection to the ZooKeeper cluster
  * at initialization time and maintains this connection until shutdown.
  */
-public interface ZkConnectionManager {
+public interface ZkConnectionManager
+{
 
   /**
    * Returns a valid ZooKeeperIface client that may be used to communicate
@@ -37,6 +39,7 @@ public interface ZkConnectionManager {
   /**
    * Registers an additional watcher to receive ZooKeeper connection
    * event callbacks.
+   *
    * @param watcher
    * @return ZooKeeper state at the instant or just after the watch is set
    */

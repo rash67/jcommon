@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -32,31 +33,37 @@ import java.io.OutputStream;
  *     bucket values - arithmetic encoded
  * </pre>
  */
-public class HyperLogLogCodec {
-  public void encodeHyperLogLog(HyperLogLog hyperLogLog, OutputStream out) throws IOException {
+public class HyperLogLogCodec
+{
+  public void encodeHyperLogLog(HyperLogLog hyperLogLog, OutputStream out) throws IOException
+  {
     Preconditions.checkNotNull(hyperLogLog, "hyperLogLog is null");
 
     encodeHyperLogLog(hyperLogLog, new DataOutputStream(out));
   }
 
-  public void encodeHyperLogLog(HyperLogLog hyperLogLog, DataOutputStream out) throws IOException {
+  public void encodeHyperLogLog(HyperLogLog hyperLogLog, DataOutputStream out) throws IOException
+  {
     encodeBuckets(out, hyperLogLog.buckets(), hyperLogLog.estimate());
   }
 
   public void encodeAdaptiveHyperLogLog(AdaptiveHyperLogLog hyperLogLog, OutputStream out)
-      throws IOException {
+      throws IOException
+  {
     Preconditions.checkNotNull(hyperLogLog, "hyperLogLog is null");
 
     encodeAdaptiveHyperLogLog(hyperLogLog, new DataOutputStream(out));
   }
 
   public void encodeAdaptiveHyperLogLog(AdaptiveHyperLogLog hyperLogLog, DataOutputStream out)
-      throws IOException {
+      throws IOException
+  {
     encodeBuckets(out, hyperLogLog.buckets(), hyperLogLog.estimate());
   }
 
   public void encodeBuckets(DataOutputStream out, int[] buckets, float estimate)
-      throws IOException {
+      throws IOException
+  {
     // get the number of buckets, which must be a power of 2
     int numberOfBuckets = buckets.length;
     Preconditions.checkArgument(numberOfBuckets > 0, "buckets is empty");
@@ -110,29 +117,34 @@ public class HyperLogLogCodec {
   }
 
   public HyperLogLog decodeHyperLogLog(InputStream in)
-      throws IOException {
+      throws IOException
+  {
     return decodeHyperLogLog(new DataInputStream(in));
   }
 
   public HyperLogLog decodeHyperLogLog(DataInputStream in)
-      throws IOException {
+      throws IOException
+  {
     int[] buckets = decodeBuckets(in);
     return new HyperLogLog(buckets);
   }
 
   public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(InputStream in)
-      throws IOException {
+      throws IOException
+  {
     return decodeAdaptiveHyperLogLog(new DataInputStream(in));
   }
 
   public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(DataInputStream in)
-      throws IOException {
+      throws IOException
+  {
     int[] buckets = decodeBuckets(in);
     return new AdaptiveHyperLogLog(buckets);
   }
 
   private int[] decodeBuckets(DataInputStream in)
-      throws IOException {
+      throws IOException
+  {
     Preconditions.checkNotNull(in, "in is null");
 
     // read the estimate
@@ -166,7 +178,8 @@ public class HyperLogLogCodec {
       long estimate,
       int bucketCount,
       byte maxValue
-  ) {
+  )
+  {
     double[] probability = hyperLogLogProbabilities(estimate, bucketCount, maxValue);
     return new SortedStaticModel(probability);
   }
@@ -175,7 +188,8 @@ public class HyperLogLogCodec {
       long cardinality,
       int bucketCount,
       byte maxValue
-  ) {
+  )
+  {
     // the probability of each symbol
     double[] probabilities = new double[(int) maxValue + 1];
 
@@ -189,11 +203,13 @@ public class HyperLogLogCodec {
     return probabilities;
   }
 
-  public static double probabilityRegisterLessThan(long cardinality, int bucketCount, int value) {
+  public static double probabilityRegisterLessThan(long cardinality, int bucketCount, int value)
+  {
     return StrictMath.pow(1.0d - 1.0d / ((1 << value) * 1.0d * bucketCount), cardinality);
   }
 
-  private static byte nextPowerOf2(int value) {
+  private static byte nextPowerOf2(int value)
+  {
     // Integer.highestOneBit returns the input value with all bits cleared
     // except for the highest 1 bit (this is very confusing).
     int newValue = Integer.highestOneBit(value);
@@ -210,7 +226,8 @@ public class HyperLogLogCodec {
     return (byte) newValue;
   }
 
-  private static boolean isPowerOf2(int numberOfBuckets) {
+  private static boolean isPowerOf2(int numberOfBuckets)
+  {
     return (numberOfBuckets & (numberOfBuckets - 1)) == 0;
   }
 }

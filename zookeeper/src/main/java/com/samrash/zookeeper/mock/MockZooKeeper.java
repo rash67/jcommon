@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.mock;
 
 
@@ -29,55 +30,63 @@ import org.apache.zookeeper.data.Stat;
 
 import java.util.List;
 
-public class MockZooKeeper implements ZooKeeperIface {
+public class MockZooKeeper implements ZooKeeperIface
+{
   private final MockZooKeeperDataStore dataStore;
   private final long sessionId;
   private final Watcher defaultWatcher;
   private ZooKeeper.States state = ZooKeeper.States.CONNECTING;
 
-  public MockZooKeeper(Watcher watcher, MockZooKeeperDataStore dataStore) {
+  public MockZooKeeper(Watcher watcher, MockZooKeeperDataStore dataStore)
+  {
     this.dataStore = dataStore;
     this.sessionId = dataStore.getUniqueSessionId();
     this.defaultWatcher = watcher;
   }
 
-  public synchronized void triggerConnect() {
+  public synchronized void triggerConnect()
+  {
     state = ZooKeeper.States.CONNECTED;
     WatchedEvent watchedEvent =
-      new WatchedEvent(EventType.None, KeeperState.SyncConnected, null);
+        new WatchedEvent(EventType.None, KeeperState.SyncConnected, null);
     dataStore.signalSessionEvent(sessionId, watchedEvent);
     defaultWatcher.process(watchedEvent);
   }
 
-  public synchronized void triggerDisconnect() {
+  public synchronized void triggerDisconnect()
+  {
     state = ZooKeeper.States.CONNECTING;
     WatchedEvent watchedEvent =
-      new WatchedEvent(EventType.None, KeeperState.Disconnected, null);
+        new WatchedEvent(EventType.None, KeeperState.Disconnected, null);
     dataStore.signalSessionEvent(sessionId, watchedEvent);
     defaultWatcher.process(watchedEvent);
   }
 
-  public synchronized void triggerSessionExpiration() {
+  public synchronized void triggerSessionExpiration()
+  {
     state = ZooKeeper.States.CLOSED;
     WatchedEvent watchedEvent =
-      new WatchedEvent(EventType.None, KeeperState.Expired, null);
+        new WatchedEvent(EventType.None, KeeperState.Expired, null);
     dataStore.signalSessionEvent(sessionId, watchedEvent);
     defaultWatcher.process(watchedEvent);
     dataStore.clearSession(sessionId);
   }
 
   @Override
-  public long getSessionId() {
+  public long getSessionId()
+  {
     return sessionId;
   }
 
   @Override
-  public synchronized void close() throws InterruptedException {
+  public synchronized void close() throws InterruptedException
+  {
     state = ZooKeeper.States.CLOSED;
     dataStore.clearSession(sessionId);
   }
 
-  private void verifyConnected() throws KeeperException {
+  private void verifyConnected() throws KeeperException
+  {
     if (state == ZooKeeper.States.CLOSED) {
       throw new KeeperException.SessionExpiredException();
     }
@@ -88,66 +97,76 @@ public class MockZooKeeper implements ZooKeeperIface {
 
   @Override
   public synchronized String create(String path, byte[] data, List<ACL> acl, CreateMode createMode)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     verifyConnected();
     return dataStore.create(sessionId, path, data, acl, createMode);
   }
 
   @Override
   public synchronized void delete(String path, int expectedVersion)
-    throws InterruptedException, KeeperException {
+      throws InterruptedException, KeeperException
+  {
     verifyConnected();
     dataStore.delete(path, expectedVersion);
   }
 
   @Override
   public synchronized Stat exists(String path, Watcher watcher)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     verifyConnected();
     return dataStore.exists(sessionId, path, watcher);
   }
 
   @Override
   public synchronized Stat exists(String path, boolean watch)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     return exists(path, watch ? defaultWatcher : null);
   }
 
   @Override
   public synchronized byte[] getData(String path, Watcher watcher, Stat stat)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     verifyConnected();
     return dataStore.getData(sessionId, path, watcher, stat);
   }
 
   @Override
   public synchronized byte[] getData(String path, boolean watch, Stat stat)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     return getData(path, watch ? defaultWatcher : null, stat);
   }
 
   @Override
   public synchronized Stat setData(String path, byte[] data, int expectedVersion)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     verifyConnected();
     return dataStore.setData(path, data, expectedVersion);
   }
 
   @Override
   public synchronized List<String> getChildren(String path, Watcher watcher)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     verifyConnected();
     return dataStore.getChildren(sessionId, path, watcher);
   }
 
   @Override
   public synchronized List<String> getChildren(String path, boolean watch)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     return getChildren(path, watch ? defaultWatcher : null);
   }
 
   @Override
-  public synchronized ZooKeeper.States getState() {
+  public synchronized ZooKeeper.States getState()
+  {
     return state;
   }
 }

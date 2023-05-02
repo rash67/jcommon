@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.serialization;
 
 
@@ -24,9 +25,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.nio.ByteBuffer;
 
-public class SerDeUtils {
+public class SerDeUtils
+{
   public static <T> byte[] serializeToBytes(T value, Serializer<T> serializer)
-    throws SerDeException {
+      throws SerDeException
+  {
     ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
 
     serializer.serialize(value, new DataOutputStream(out));
@@ -35,14 +38,16 @@ public class SerDeUtils {
   }
 
   public static <T> ByteBuffer serializeToByteBuffer(
-    T value, Serializer<T> serializer
-  ) throws SerDeException {
+      T value, Serializer<T> serializer
+  ) throws SerDeException
+  {
     return ByteBuffer.wrap(serializeToBytes(value, serializer));
   }
 
   public static <T> T deserializeFromBytes(
-    byte[] bytes, Deserializer<T> deserializer
-  ) throws SerDeException {
+      byte[] bytes, Deserializer<T> deserializer
+  ) throws SerDeException
+  {
 
     if (bytes == null) {
       return null;
@@ -54,8 +59,9 @@ public class SerDeUtils {
   }
 
   public static <T> T deserializeFromByteBuffer(
-    ByteBuffer buffer, Deserializer<T> deserializer
-  ) throws SerDeException {
+      ByteBuffer buffer, Deserializer<T> deserializer
+  ) throws SerDeException
+  {
 
     if (buffer == null) {
       return null;

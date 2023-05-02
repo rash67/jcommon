@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LongExtractor implements Extractor<Long> {
+public class LongExtractor implements Extractor<Long>
+{
   @Override
   public Long extract(String key, JSONObject jsonObject)
-    throws JSONException {
+      throws JSONException
+  {
     return jsonObject.getLong(key);
   }
 }

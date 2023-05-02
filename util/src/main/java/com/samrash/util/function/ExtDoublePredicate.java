@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.DoublePredicate;
 
-public interface ExtDoublePredicate<E extends Throwable> {
+public interface ExtDoublePredicate<E extends Throwable>
+{
   boolean test(double value) throws E;
 
-  default ExtDoublePredicate<E> and(ExtDoublePredicate<E> other) {
+  default ExtDoublePredicate<E> and(ExtDoublePredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
 
-  default ExtDoublePredicate<E> negate() {
+  default ExtDoublePredicate<E> negate()
+  {
     return (value) -> !test(value);
   }
 
-  default ExtDoublePredicate<E> or(ExtDoublePredicate<E> other) {
+  default ExtDoublePredicate<E> or(ExtDoublePredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
 
-  static DoublePredicate quiet(ExtDoublePredicate<?> doublePredicate) {
+  static DoublePredicate quiet(ExtDoublePredicate<?> doublePredicate)
+  {
     return (value) -> ExtBooleanSupplier.quiet(() -> doublePredicate.test(value)).getAsBoolean();
   }
 }

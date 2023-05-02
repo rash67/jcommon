@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 /**
  * marker interface:  this is required for for any class that requires a generic
  * of the type C extends EventCounterIf<C>
  */
-public interface EventCounter extends EventCounterIf<EventCounter>{
+public interface EventCounter extends EventCounterIf<EventCounter>
+{
 }

@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
+import com.samrash.logging.Logger;
+import com.samrash.testing.MockExecutor;
+import com.samrash.testing.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,160 +31,166 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.samrash.logging.Logger;
-import com.samrash.testing.MockExecutor;
-import com.samrash.testing.TestUtils;
-
-public class TestUnstoppableExecutorService {
+public class TestUnstoppableExecutorService
+{
   private static final Logger LOG = com.samrash.logging.LoggerImpl.getClassLogger();
-  private static final Runnable NO_OP = () -> { };
+  private static final Runnable NO_OP = () -> {
+  };
 
   private ExecutorService executor;
   private MockExecutor mockExecutor;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     mockExecutor = new MockExecutor();
     executor = new UnstoppableExecutorService(mockExecutor);
   }
 
   @Test(groups = "fast")
-  public void testShutdown() throws Exception {
+  public void testShutdown() throws Exception
+  {
     executor.shutdown();
 
     Assert.assertFalse(
-      mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
+        mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
     );
     Assert.assertTrue(
-      executor.isShutdown(), "executor should be shut down"
+        executor.isShutdown(), "executor should be shut down"
     );
   }
 
   @Test(groups = "fast")
-  public void testShutdownNow() throws Exception {
+  public void testShutdownNow() throws Exception
+  {
     Assert.assertTrue(
-      executor.shutdownNow().isEmpty(),
-      "shutdownNow should return empty list"
+        executor.shutdownNow().isEmpty(),
+        "shutdownNow should return empty list"
     );
 
     Assert.assertFalse(
-      mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
+        mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
     );
     Assert.assertTrue(
-      executor.isShutdown(), "executor should be shut down"
+        executor.isShutdown(), "executor should be shut down"
     );
   }
 
   @Test(groups = "fast")
-  public void testAwaitTermination() throws Exception {
+  public void testAwaitTermination() throws Exception
+  {
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor is terminated"
     );
 
     executor.shutdown();
     mockExecutor.drain();
 
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
 
     Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"
+        executor.isTerminated(),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testAwaitTerminationForExecute() throws Exception {
+  public void testAwaitTerminationForExecute() throws Exception
+  {
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor is terminated"
     );
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
-      10,
-      executor::execute
+        10,
+        executor::execute
     );
 
     executor.shutdown();
     mockExecutor.drain();
 
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
 
     Assert.assertEquals(completed.get(), 10);
 
     Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"
+        executor.isTerminated(),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testAwaitTerminationForSubmitRunnable1() throws Exception {
+  public void testAwaitTerminationForSubmitRunnable1() throws Exception
+  {
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor is terminated"
     );
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
-      10,
-      executor::submit
+        10,
+        executor::submit
     );
 
     executor.shutdown();
     mockExecutor.drain();
 
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
 
     Assert.assertEquals(completed.get(), 10);
 
     Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"
+        executor.isTerminated(),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testAwaitTerminationForSubmitRunnable2() throws Exception {
+  public void testAwaitTerminationForSubmitRunnable2() throws Exception
+  {
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor is terminated"
     );
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
-      10,
-      argument -> executor.submit(argument, new Object())
+        10,
+        argument -> executor.submit(argument, new Object())
     );
 
     executor.shutdown();
     mockExecutor.drain();
 
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
 
     Assert.assertEquals(completed.get(), 10);
 
     Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"
+        executor.isTerminated(),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testAwaitTerminationForSubmitCallable() throws Exception {
+  public void testAwaitTerminationForSubmitCallable() throws Exception
+  {
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor is terminated"
     );
 
     AtomicInteger completed = TestUtils.<Void>countCompletedCallables(10, executor::submit);
@@ -190,22 +200,23 @@ public class TestUnstoppableExecutorService {
 
     Assert.assertEquals(completed.get(), 10);
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
 
     Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"
+        executor.isTerminated(),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testTaskCompletesThenCancel() throws Exception {
+  public void testTaskCompletesThenCancel() throws Exception
+  {
     final AtomicReference<Future> future = new AtomicReference<>();
     AtomicInteger completed = TestUtils.<Void>countCompletedCallables(
-      10,
-      argument -> future.compareAndSet(null, executor.submit(argument))
+        10,
+        argument -> future.compareAndSet(null, executor.submit(argument))
     );
 
     executor.shutdown();
@@ -217,13 +228,14 @@ public class TestUnstoppableExecutorService {
 
     Assert.assertEquals(completed.get(), 10);
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS),
+        "executor should be terminated"
     );
   }
 
   @Test(groups = "fast")
-  public void testSubmission() throws Exception {
+  public void testSubmission() throws Exception
+  {
     executor.execute(NO_OP);
     Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);
     executor.submit(NO_OP);
@@ -235,13 +247,15 @@ public class TestUnstoppableExecutorService {
   }
 
   @Test(groups = "fast")
-  public void testRejectedAfterShutdown() throws Exception {
+  public void testRejectedAfterShutdown() throws Exception
+  {
     executor.shutdown();
 
     try {
       executor.submit(NO_OP);
       Assert.fail("expected exception");
-    } catch (RejectedExecutionException e) {
+    }
+    catch (RejectedExecutionException e) {
       // success
       Assert.assertEquals(executor.isShutdown(), true);
       Assert.assertEquals(mockExecutor.isShutdown(), false);
@@ -249,7 +263,8 @@ public class TestUnstoppableExecutorService {
   }
 
   @Test(groups = "fast")
-  public void testRate() throws Exception {
+  public void testRate() throws Exception
+  {
     int numTasks = 1000000;
     // use enough threads to induce lock contention
     int numThreads = 6;
@@ -279,7 +294,7 @@ public class TestUnstoppableExecutorService {
     // rate is primarily affected by rate that executor and get tasks to queues, ie pull from
     // the queue
     LOG.info(
-      "%d tasks with %d threads took %f ms", numTasks, numThreads, timeTakenMillis
+        "%d tasks with %d threads took %f ms", numTasks, numThreads, timeTakenMillis
     );
 
     realExecutor.shutdown();

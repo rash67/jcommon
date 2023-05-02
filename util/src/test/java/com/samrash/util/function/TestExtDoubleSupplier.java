@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.TestQuietFunctionBase;
+
 import java.util.function.Supplier;
 
-public class TestExtDoubleSupplier extends TestQuietFunctionBase {
+public class TestExtDoubleSupplier extends TestQuietFunctionBase
+{
   @Override
-  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtDoubleSupplier.quiet(() -> { throw toThrow.get(); }).getAsDouble();
+  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow)
+  {
+    ExtDoubleSupplier.quiet(() -> {
+      throw toThrow.get();
+    }).getAsDouble();
   }
 }

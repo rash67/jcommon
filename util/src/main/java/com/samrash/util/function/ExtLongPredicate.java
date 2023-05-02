@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.LongPredicate;
 
-public interface ExtLongPredicate<E extends Throwable> {
+public interface ExtLongPredicate<E extends Throwable>
+{
   boolean test(long value) throws E;
 
-  default ExtLongPredicate<E> and(ExtLongPredicate<E> other) {
+  default ExtLongPredicate<E> and(ExtLongPredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
 
-  default ExtLongPredicate<E> negate() {
+  default ExtLongPredicate<E> negate()
+  {
     return (value) -> !test(value);
   }
 
-  default ExtLongPredicate<E> or(ExtLongPredicate<E> other) {
+  default ExtLongPredicate<E> or(ExtLongPredicate<E> other)
+  {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
 
-  static LongPredicate quiet(ExtLongPredicate<?> longPredicate) {
+  static LongPredicate quiet(ExtLongPredicate<?> longPredicate)
+  {
     return (value) -> ExtBooleanSupplier.quiet(() -> longPredicate.test(value)).getAsBoolean();
   }
 }

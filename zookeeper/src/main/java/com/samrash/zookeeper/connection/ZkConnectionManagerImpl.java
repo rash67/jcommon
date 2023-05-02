@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.connection;
 
 import com.samrash.concurrency.ErrorLoggingRunnable;
 import com.samrash.concurrency.NamedThreadFactory;
 import com.samrash.zookeeper.ZooKeeperFactory;
 import com.samrash.zookeeper.ZooKeeperIface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,16 +35,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ZkConnectionManagerImpl implements ZkConnectionManager {
+public class ZkConnectionManagerImpl implements ZkConnectionManager
+{
   private static final Logger LOG =
-    LoggerFactory.getLogger(ZkConnectionManagerImpl.class);
+      LoggerFactory.getLogger(ZkConnectionManagerImpl.class);
 
   private final ZooKeeperFactory zooKeeperFactory;
   private final List<Watcher> registeredWatchers =
-    new CopyOnWriteArrayList<Watcher>();
+      new CopyOnWriteArrayList<Watcher>();
   private final ConnectionWatcher connectionWatcher = new ConnectionWatcher();
   private final ConnectionRenewer connectionRenewer =
-    new ConnectionRenewer();
+      new ConnectionRenewer();
   private final int connectTimeoutMillis;
   private final int retryIntervalMillis;
   private volatile ZooKeeperIface zk = null;
@@ -51,17 +53,19 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
   private volatile boolean isShutDown = false;
 
   public ZkConnectionManagerImpl(
-    ZooKeeperFactory zooKeeperFactory,
-    int connectTimeoutMillis,
-    int retryIntervalMillis
-  ) {
+      ZooKeeperFactory zooKeeperFactory,
+      int connectTimeoutMillis,
+      int retryIntervalMillis
+  )
+  {
     this.zooKeeperFactory = zooKeeperFactory;
     this.connectTimeoutMillis = connectTimeoutMillis;
     this.retryIntervalMillis = retryIntervalMillis;
   }
 
   // Instance must be started before it becomes valid for use
-  public synchronized void start() {
+  public synchronized void start()
+  {
     if (isStarted) {
       throw new IllegalStateException("Should only be started once");
     }
@@ -69,13 +73,15 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
     try {
       // Call connect first to guarantee zk is not null when this method exits
       connect();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       connectionRenewer.activate();
     }
     isStarted = true;
   }
 
-  private void verifyOperational() {
+  private void verifyOperational()
+  {
     if (!isStarted) {
       throw new IllegalStateException("Not yet started");
     }
@@ -84,11 +90,13 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
     }
   }
 
-  private boolean isAlive() {
+  private boolean isAlive()
+  {
     return zk != null && zk.getState().isAlive();
   }
 
-  private synchronized void connect() throws IOException {
+  private synchronized void connect() throws IOException
+  {
     if (!isShutDown && !isAlive()) {
       LOG.info("Initializing ZooKeeper connection");
       connectionWatcher.reset();
@@ -97,18 +105,20 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
   }
 
   @Override
-  public ZooKeeperIface getClient() throws InterruptedException {
+  public ZooKeeperIface getClient() throws InterruptedException
+  {
     verifyOperational();
     // Wait if we are in the process of connecting
     if (!connectionWatcher.waitForConnect(connectTimeoutMillis, TimeUnit.MILLISECONDS)) {
       LOG.error("Exceeded " + connectTimeoutMillis + " ms waiting for " +
-        "connection to be established! Using disconnected client...");
+                "connection to be established! Using disconnected client...");
     }
     return zk;
   }
 
   @Override
-  public ZooKeeper.States registerWatcher(Watcher watcher) {
+  public ZooKeeper.States registerWatcher(Watcher watcher)
+  {
     // This operation may legitimately happen at any time without problems
 
     // Note: the setting of the watch MUST precede the reading of the state
@@ -118,7 +128,8 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
     return (zk == null) ? ZooKeeper.States.CLOSED : zk.getState();
   }
 
-  public synchronized void shutdown() throws InterruptedException {
+  public synchronized void shutdown() throws InterruptedException
+  {
     LOG.info("Closing ZooKeeper connection");
     verifyOperational();
     try {
@@ -126,7 +137,8 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
       if (isAlive()) {
         zk.close();
       }
-    } finally {
+    }
+    finally {
       isShutDown = true;
     }
   }
@@ -134,30 +146,36 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
   /**
    * When activated, will try to connect to ZooKeeper until it succeeds.
    */
-  private class ConnectionRenewer {
+  private class ConnectionRenewer
+  {
     private final ScheduledExecutorService retryExecutor =
-      Executors.newSingleThreadScheduledExecutor(
-        new NamedThreadFactory("ZkConnectionManager-renewer")
-      );
+        Executors.newSingleThreadScheduledExecutor(
+            new NamedThreadFactory("ZkConnectionManager-renewer")
+        );
     private final AtomicBoolean isScheduled = new AtomicBoolean(false);
 
-    public void activate() {
+    public void activate()
+    {
       if (isScheduled.compareAndSet(false, true)) {
-        retryExecutor.execute(new ErrorLoggingRunnable(new Runnable() {
+        retryExecutor.execute(new ErrorLoggingRunnable(new Runnable()
+        {
           @Override
-          public void run() {
+          public void run()
+          {
             try {
               connect();
               return; // Success, don't reschedule
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
               // Try again after sleeping...
               LOG.error("Failed to connect to ZooKeeper", e);
-            } finally {
+            }
+            finally {
               isScheduled.set(false);
             }
             if (isScheduled.compareAndSet(false, true)) {
               retryExecutor.schedule(
-                this, retryIntervalMillis, TimeUnit.MILLISECONDS
+                  this, retryIntervalMillis, TimeUnit.MILLISECONDS
               );
             }
           }
@@ -165,26 +183,31 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
       }
     }
 
-    public void shutdown() {
+    public void shutdown()
+    {
       retryExecutor.shutdown();
     }
   }
 
-  private class ConnectionWatcher implements Watcher {
+  private class ConnectionWatcher implements Watcher
+  {
     private volatile CountDownLatch connectedSignal = new CountDownLatch(1);
 
-    public synchronized void reset() {
+    public synchronized void reset()
+    {
       connectedSignal.countDown(); // Unblock any prior threads
       connectedSignal = new CountDownLatch(1);
     }
 
     public boolean waitForConnect(int timeout, TimeUnit timeUnit)
-      throws InterruptedException {
+        throws InterruptedException
+    {
       return connectedSignal.await(timeout, timeUnit);
     }
 
     @Override
-    public void process(WatchedEvent event) {
+    public void process(WatchedEvent event)
+    {
       // Handle the connection event signals. No thread needed because all
       // operations are non-blocking
       switch (event.getState()) {
@@ -207,7 +230,8 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
         try {
           // All watchers should have non-blocking implementations
           watcher.process(event);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
           LOG.error("Registered watcher failed handling connection event", t);
         }
       }

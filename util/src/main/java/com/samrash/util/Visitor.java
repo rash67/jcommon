@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 /**
  * simple visitor object for type T
  *
  * @param <T>
- *
  */
-public interface Visitor<T> {
+public interface Visitor<T>
+{
   /**
-   *
    * @param element element being examined
    * @return return true to continue visiting to next element
    */

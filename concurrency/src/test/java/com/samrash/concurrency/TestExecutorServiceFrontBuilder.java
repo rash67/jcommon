@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import org.testng.Assert;
@@ -25,7 +26,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class TestExecutorServiceFrontBuilder {
+public class TestExecutorServiceFrontBuilder
+{
   private ExecutorService coreExecutor;
   private ExecutorServiceFrontBuilder executorFrontBuilder;
   private AtomicLong count;
@@ -36,27 +38,33 @@ public class TestExecutorServiceFrontBuilder {
   private Runnable countTask;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     count = new AtomicLong(0);
     finishLatch = new CountDownLatch(4);
     countLatch = new CountDownLatch(2);
     hangLatch = new CountDownLatch(1);
 
-    hangTask = new Runnable() {
+    hangTask = new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         try {
           hangLatch.await();
           count.incrementAndGet();
           finishLatch.countDown();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           throw new RuntimeException("interrupted waiting on latch!", e);
         }
       }
     };
-    countTask = new Runnable() {
+    countTask = new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         count.incrementAndGet();
         countLatch.countDown();
         finishLatch.countDown();
@@ -68,7 +76,8 @@ public class TestExecutorServiceFrontBuilder {
   }
 
   @AfterMethod(alwaysRun = true)
-  public void tearDown() throws Exception {
+  public void tearDown() throws Exception
+  {
     coreExecutor.shutdown();
   }
 
@@ -79,16 +88,17 @@ public class TestExecutorServiceFrontBuilder {
    * the global ExecutorServiceFront.
    */
   @Test(groups = "fast")
-  public void testGlobalMax() throws Exception {
+  public void testGlobalMax() throws Exception
+  {
     ExecutorServiceFront executorFront1 =
-      executorFrontBuilder
-        .setMaxInstanceThreads(2)
-        .build();
+        executorFrontBuilder
+            .setMaxInstanceThreads(2)
+            .build();
 
     ExecutorServiceFront executorFront2 =
-      executorFrontBuilder
-        .setMaxInstanceThreads(2)
-        .build();
+        executorFrontBuilder
+            .setMaxInstanceThreads(2)
+            .build();
 
     /* submit 2 tasks that will hang */
     executorFront1.execute(hangTask);
@@ -109,7 +119,8 @@ public class TestExecutorServiceFrontBuilder {
       /* wait for all tasks to complete */
       finishLatch.await();
       Assert.assertEquals(count.get(), 4);
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException("interrupted waiting on latch!", e);
     }
   }

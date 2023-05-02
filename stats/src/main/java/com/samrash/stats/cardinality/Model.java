@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
-interface Model {
+interface Model
+{
   SymbolInfo getSymbolInfo(int symbol);
 
   SymbolInfo countToSymbol(int count);
@@ -30,31 +32,37 @@ interface Model {
    */
   int log2MaxCount();
 
-  public static final class SymbolInfo {
+  public static final class SymbolInfo
+  {
     private final int symbol;
     private final int lowCount;
     private final int highCount;
 
-    public SymbolInfo(int symbol, int lowCount, int highCount) {
+    public SymbolInfo(int symbol, int lowCount, int highCount)
+    {
       this.symbol = symbol;
       this.lowCount = lowCount;
       this.highCount = highCount;
     }
 
-    public int symbol() {
+    public int symbol()
+    {
       return symbol;
     }
 
-    public int lowCount() {
+    public int lowCount()
+    {
       return lowCount;
     }
 
-    public int highCount() {
+    public int highCount()
+    {
       return highCount;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
       final StringBuilder sb = new StringBuilder();
       sb.append("SymbolInfo");
       sb.append("{symbol=").append(symbol);

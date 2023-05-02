@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -25,7 +26,8 @@ import java.util.Arrays;
  */
 @NotThreadSafe
 class SparseEstimator
-  implements Estimator {
+    implements Estimator
+{
   private final static int BITS_PER_BUCKET = 4;
   private final static int BUCKET_VALUE_MASK = (1 << BITS_PER_BUCKET) - 1;
   public final static int MAX_BUCKET_VALUE = (1 << BITS_PER_BUCKET);
@@ -50,11 +52,13 @@ class SparseEstimator
   */
   private long[] slots;
 
-  SparseEstimator(int numberOfBuckets) {
+  SparseEstimator(int numberOfBuckets)
+  {
     this(numberOfBuckets, 1);
   }
 
-  SparseEstimator(int[] buckets) {
+  SparseEstimator(int[] buckets)
+  {
     this(buckets.length, countNonZeroBuckets(buckets));
 
     for (int bucket = 0; bucket < buckets.length; bucket++) {
@@ -67,22 +71,24 @@ class SparseEstimator
     }
   }
 
-  SparseEstimator(int numberOfBuckets, int initialCapacity) {
+  SparseEstimator(int numberOfBuckets, int initialCapacity)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
+        Numbers.isPowerOf2(numberOfBuckets),
+        "numberOfBuckets must be a power of 2"
     );
 
     this.indexBits = (byte) Integer.numberOfTrailingZeros(numberOfBuckets); // log2(numberOfBuckets)
     slots = new long[(initialCapacity + getBucketsPerSlot()) / getBucketsPerSlot()];
   }
 
-  public boolean setIfGreater(int bucket, int highestBitPosition) {
+  public boolean setIfGreater(int bucket, int highestBitPosition)
+  {
     Preconditions.checkArgument(
-      highestBitPosition < MAX_BUCKET_VALUE,
-      "highestBitPosition %s is bigger than allowed by BITS_PER_BUCKET (%s)",
-      highestBitPosition,
-      BITS_PER_BUCKET
+        highestBitPosition < MAX_BUCKET_VALUE,
+        "highestBitPosition %s is bigger than allowed by BITS_PER_BUCKET (%s)",
+        highestBitPosition,
+        BITS_PER_BUCKET
     );
 
     if (highestBitPosition == 0) {
@@ -104,7 +110,8 @@ class SparseEstimator
     return false;
   }
 
-  public int[] buckets() {
+  public int[] buckets()
+  {
     int[] buckets = new int[getNumberOfBuckets()];
 
     for (int i = 0; i < bucketCount; ++i) {
@@ -115,16 +122,19 @@ class SparseEstimator
     return buckets;
   }
 
-  public int getNumberOfBuckets() {
+  public int getNumberOfBuckets()
+  {
     return 1 << indexBits;
   }
 
   @Override
-  public int getMaxAllowedBucketValue() {
+  public int getMaxAllowedBucketValue()
+  {
     return MAX_BUCKET_VALUE;
   }
 
-  private Entry getEntry(int index) {
+  private Entry getEntry(int index)
+  {
     int totalBitsPerBucket = getTotalBitsPerBucket();
     int bucketMask = (1 << totalBitsPerBucket) - 1;
     int bucketsPerSlot = getBucketsPerSlot();
@@ -137,15 +147,18 @@ class SparseEstimator
     return new Entry(bucketEntry >> BITS_PER_BUCKET, bucketEntry & BUCKET_VALUE_MASK);
   }
 
-  private int getBucketsPerSlot() {
+  private int getBucketsPerSlot()
+  {
     return Long.SIZE / getTotalBitsPerBucket();
   }
 
-  private int getTotalBitsPerBucket() {
+  private int getTotalBitsPerBucket()
+  {
     return indexBits + BITS_PER_BUCKET;
   }
 
-  private void setEntry(int index, int bucket, int value) {
+  private void setEntry(int index, int bucket, int value)
+  {
     int totalBitsPerBucket = getTotalBitsPerBucket();
     long bucketMask = (1L << totalBitsPerBucket) - 1;
     int bucketsPerSlot = getBucketsPerSlot();
@@ -161,14 +174,16 @@ class SparseEstimator
     slots[slot] = (slots[slot] & ~bucketClearMask) | bucketSetMask;
   }
 
-  public int estimateSizeInBytes() {
+  public int estimateSizeInBytes()
+  {
     return estimateSizeInBytes(bucketCount, getNumberOfBuckets());
   }
 
-  public static int estimateSizeInBytes(int nonZeroBuckets, int totalBuckets) {
+  public static int estimateSizeInBytes(int nonZeroBuckets, int totalBuckets)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(totalBuckets),
-      "totalBuckets must be a power of 2"
+        Numbers.isPowerOf2(totalBuckets),
+        "totalBuckets must be a power of 2"
     );
 
     int bits = Integer.numberOfTrailingZeros(totalBuckets); // log2(totalBuckets)
@@ -177,7 +192,8 @@ class SparseEstimator
     return (nonZeroBuckets + bucketsPerSlot) / bucketsPerSlot * Long.SIZE / 8 + INSTANCE_SIZE;
   }
 
-  public long estimate() {
+  public long estimate()
+  {
     int totalBuckets = getNumberOfBuckets();
 
     // small cardinality estimate
@@ -185,11 +201,13 @@ class SparseEstimator
     return Math.round(totalBuckets * Math.log(totalBuckets * 1.0 / zeroBuckets));
   }
 
-  private void grow() {
+  private void grow()
+  {
     slots = Arrays.copyOf(slots, slots.length + 1);
   }
 
-  private int findBucket(int bucket) {
+  private int findBucket(int bucket)
+  {
     int low = 0;
     int high = bucketCount - 1;
 
@@ -211,7 +229,8 @@ class SparseEstimator
   }
 
 
-  private void insertAt(int index, int bucket, int value) {
+  private void insertAt(int index, int bucket, int value)
+  {
     int totalBitsPerBucket = getTotalBitsPerBucket();
     int bucketsPerSlot = getBucketsPerSlot();
 
@@ -232,7 +251,7 @@ class SparseEstimator
     // shift all buckets one position to the right
     for (int i = lastUsedSlot; i > insertAtSlot; --i) {
       int overflow = (int) ((slots[i - 1] >>> ((bucketsPerSlot - 1) * totalBitsPerBucket)) &
-                              bucketMask);
+                            bucketMask);
       slots[i] = (slots[i] << totalBitsPerBucket) | overflow;
     }
 
@@ -245,13 +264,14 @@ class SparseEstimator
       topMask = (0xFFFFFFFFFFFFFFFFL << ((insertOffset + 1) * totalBitsPerBucket));
     }
     long bucketSetMask = ((((long) bucket) << BITS_PER_BUCKET) | value) << (insertOffset *
-      totalBitsPerBucket);
+                                                                            totalBitsPerBucket);
 
     slots[insertAtSlot] = ((old << totalBitsPerBucket) & topMask) | bucketSetMask |
-      (old & bottomMask);
+                          (old & bottomMask);
   }
 
-  private static int countNonZeroBuckets(int[] buckets) {
+  private static int countNonZeroBuckets(int[] buckets)
+  {
     int count = 0;
     for (int bucket : buckets) {
       if (bucket > 0) {
@@ -262,20 +282,24 @@ class SparseEstimator
     return count;
   }
 
-  private static class Entry {
+  private static class Entry
+  {
     private final int bucket;
     private final int value;
 
-    private Entry(int bucket, int value) {
+    private Entry(int bucket, int value)
+    {
       this.bucket = bucket;
       this.value = value;
     }
 
-    public int getBucket() {
+    public int getBucket()
+    {
       return bucket;
     }
 
-    public int getValue() {
+    public int getValue()
+    {
       return value;
     }
   }

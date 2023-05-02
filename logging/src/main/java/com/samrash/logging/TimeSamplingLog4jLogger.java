@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import org.apache.log4j.Level;
@@ -25,27 +26,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Logger wrapper to down-sample frequent logs to one log per specified time
  */
-public class TimeSamplingLog4jLogger {
+public class TimeSamplingLog4jLogger
+{
   private final Logger logger;
   private final long windowSizeMillis;
   private final AtomicBoolean logToggle = new AtomicBoolean(false);
 
   private volatile long lastLoggedMillis = 0;
 
-  public TimeSamplingLog4jLogger(Logger logger, long time, TimeUnit timeUnit) {
+  public TimeSamplingLog4jLogger(Logger logger, long time, TimeUnit timeUnit)
+  {
     this.logger = logger;
     windowSizeMillis = timeUnit.toMillis(time);
   }
 
-  private boolean shouldLog() {
+  private boolean shouldLog()
+  {
     if (DateTimeUtils.currentTimeMillis() - lastLoggedMillis >= windowSizeMillis
-      && logToggle.compareAndSet(false, true)
-      ) {
+        && logToggle.compareAndSet(false, true)
+    ) {
       try {
         lastLoggedMillis = DateTimeUtils.currentTimeMillis();
 
         return true;
-      } finally {
+      }
+      finally {
         logToggle.set(false);
       }
     }
@@ -53,7 +58,8 @@ public class TimeSamplingLog4jLogger {
     return false;
   }
 
-  public void debug(String format, Object ... args) {
+  public void debug(String format, Object... args)
+  {
     if (shouldLog() && logger.isDebugEnabled()) {
       String message = String.format(format, args);
 
@@ -61,7 +67,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void debug(Throwable t, String format, Object ... args) {
+  public void debug(Throwable t, String format, Object... args)
+  {
     if (shouldLog() && logger.isDebugEnabled()) {
       String message = String.format(format, args);
 
@@ -69,7 +76,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void info(String format, Object ... args) {
+  public void info(String format, Object... args)
+  {
     if (shouldLog() && logger.isInfoEnabled()) {
       String message = String.format(format, args);
 
@@ -77,7 +85,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void info(Throwable t, String format, Object ... args) {
+  public void info(Throwable t, String format, Object... args)
+  {
     if (shouldLog() && logger.isInfoEnabled()) {
       String message = String.format(format, args);
 
@@ -85,7 +94,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void warn(String format, Object ... args) {
+  public void warn(String format, Object... args)
+  {
     if (shouldLog() && logger.isEnabledFor(Level.WARN)) {
       String message = String.format(format, args);
 
@@ -93,7 +103,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void warn(Throwable t, String format, Object ... args) {
+  public void warn(Throwable t, String format, Object... args)
+  {
     if (shouldLog() && logger.isEnabledFor(Level.WARN)) {
       String message = String.format(format, args);
 
@@ -101,7 +112,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void error(String format, Object ... args) {
+  public void error(String format, Object... args)
+  {
     if (shouldLog() && logger.isEnabledFor(Level.ERROR)) {
       String message = String.format(format, args);
 
@@ -109,7 +121,8 @@ public class TimeSamplingLog4jLogger {
     }
   }
 
-  public void error(Throwable t, String format, Object ... args) {
+  public void error(Throwable t, String format, Object... args)
+  {
     if (shouldLog() && logger.isEnabledFor(Level.ERROR)) {
       String message = String.format(format, args);
 

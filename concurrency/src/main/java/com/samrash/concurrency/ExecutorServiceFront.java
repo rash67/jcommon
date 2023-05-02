@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.joda.time.DateTimeUtils;
 
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
@@ -33,16 +34,16 @@ import java.util.concurrent.locks.ReentrantLock;
  * This class puts its own Queue in front of another ExecutorService.
  * It uses that service to submit tasks that drain its queue.  It ensures
  * a max # of drainer threads (default 1)
- *
+ * <p>
  * Typical use case : back this by a SynchronousQueue based thread pool, ie
  * Executors.newCachedThreadPool()
- *
+ * <p>
  * This will allow more than one object to share the thread pool, but have
  * a maximum # of threads.  When there are no elements in the queue,
  * no threads are used.
- *
  */
-public class ExecutorServiceFront extends AbstractExecutorService {
+public class ExecutorServiceFront extends AbstractExecutorService
+{
   private final Lock lock = new ReentrantLock();
   private final BlockingQueue<Runnable> workQueue;
   private final ExecutorService executor;
@@ -53,21 +54,21 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceFront.class);
 
   /**
-   *
    * @param workQueue
    * @param executor
    * @param maxDrainers
-   * @param maxTimeSlice - the maximum time slice of a drainer can run
+   * @param maxTimeSlice     - the maximum time slice of a drainer can run
    * @param maxTimeSliceUnit - the unit of the maxTimeSlice argument
    */
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue,
-    ExecutorService executor,
-    String poolName,
-    int maxDrainers,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      String poolName,
+      int maxDrainers,
+      long maxTimeSlice,
+      TimeUnit maxTimeSliceUnit
+  )
+  {
     this.workQueue = workQueue;
     this.executor = executor;
     this.poolName = poolName;
@@ -80,78 +81,90 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue,
-    ExecutorService executor,
-    int maxDrainers,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      int maxDrainers,
+      long maxTimeSlice,
+      TimeUnit maxTimeSliceUnit
+  )
+  {
     this(workQueue, executor, "Drainer", maxDrainers, maxTimeSlice, maxTimeSliceUnit);
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue,
-    ExecutorService executor,
-    String poolName,
-    int maxDrainers
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      String poolName,
+      int maxDrainers
+  )
+  {
     this(workQueue, executor, poolName, maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue,
-    ExecutorService executor,
-    int maxDrainers
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      int maxDrainers
+  )
+  {
     this(workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(
-    ExecutorService executor,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      ExecutorService executor,
+      long maxTimeSlice,
+      TimeUnit maxTimeSliceUnit
+  )
+  {
     this(
-      new LinkedBlockingQueue<Runnable>(),
-      executor,
-      "Drainer",
-      1,
-      maxTimeSlice,
-      maxTimeSliceUnit);
+        new LinkedBlockingQueue<Runnable>(),
+        executor,
+        "Drainer",
+        1,
+        maxTimeSlice,
+        maxTimeSliceUnit
+    );
   }
 
-  public ExecutorServiceFront(ExecutorService executor) {
+  public ExecutorServiceFront(ExecutorService executor)
+  {
     this(new LinkedBlockingQueue<Runnable>(), executor, 1);
   }
 
   @Override
-  public void shutdown() {
+  public void shutdown()
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public synchronized List<Runnable> shutdownNow() {
+  public synchronized List<Runnable> shutdownNow()
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean isShutdown() {
+  public boolean isShutdown()
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean isTerminated() {
+  public boolean isTerminated()
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean awaitTermination(long timeout, TimeUnit unit)
-    throws InterruptedException {
+      throws InterruptedException
+  {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void execute(Runnable task) {
+  public void execute(Runnable task)
+  {
     workQueue.offer(task);
     lock.lock();
 
@@ -159,32 +172,38 @@ public class ExecutorServiceFront extends AbstractExecutorService {
       if (!drainerList.isEmpty()) {
         executor.execute(drainerList.poll());
       }
-    } finally {
+    }
+    finally {
       lock.unlock();
     }
   }
 
-  private class Drainer implements Runnable {
+  private class Drainer implements Runnable
+  {
     private final String threadName;
 
-    private Drainer(String threadName) {
+    private Drainer(String threadName)
+    {
       this.threadName = threadName;
     }
 
-    public void run() {
+    public void run()
+    {
       Thread t = Thread.currentThread();
       String oldName = t.getName();
       t.setName(threadName);
 
       try {
         internalRun();
-      } finally {
+      }
+      finally {
         t.setName(oldName);
       }
 
     }
 
-    private void internalRun() {
+    private void internalRun()
+    {
       long startTime = DateTimeUtils.currentTimeMillis();
 
       while (DateTimeUtils.currentTimeMillis() - startTime < maxTimeSliceMillis) {
@@ -200,13 +219,15 @@ public class ExecutorServiceFront extends AbstractExecutorService {
 
             return;
           }
-        } finally {
+        }
+        finally {
           lock.unlock();
         }
 
         try {
           task.run();
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
           LOG.warn("Ignoring Task Failure", e);
         }
       }
@@ -224,7 +245,8 @@ public class ExecutorServiceFront extends AbstractExecutorService {
         } else {
           executor.execute(this);
         }
-      } finally {
+      }
+      finally {
         lock.unlock();
       }
     }

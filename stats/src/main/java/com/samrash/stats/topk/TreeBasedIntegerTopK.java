@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.topk;
 
-import com.samrash.collections.ComparablePair;
 import com.google.common.base.Preconditions;
+import com.samrash.collections.ComparablePair;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,15 +31,17 @@ import java.util.TreeSet;
  * Space usage is O(n + k).
  * (n = keySpaceSize)
  */
-public class TreeBasedIntegerTopK implements TopK<Integer> {
+public class TreeBasedIntegerTopK implements TopK<Integer>
+{
   private final int k;
   private final long[] counts;
   private final boolean[] isInTop;
   private final TreeSet<ComparablePair<Long, Integer>> topPairs =
-    new TreeSet<ComparablePair<Long, Integer>>();
+      new TreeSet<ComparablePair<Long, Integer>>();
   private long smallestTopCount = Long.MAX_VALUE;
 
-  public TreeBasedIntegerTopK(int keySpaceSize, int k) {
+  public TreeBasedIntegerTopK(int keySpaceSize, int k)
+  {
     this.k = k;
     counts = new long[keySpaceSize];
     isInTop = new boolean[keySpaceSize];
@@ -49,7 +52,8 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
    * the current top-k elements, O(1) otherwise.
    */
   @Override
-  public synchronized void add(Integer key, long count) {
+  public synchronized void add(Integer key, long count)
+  {
     Preconditions.checkNotNull(key, "key can't be null");
     Preconditions.checkElementIndex(key, counts.length, "key");
     Preconditions.checkArgument(count >= 0, "count to add must be non-negative, got %s", count);
@@ -80,7 +84,8 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
   }
 
   @Override
-  public synchronized List<Integer> getTopK() {
+  public synchronized List<Integer> getTopK()
+  {
     LinkedList<Integer> topK = new LinkedList<Integer>();
 
     for (ComparablePair<Long, Integer> pair : topPairs) {

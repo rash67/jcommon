@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MockJSONProvider implements JSONProvider {
+public class MockJSONProvider implements JSONProvider
+{
   private final JSONObject jsonObject;
 
-  public MockJSONProvider(JSONObject jsonObject) {
+  public MockJSONProvider(JSONObject jsonObject)
+  {
     this.jsonObject = jsonObject;
   }
 
   @Override
-  public JSONObject get() throws JSONException {
+  public JSONObject get() throws JSONException
+  {
     return jsonObject;
   }
 }

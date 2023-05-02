@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.ToDoubleBiFunction;
 
-public interface ExtToDoubleBiFunction<T, U, E extends Throwable> {
+public interface ExtToDoubleBiFunction<T, U, E extends Throwable>
+{
   double applyAsDouble(T t, U u) throws E;
 
-  static <T, U> ToDoubleBiFunction<T, U> quiet(ExtToDoubleBiFunction<T, U, ?> toDoubleBiFunction) {
+  static <T, U> ToDoubleBiFunction<T, U> quiet(ExtToDoubleBiFunction<T, U, ?> toDoubleBiFunction)
+  {
     return (t, u) -> ExtDoubleSupplier.quiet(() -> toDoubleBiFunction.applyAsDouble(t, u)).getAsDouble();
   }
 }

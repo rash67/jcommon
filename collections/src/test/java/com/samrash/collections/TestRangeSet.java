@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import org.testng.Assert;
@@ -26,16 +27,19 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 
-public class TestRangeSet {
+public class TestRangeSet
+{
   private Set<Long> set;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     set = new RangeSet();
   }
 
   @Test(groups = "fast")
-  public void testAdd() throws Exception {
+  public void testAdd() throws Exception
+  {
     Assert.assertTrue(set.isEmpty());
     Assert.assertEquals(set.size(), 0);
 
@@ -83,7 +87,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast")
-  public void testRemove() throws Exception {
+  public void testRemove() throws Exception
+  {
     Assert.assertTrue(set.isEmpty());
     Assert.assertEquals(set.size(), 0);
 
@@ -119,7 +124,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast")
-  public void testRemoveAll() throws Exception {
+  public void testRemoveAll() throws Exception
+  {
     Assert.assertTrue(set.isEmpty());
     Assert.assertEquals(set.size(), 0);
 
@@ -137,7 +143,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast")
-  public void testClear() throws Exception {
+  public void testClear() throws Exception
+  {
     Assert.assertTrue(set.isEmpty());
     Assert.assertEquals(set.size(), 0);
 
@@ -152,7 +159,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast")
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     Iterator<Long> iter;
 
     iter = set.iterator();
@@ -184,7 +192,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast", expectedExceptions = NoSuchElementException.class)
-  public void testIllegalIterator() throws Exception {
+  public void testIllegalIterator() throws Exception
+  {
     Iterator<Long> iter;
 
     iter = set.iterator();
@@ -193,7 +202,8 @@ public class TestRangeSet {
   }
 
   @Test(groups = "fast")
-  public void testStandard() throws Exception {
+  public void testStandard() throws Exception
+  {
     Set<Long> standard = new HashSet<Long>();
     Random random = new Random(System.nanoTime());
 

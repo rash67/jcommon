@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class BlockingValueProducer<V, E extends Exception> implements Callable<V> {
+class BlockingValueProducer<V, E extends Exception> implements Callable<V>
+{
   private final V value;
   private final E ex;
   private final CountDownLatch latch;
   private AtomicInteger calledCount = new AtomicInteger(0);
   private AtomicInteger completedCount = new AtomicInteger(0);
 
-  BlockingValueProducer(V value, boolean blocked, E ex) {
+  BlockingValueProducer(V value, boolean blocked, E ex)
+  {
     this.value = value;
     this.ex = ex;
 
@@ -37,19 +40,23 @@ class BlockingValueProducer<V, E extends Exception> implements Callable<V> {
     }
   }
 
-  BlockingValueProducer(V value, boolean blocked) {
+  BlockingValueProducer(V value, boolean blocked)
+  {
     this(value, blocked, null);
   }
 
-  BlockingValueProducer(V value) {
+  BlockingValueProducer(V value)
+  {
     this(value, false, null);
   }
 
   @Override
-  public V call() throws E {
+  public V call() throws E
+  {
     try {
       latch.await();
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       // Ignore
     }
     calledCount.incrementAndGet();
@@ -63,15 +70,18 @@ class BlockingValueProducer<V, E extends Exception> implements Callable<V> {
     return value;
   }
 
-  public int getCalledCount() {
+  public int getCalledCount()
+  {
     return calledCount.get();
   }
 
-  public int getCompletedCount() {
+  public int getCompletedCount()
+  {
     return completedCount.get();
   }
 
-  public void signal() {
+  public void signal()
+  {
     latch.countDown();
   }
 }

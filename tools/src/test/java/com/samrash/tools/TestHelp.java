@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools;
 
+import com.samrash.tools.io.MockIO;
 import com.samrash.tools.parser.CliCommand;
 import com.samrash.tools.parser.CliParser;
-import com.samrash.tools.io.MockIO;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,17 +27,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TestHelp {
+public class TestHelp
+{
   private MockIO io;
   private Help help;
 
   @BeforeMethod(groups = "fast")
-  public void setUp() {
+  public void setUp()
+  {
     io = new MockIO();
 
     CliCommand.Builder noOptions = new CliCommand.Builder("foo", "My awesome foo command");
     CliCommand.Builder oneOption = new CliCommand.Builder(
-      "bar", "My awesome bar command", "(even more awesome than foo)"
+        "bar", "My awesome bar command", "(even more awesome than foo)"
     );
     CliCommand.Builder severalOptions = new CliCommand.Builder("baz", "Meh");
     CliCommand.Builder withParameter = new CliCommand.Builder("pram", "This has a param");
@@ -51,25 +54,26 @@ public class TestHelp {
     withNotes.withNotes("Yes, that's the same option", "(it's a good option)");
 
     List<CommandBuilder> commands = Arrays.asList(
-      new MockCommand(noOptions.build()),
-      new MockCommand(oneOption.build()),
-      new MockCommand(severalOptions.build()),
-      new MockCommand(withParameter.build()),
-      new MockCommand(withNotes.build()),
-      new CommandGroup(
-        io,
-        "cmds",
-        "Some commands",
         new MockCommand(noOptions.build()),
-        new MockCommand(oneOption.build())
-      )
+        new MockCommand(oneOption.build()),
+        new MockCommand(severalOptions.build()),
+        new MockCommand(withParameter.build()),
+        new MockCommand(withNotes.build()),
+        new CommandGroup(
+            io,
+            "cmds",
+            "Some commands",
+            new MockCommand(noOptions.build()),
+            new MockCommand(oneOption.build())
+        )
     );
 
     help = new Help(io, commands);
   }
 
   @Test(groups = "fast")
-  public void testNoCommands() {
+  public void testNoCommands()
+  {
     Help onlyHelp = new Help(io, Collections.<CommandBuilder>emptyList());
     CliParser parser = new CliParser(onlyHelp.defineCommand(), Collections.<String>emptyList());
 
@@ -79,13 +83,14 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testCommandSummary() {
+  public void testCommandSummary()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Collections.<String>emptyList());
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "foo\n" +
+        io.getOut(),
+        "foo\n" +
         "  My awesome foo command\n" +
         "bar\n" +
         "  My awesome bar command\n  (even more awesome than foo)\n" +
@@ -104,26 +109,28 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testNoOptions() {
+  public void testNoOptions()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("foo"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "foo\n" +
+        io.getOut(),
+        "foo\n" +
         "  My awesome foo command\n"
     );
     Assert.assertEquals(io.getErr(), "");
   }
 
   @Test(groups = "fast")
-  public void testOneOption() {
+  public void testOneOption()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("bar"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "bar\n" +
+        io.getOut(),
+        "bar\n" +
         "  My awesome bar command\n  (even more awesome than foo)\n" +
         "\n" +
         "  -b --bar <bar>\n" +
@@ -133,13 +140,14 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testSeveralOptions() {
+  public void testSeveralOptions()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("baz"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "baz\n" +
+        io.getOut(),
+        "baz\n" +
         "  Meh\n" +
         "\n" +
         "  -x <hello>\n" +
@@ -155,26 +163,28 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testWithParameter() {
+  public void testWithParameter()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("pram"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "pram <cool>\n" +
+        io.getOut(),
+        "pram <cool>\n" +
         "  This has a param\n"
     );
     Assert.assertEquals(io.getErr(), "");
   }
 
   @Test(groups = "fast")
-  public void testWithNotes() {
+  public void testWithNotes()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("noted"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "noted\n" +
+        io.getOut(),
+        "noted\n" +
         "  I have notes\n" +
         "\n" +
         "  -b --bar <bar>\n" +
@@ -189,13 +199,14 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testCommandGroupSummary() {
+  public void testCommandGroupSummary()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("cmds"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "cmds foo\n" +
+        io.getOut(),
+        "cmds foo\n" +
         "  My awesome foo command\n" +
         "cmds bar\n" +
         "  My awesome bar command\n  (even more awesome than foo)\n" +
@@ -206,13 +217,14 @@ public class TestHelp {
   }
 
   @Test(groups = "fast")
-  public void testCommandGroupHelp() {
+  public void testCommandGroupHelp()
+  {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("cmds", "bar"));
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "bar\n" +
+        io.getOut(),
+        "bar\n" +
         "  My awesome bar command\n  (even more awesome than foo)\n" +
         "\n" +
         "  -b --bar <bar>\n" +
@@ -221,20 +233,24 @@ public class TestHelp {
     Assert.assertEquals(io.getErr(), "");
   }
 
-  private static class MockCommand implements CommandBuilder {
+  private static class MockCommand implements CommandBuilder
+  {
     private final CliCommand command;
 
-    private MockCommand(CliCommand command) {
+    private MockCommand(CliCommand command)
+    {
       this.command = command;
     }
 
     @Override
-    public CliCommand defineCommand() {
+    public CliCommand defineCommand()
+    {
       return command;
     }
 
     @Override
-    public void runCommand(CliParser parser) {
+    public void runCommand(CliParser parser)
+    {
     }
   }
 }

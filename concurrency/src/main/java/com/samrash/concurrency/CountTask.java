@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class CountTask implements Runnable {
+public class CountTask implements Runnable
+{
   private final AtomicLong count = new AtomicLong(0);
 
   @Override
-  public void run() {
+  public void run()
+  {
     count.incrementAndGet();
   }
 
-  public long getValue() {
+  public long getValue()
+  {
     return count.get();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import org.testng.annotations.Test;
@@ -23,9 +24,11 @@ import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 
-public abstract class TestEstimator {
+public abstract class TestEstimator
+{
   @Test
-  public void testUpdatesBucket() {
+  public void testUpdatesBucket()
+  {
     Estimator estimator = getEstimator();
 
     for (int value = 0; value < estimator.getMaxAllowedBucketValue(); ++value) {
@@ -40,7 +43,8 @@ public abstract class TestEstimator {
   }
 
   @Test
-  public void testSetBuckets() {
+  public void testSetBuckets()
+  {
     Estimator estimator = getEstimator();
 
     Set<Integer> buckets = new HashSet<Integer>();

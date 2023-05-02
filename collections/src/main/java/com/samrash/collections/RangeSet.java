@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.AbstractSet;
@@ -28,7 +29,8 @@ import java.util.TreeMap;
  * Set of Longs that is memory optimized for data sets containing mostly contiguous blocks of longs.
  * This collection is NOT thread-safe.
  */
-public class RangeSet extends AbstractSet<Long> implements Set<Long> {
+public class RangeSet extends AbstractSet<Long> implements Set<Long>
+{
   /**
    * Map that indexes each LongSegment with the smallest value in its range
    */
@@ -36,12 +38,14 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   private int size = 0;
 
   @Override
-  public int size() {
+  public int size()
+  {
     return size;
   }
 
   @Override
-  public boolean contains(Object o) {
+  public boolean contains(Object o)
+  {
     Long value = ((Number) o).longValue();
     Map.Entry<Long, LongSegment> entry = map.floorEntry(value);
     return entry != null && entry.getValue().contains(value);
@@ -53,20 +57,24 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
    * @return iterator
    */
   @Override
-  public Iterator<Long> iterator() {
-    return new Iterator<Long>() {
+  public Iterator<Long> iterator()
+  {
+    return new Iterator<Long>()
+    {
       // Get Segments in ascending order
       private final Iterator<LongSegment> segmentIterator = map.values().iterator();
       private Iterator<Long> longIterator =
-        segmentIterator.hasNext() ? segmentIterator.next().iterator() : null;
+          segmentIterator.hasNext() ? segmentIterator.next().iterator() : null;
 
       @Override
-      public boolean hasNext() {
+      public boolean hasNext()
+      {
         return longIterator != null && longIterator.hasNext();
       }
 
       @Override
-      public Long next() {
+      public Long next()
+      {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
@@ -78,14 +86,16 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
       }
 
       @Override
-      public void remove() {
+      public void remove()
+      {
         throw new UnsupportedOperationException("Iterator does not support remove");
       }
     };
   }
 
   @Override
-  public boolean add(Long aLong) {
+  public boolean add(Long aLong)
+  {
     // Find the largest LongSegment with a min value of less than or equal to aLong
     Map.Entry<Long, LongSegment> lowerEntry = map.floorEntry(aLong);
 
@@ -105,8 +115,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
 
       // Overwrite the lower adjacent to encompass the whole range
       map.put(
-        lowerEntry.getValue().getMin(),
-        new LongSegment(lowerEntry.getValue().getMin(), upperSegment.getMax())
+          lowerEntry.getValue().getMin(),
+          new LongSegment(lowerEntry.getValue().getMin(), upperSegment.getMax())
       );
 
       // Remove the upper adjacent b/c now included in the merged LongSegment
@@ -116,7 +126,7 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
 
       // Overwrite the lower adjacent max to include aLong
       map.put(
-        lowerEntry.getValue().getMin(), new LongSegment(lowerEntry.getValue().getMin(), aLong)
+          lowerEntry.getValue().getMin(), new LongSegment(lowerEntry.getValue().getMin(), aLong)
       );
 
     } else if (upperAdjacent) {
@@ -138,7 +148,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   }
 
   @Override
-  public boolean remove(Object o) {
+  public boolean remove(Object o)
+  {
     Long value = ((Number) o).longValue();
     Map.Entry<Long, LongSegment> entry = map.floorEntry(value);
 
@@ -169,7 +180,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   }
 
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public boolean removeAll(Collection<?> c)
+  {
     boolean changed = false;
     for (Object o : c) {
       changed |= remove(o);
@@ -178,7 +190,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     map.clear();
     size = 0;
   }
@@ -186,11 +199,13 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   /**
    * Represents a range of long values from min to max (inclusive)
    */
-  private static class LongSegment implements Iterable<Long> {
+  private static class LongSegment implements Iterable<Long>
+  {
     private final long min;
     private final long max;
 
-    private LongSegment(long min, long max) {
+    private LongSegment(long min, long max)
+    {
       this.min = min;
       this.max = max;
       if (max < min) {
@@ -198,34 +213,42 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
       }
     }
 
-    private LongSegment(long value) {
+    private LongSegment(long value)
+    {
       this(value, value);
     }
 
-    public long getMin() {
+    public long getMin()
+    {
       return min;
     }
 
-    public long getMax() {
+    public long getMax()
+    {
       return max;
     }
 
-    public boolean contains(long value) {
+    public boolean contains(long value)
+    {
       return value >= min && value <= max;
     }
 
     @Override
-    public Iterator<Long> iterator() {
-      return new Iterator<Long>() {
+    public Iterator<Long> iterator()
+    {
+      return new Iterator<Long>()
+      {
         private long currentValue = min;
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNext()
+        {
           return currentValue <= max;
         }
 
         @Override
-        public Long next() {
+        public Long next()
+        {
           if (!hasNext()) {
             throw new NoSuchElementException();
           }
@@ -235,7 +258,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
         }
 
         @Override
-        public void remove() {
+        public void remove()
+        {
           throw new UnsupportedOperationException("Iterator does not support remove");
         }
       };

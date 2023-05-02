@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.collections.ListMapper;
@@ -35,11 +36,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * core class that Unstoppable[Scheduled]ExecutorService delegates termination
  * methods to in order to guard shutdown
  */
-class UnstoppableExecutorServiceCore {
+class UnstoppableExecutorServiceCore
+{
   private final AtomicInteger remaining = new AtomicInteger(0);
   private volatile boolean isShutdown = false;
 
-  public List<Runnable> registerRunnableList(List<Runnable> taskList) {
+  public List<Runnable> registerRunnableList(List<Runnable> taskList)
+  {
     if (isShutdown) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -54,8 +57,9 @@ class UnstoppableExecutorServiceCore {
   }
 
   public <V> List<TrackedCallable<V>> registerCallableList(
-    Collection<? extends Callable<V>> taskList
-  ) {
+      Collection<? extends Callable<V>> taskList
+  )
+  {
     if (isShutdown()) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -69,7 +73,8 @@ class UnstoppableExecutorServiceCore {
     return result;
   }
 
-  public TrackedRunnable registerTask(Runnable task) {
+  public TrackedRunnable registerTask(Runnable task)
+  {
     if (isShutdown()) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -77,7 +82,8 @@ class UnstoppableExecutorServiceCore {
     return new TrackedRunnableImpl(task);
   }
 
-  public <V> TrackedCallable<V> registerTask(final Callable<V> task) {
+  public <V> TrackedCallable<V> registerTask(final Callable<V> task)
+  {
     if (isShutdown()) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -85,7 +91,8 @@ class UnstoppableExecutorServiceCore {
     return new TrackedCallableImpl<V>(task);
   }
 
-  private void decrementRemaining() {
+  private void decrementRemaining()
+  {
     if (remaining.decrementAndGet() == 0) {
       synchronized (remaining) {
         remaining.notifyAll();
@@ -93,7 +100,8 @@ class UnstoppableExecutorServiceCore {
     }
   }
 
-  public synchronized void shutdown() {
+  public synchronized void shutdown()
+  {
     if (isShutdown) {
       return;
     }
@@ -101,7 +109,8 @@ class UnstoppableExecutorServiceCore {
     isShutdown = true;
   }
 
-  public List<Runnable> shutdownNow() {
+  public List<Runnable> shutdownNow()
+  {
     // for now, shutdownNow() is equivalent to shutdown()
     shutdown();
 
@@ -110,17 +119,20 @@ class UnstoppableExecutorServiceCore {
     return Collections.emptyList();
   }
 
-  public boolean isShutdown() {
+  public boolean isShutdown()
+  {
     return isShutdown;
   }
 
-  public boolean isTerminated() {
+  public boolean isTerminated()
+  {
     assert remaining.get() >= 0;
 
     return remaining.get() == 0;
   }
 
-  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException
+  {
     if (!isShutdown) {
       return false;
     }
@@ -144,116 +156,138 @@ class UnstoppableExecutorServiceCore {
   }
 
   public <V> List<Future<V>> trackFutureList(
-    List<Future<V>> futureList, List<? extends Completable> completableList
-  ) {
+      List<Future<V>> futureList, List<? extends Completable> completableList
+  )
+  {
     return ListMapper.map(futureList, new FutureMapper<V>(completableList));
   }
 
-  public <V> Future<V> trackFuture(Future<V> future, Completable task) {
+  public <V> Future<V> trackFuture(Future<V> future, Completable task)
+  {
     return new TrackedFuture<V>(future, task);
   }
 
   public <V> ScheduledFuture<V> trackScheduledFuture(
-    ScheduledFuture<V> future, Completable task
-  ) {
+      ScheduledFuture<V> future, Completable task
+  )
+  {
     return new TrackedScheduledFuture<V>(future, task);
   }
 
-  private class TrackedRunnableImpl implements TrackedRunnable {
+  private class TrackedRunnableImpl implements TrackedRunnable
+  {
     private final Runnable delegate;
     private final AtomicBoolean hasCompleted = new AtomicBoolean(false);
 
-    private TrackedRunnableImpl(Runnable delegate) {
+    private TrackedRunnableImpl(Runnable delegate)
+    {
       this.delegate = delegate;
       remaining.incrementAndGet();
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
       try {
         delegate.run();
-      } finally {
+      }
+      finally {
         complete();
       }
     }
 
-    public void complete() {
+    public void complete()
+    {
       if (hasCompleted.compareAndSet(false, true)) {
         decrementRemaining();
       }
     }
   }
 
-  private class TrackedCallableImpl<V> implements TrackedCallable<V> {
+  private class TrackedCallableImpl<V> implements TrackedCallable<V>
+  {
 
     private final Callable<V> delegate;
     private final AtomicBoolean hasCompleted = new AtomicBoolean(false);
 
-    private TrackedCallableImpl(Callable<V> delegate) {
+    private TrackedCallableImpl(Callable<V> delegate)
+    {
       this.delegate = delegate;
       remaining.incrementAndGet();
     }
 
     @Override
-    public V call() throws Exception {
+    public V call() throws Exception
+    {
       try {
         return delegate.call();
-      } finally {
+      }
+      finally {
         complete();
       }
     }
 
-    public void complete() {
+    public void complete()
+    {
       if (hasCompleted.compareAndSet(false, true)) {
         decrementRemaining();
       }
     }
   }
 
-  private class TrackedFuture<V> extends WrappedFuture<V> {
+  private class TrackedFuture<V> extends WrappedFuture<V>
+  {
     private final Completable task;
 
-    private TrackedFuture(Future<V> delegate, Completable task) {
+    private TrackedFuture(Future<V> delegate, Completable task)
+    {
       super(delegate);
       this.task = task;
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    public boolean cancel(boolean mayInterruptIfRunning)
+    {
       task.complete();
 
       return super.cancel(mayInterruptIfRunning);
     }
   }
 
-  private class TrackedScheduledFuture<V> extends WrappedScheduledFuture<V> {
+  private class TrackedScheduledFuture<V> extends WrappedScheduledFuture<V>
+  {
     private final Completable task;
 
     private TrackedScheduledFuture(
-      ScheduledFuture<V> delegate, Completable task
-    ) {
+        ScheduledFuture<V> delegate, Completable task
+    )
+    {
       super(delegate);
       this.task = task;
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    public boolean cancel(boolean mayInterruptIfRunning)
+    {
       task.complete();
 
       return super.cancel(mayInterruptIfRunning);
     }
   }
 
-  private class FutureMapper<V> implements Mapper<Future<V>, Future<V>> {
+  private class FutureMapper<V> implements Mapper<Future<V>, Future<V>>
+  {
     private final List<? extends Completable> completableList;
     private int index = 0;
 
-    private FutureMapper(List<? extends Completable> completableList) {
+    private FutureMapper(List<? extends Completable> completableList)
+    {
       this.completableList = completableList;
     }
 
     @Override
-    public Future<V> map(Future<V> input) {
+    public Future<V> map(Future<V> input)
+    {
       TrackedFuture<V> trackedFuture = new TrackedFuture<V>(input, completableList.get(index));
 
       index++;

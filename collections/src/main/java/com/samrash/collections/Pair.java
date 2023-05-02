@@ -13,33 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
-public class Pair<First, Second> {
+public class Pair<First, Second>
+{
   private final First first;
   private final Second second;
 
   private volatile String toStringResult;
 
-  public Pair(First first, Second second) {
+  public Pair(First first, Second second)
+  {
     this.first = first;
     this.second = second;
   }
 
-  public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
+  public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second)
+  {
     return new Pair<>(first, second);
   }
 
-  public First getFirst() {
+  public First getFirst()
+  {
     return first;
   }
 
-  public Second getSecond() {
+  public Second getSecond()
+  {
     return second;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -62,7 +69,8 @@ public class Pair<First, Second> {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = first != null ? first.hashCode() : 0;
 
     result = 31 * result + (second != null ? second.hashCode() : 0);
@@ -71,12 +79,13 @@ public class Pair<First, Second> {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     if (toStringResult == null) {
       toStringResult = "Pair{" +
-        "first=" + first +
-        ", second=" + second +
-        '}';
+                       "first=" + first +
+                       ", second=" + second +
+                       '}';
     }
 
     return toStringResult;

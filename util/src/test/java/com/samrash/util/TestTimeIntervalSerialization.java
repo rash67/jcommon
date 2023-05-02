@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -23,7 +24,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class TestTimeIntervalSerialization {
+public class TestTimeIntervalSerialization
+{
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
@@ -35,27 +37,29 @@ public class TestTimeIntervalSerialization {
   }
 
   @DataProvider(name = "timeintervals")
-  public Object[][] intervals() {
+  public Object[][] intervals()
+  {
     return new Object[][]{
-      {TimeInterval.INFINITE},
-      {TimeInterval.ZERO},
-      {TimeInterval.withMillis(100)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.MILLIS, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.MILLIS, 999)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.SECOND, 59)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.MINUTE, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.HOUR, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.DAY, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.WEEK, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 1)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 12)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.YEAR, 1)},
-      {TimeInterval.withMillis(2592000000L)}
+        {TimeInterval.INFINITE},
+        {TimeInterval.ZERO},
+        {TimeInterval.withMillis(100)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.MILLIS, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.MILLIS, 999)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.SECOND, 59)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.MINUTE, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.HOUR, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.DAY, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.WEEK, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 1)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 12)},
+        {TimeInterval.withTypeAndLength(TimeIntervalType.YEAR, 1)},
+        {TimeInterval.withMillis(2592000000L)}
     };
   }
 
   @Test(groups = "fast", dataProvider = "timeintervals")
-  public void testSerDe(TimeInterval timeInterval) throws Exception {
+  public void testSerDe(TimeInterval timeInterval) throws Exception
+  {
     String serialized = MAPPER.writeValueAsString(timeInterval);
     TimeInterval deserialized = MAPPER.readValue(serialized, TimeInterval.class);
     Assert.assertEquals(timeInterval, deserialized);

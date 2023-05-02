@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CliParameter {
+public class CliParameter
+{
   private final String name;
   private final List<String> description;
   private final List<String> examples;
@@ -28,12 +30,13 @@ public class CliParameter {
   private final boolean required;
 
   private CliParameter(
-    String name,
-    List<String> description,
-    List<String> examples,
-    String defaultValue,
-    boolean required
-  ) {
+      String name,
+      List<String> description,
+      List<String> examples,
+      String defaultValue,
+      boolean required
+  )
+  {
     this.name = name;
     this.description = new ArrayList<>(description);
     this.examples = new ArrayList<>(examples);
@@ -41,27 +44,33 @@ public class CliParameter {
     this.required = required;
   }
 
-  public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-  public List<String> getDescription() {
+  public List<String> getDescription()
+  {
     return description;
   }
 
-  public List<String> getExamples() {
+  public List<String> getExamples()
+  {
     return examples;
   }
 
-  public String getDefaultValue() {
+  public String getDefaultValue()
+  {
     return defaultValue;
   }
 
-  public boolean isRequired() {
+  public boolean isRequired()
+  {
     return required;
   }
 
-  public static class Builder {
+  public static class Builder
+  {
     private final String name;
 
     private List<String> description = Collections.emptyList();
@@ -69,15 +78,18 @@ public class CliParameter {
     private String defaultValue;
     private boolean required = true;
 
-    private Builder(String name) {
+    private Builder(String name)
+    {
       this.name = name;
     }
 
-    public static Builder withName(String name) {
+    public static Builder withName(String name)
+    {
       return new Builder(name);
     }
 
-    public Builder withDescription(String description, String... additionalLines) {
+    public Builder withDescription(String description, String... additionalLines)
+    {
       this.description = new ArrayList<>();
       this.description.add(description);
       this.description.addAll(Arrays.asList(additionalLines));
@@ -85,7 +97,8 @@ public class CliParameter {
       return this;
     }
 
-    public Builder withExample(String example, String... additionalLines) {
+    public Builder withExample(String example, String... additionalLines)
+    {
       this.examples = new ArrayList<>();
       this.examples.add(example);
       this.examples.addAll(Arrays.asList(additionalLines));
@@ -93,14 +106,16 @@ public class CliParameter {
       return this;
     }
 
-    public Builder withDefault(String defaultValue) {
+    public Builder withDefault(String defaultValue)
+    {
       this.defaultValue = defaultValue;
       this.required = false;
 
       return this;
     }
 
-    CliParameter build() {
+    CliParameter build()
+    {
       return new CliParameter(name, description, examples, defaultValue, required);
     }
   }

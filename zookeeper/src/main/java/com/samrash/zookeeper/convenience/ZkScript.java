@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.convenience;
 
 import com.samrash.zookeeper.ZooKeeperIface;
@@ -34,23 +35,28 @@ import java.util.concurrent.TimeoutException;
  * ZooKeeper connection as well as parsing relevant command line parameters.
  * The script may be executed via the runMain(...) method.
  */
-public abstract class ZkScript {
+public abstract class ZkScript
+{
   private final ZkQuickConnectionManager zkQuickConnectionManager;
 
-  protected ZkScript(ZkQuickConnectionManager zkQuickConnectionManager) {
+  protected ZkScript(ZkQuickConnectionManager zkQuickConnectionManager)
+  {
     this.zkQuickConnectionManager = zkQuickConnectionManager;
   }
 
   public void connect(String server, int timeout)
-    throws IOException, InterruptedException, TimeoutException {
+      throws IOException, InterruptedException, TimeoutException
+  {
     zkQuickConnectionManager.connect(server, timeout);
   }
 
-  public void close() throws InterruptedException {
+  public void close() throws InterruptedException
+  {
     zkQuickConnectionManager.close();
   }
 
-  protected ZooKeeperIface getZk() {
+  protected ZooKeeperIface getZk()
+  {
     return zkQuickConnectionManager.getZk();
   }
 
@@ -70,6 +76,7 @@ public abstract class ZkScript {
 
   /**
    * Verifies the integrity of the script specific command line parameters
+   *
    * @param cmd
    * @return true, if verified, false if there is an issue
    */
@@ -77,36 +84,38 @@ public abstract class ZkScript {
 
   /**
    * Executes the script (assuming already connected to ZooKeeper)
+   *
    * @param cmd
    * @throws Exception
    */
   protected abstract void runScript(CommandLine cmd) throws Exception;
 
-  private Options getOptions() {
+  private Options getOptions()
+  {
     Options options = new Options();
     options.addOption(
-      "s",
-      "server",
-      true,
-      "Zookeeper server as host:port string"
+        "s",
+        "server",
+        true,
+        "Zookeeper server as host:port string"
     );
     options.addOption(
-      "i",
-      "tier",
-      true,
-      "Zookeeper SMC tier name (alternative to server parameter)"
+        "i",
+        "tier",
+        true,
+        "Zookeeper SMC tier name (alternative to server parameter)"
     );
     options.addOption(
-      "t",
-      "timeout",
-      true,
-      "Session timeout in milliseconds [Default: 5000]"
+        "t",
+        "timeout",
+        true,
+        "Session timeout in milliseconds [Default: 5000]"
     );
     options.addOption(
-      "h",
-      "help",
-      false,
-      "Prints this message"
+        "h",
+        "help",
+        false,
+        "Prints this message"
     );
     // Incorporate the specific options from the derived script
     for (Option opt : (Collection<Option>) getSpecificOptions().getOptions()) {
@@ -115,21 +124,24 @@ public abstract class ZkScript {
     return options;
   }
 
-  private void printUsage() {
+  private void printUsage()
+  {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp(getName(), getOptions());
     System.out.println(
-      "Note: You must specify either a specific ZooKeeper server (-s) or an " +
+        "Note: You must specify either a specific ZooKeeper server (-s) or an " +
         "SMC ZooKeeper tier (-i)"
     );
   }
 
   /**
    * Main method to launch any script that derives from this abstract class
+   *
    * @param args
    * @throws Exception
    */
-  public void runMain(String[] args) throws Exception {
+  public void runMain(String[] args) throws Exception
+  {
     Options options = getOptions();
     CommandLineParser parser = new GnuParser();
     CommandLine cmd = parser.parse(options, args);
@@ -151,7 +163,7 @@ public abstract class ZkScript {
       servers = cmd.getOptionValue("server");
     } else {
       System.err.println(
-        "You did not specify a ZooKeeper server or an SMC ZooKeeper tier!"
+          "You did not specify a ZooKeeper server or an SMC ZooKeeper tier!"
       );
       printUsage();
       return;
@@ -162,7 +174,8 @@ public abstract class ZkScript {
     connect(servers, timeout);
     try {
       runScript(cmd);
-    } finally {
+    }
+    finally {
       close();
     }
   }

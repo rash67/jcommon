@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.Duration;
@@ -22,13 +23,15 @@ import org.joda.time.ReadableDateTime;
  * Default implementation of GaugeCounter. For a slightly faster, but less
  * accurate version, see FastGaugeCounter.
  */
-public class DefaultGaugeCounter implements GaugeCounter {
+public class DefaultGaugeCounter implements GaugeCounter
+{
   private final ReadableDateTime start;
   private final ReadableDateTime end;
   private long value = 0;
   private long nsamples = 0;
 
-  public DefaultGaugeCounter(ReadableDateTime start, ReadableDateTime end) {
+  public DefaultGaugeCounter(ReadableDateTime start, ReadableDateTime end)
+  {
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -39,28 +42,33 @@ public class DefaultGaugeCounter implements GaugeCounter {
   }
 
   @Override
-  public synchronized void add(long delta, long samples) {
+  public synchronized void add(long delta, long samples)
+  {
     value += delta;
     nsamples += samples;
   }
 
   @Override
-  public synchronized void add(long delta) {
+  public synchronized void add(long delta)
+  {
     add(delta, 1);
   }
 
   @Override
-  public synchronized long getValue() {
+  public synchronized long getValue()
+  {
     return value;
   }
 
   @Override
-  public synchronized long getSamples() {
+  public synchronized long getSamples()
+  {
     return nsamples;
   }
 
   @Override
-  public synchronized long getAverage() {
+  public synchronized long getAverage()
+  {
     if (nsamples == 0) {
       return 0;
     }
@@ -68,21 +76,25 @@ public class DefaultGaugeCounter implements GaugeCounter {
   }
 
   @Override
-  public ReadableDateTime getStart() {
+  public ReadableDateTime getStart()
+  {
     return start;
   }
 
   @Override
-  public ReadableDateTime getEnd() {
+  public ReadableDateTime getEnd()
+  {
     return end;
   }
 
   @Override
-  public Duration getLength() {
+  public Duration getLength()
+  {
     return new Duration(start, end);
   }
 
-  public GaugeCounter merge(GaugeCounter counter) {
+  public GaugeCounter merge(GaugeCounter counter)
+  {
     ReadableDateTime mergedStart = start;
     ReadableDateTime mergedEnd = end;
 
@@ -95,12 +107,12 @@ public class DefaultGaugeCounter implements GaugeCounter {
     }
 
     DefaultGaugeCounter mergedCounter =
-      new DefaultGaugeCounter(mergedStart, mergedEnd);
+        new DefaultGaugeCounter(mergedStart, mergedEnd);
 
-      mergedCounter.add(
+    mergedCounter.add(
         value + counter.getValue(),
-        nsamples + ((GaugeCounter)counter).getSamples()
-      );
+        nsamples + ((GaugeCounter) counter).getSamples()
+    );
 
     return mergedCounter;
   }

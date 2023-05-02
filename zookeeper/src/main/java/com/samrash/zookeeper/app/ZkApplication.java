@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.app;
 
 import com.samrash.concurrency.ErrorLoggingRunnable;
 import com.samrash.concurrency.NamedThreadFactory;
 import com.samrash.zookeeper.connection.ZkConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -35,45 +36,45 @@ import java.util.concurrent.TimeUnit;
 /**
  * ZkApplication is an abstract base class that provides a template-and-hook
  * style ZooKeeper state management framework.
- *
+ * <p>
  * Features:
  * - Automatic connection and reconnection to ZooKeeper on disconnects and
- *   expirations.
+ * expirations.
  * - Issues initialize(), repair(), and expire() callbacks to the application
- *   as various connection events occur.
+ * as various connection events occur.
  * - Models application state with a finite state machine. States are queryable
- *   from subclasses.
- *
+ * from subclasses.
+ * <p>
  * =============================== STATES ===============================
- *
+ * <p>
  * PRESTART:
  * This is the application's initial state before the user issues a start()
  * command to begin the application
- *
+ * <p>
  * DISCONNECTED:
  * Application is not connected to ZooKeeper and does not have any
  * application state set in ZooKeeper (e.g. watches or ephemeral nodes).
  * Entry to this state automatically triggers a connection loop that retries
  * until successful.
- *
+ * <p>
  * CONNECTED:
  * Application is connected to ZooKeeper, but application state in ZooKeeper
  * has not been fully initialized. Entry to this state automatically triggers
  * callbacks to the initialize() abstract method, looping until initialize()
  * returns true.
- *
+ * <p>
  * FUNCTIONAL:
  * Application is connected to ZooKeeper and has full application state
  * initialized in ZooKeeper. At this point the application should be fully
  * functioning.
- *
+ * <p>
  * SAFEMODE:
  * Application was successfully initialized, but became disconnected. Since
  * many applications will cache ZooKeeper state, this state signifies a
  * cache read-only mode where ZooKeeper is unavailable. Entry to this
  * state will automatically trigger a connection loop that retries until
  * reconnected, or until the session expires.
- *
+ * <p>
  * SAFEMODE_REPAIR:
  * Application in safemode was successfully reconnected to ZooKeeper without
  * expiration. Entry to this state will automatically trigger callbacks to the
@@ -81,35 +82,36 @@ import java.util.concurrent.TimeUnit;
  * initialize() and repair() may do the same things, we make this distinction
  * as it is often possible to optimize the repair method to only repeat failed
  * commands.
- *
+ * <p>
  * SHUTDOWN:
  * Application has been shut down by the user via the shutdown() method.
- *
+ * <p>
  * ======================= STATE TRANSITION DIAGRAM =====================
- *
+ * <p>
  * The state transition diagram appears as follows:
- *
- *                  PRESTART     (expire*)
- *                     | (start)    |
- *                     v            |
- *                DISCONNECTED <----       -->  SAFEMODE
- *                     | (connect)        /        | (connect)
- *                     v                 /         v
- *                 CONNECTED    (dc'ed) /    SAFEMODE_REPAIR
- *                       \             /          /
- *                        \           /          /
- *                 (init)  \         /          / (repair)
- *                          \       /          /
- *                           v     /          /
- *                          FUNCTIONAL <-----
- *
- *
- *                  (shutdown*) -----> SHUTDOWN
- *
+ * <p>
+ * PRESTART     (expire*)
+ * | (start)    |
+ * v            |
+ * DISCONNECTED <----       -->  SAFEMODE
+ * | (connect)        /        | (connect)
+ * v                 /         v
+ * CONNECTED    (dc'ed) /    SAFEMODE_REPAIR
+ * \             /          /
+ * \           /          /
+ * (init)  \         /          / (repair)
+ * \       /          /
+ * v     /          /
+ * FUNCTIONAL <-----
+ * <p>
+ * <p>
+ * (shutdown*) -----> SHUTDOWN
+ * <p>
  * NOTE: '*' denotes an event that unconditionally leads to a specific state,
  * regardles of the pre-existing state.
  */
-public abstract class ZkApplication {
+public abstract class ZkApplication
+{
   private static final Logger APP_LOG = LoggerFactory.getLogger(ZkApplication.class);
 
   protected final ZkConnectionManager zkConnectionManager;
@@ -120,7 +122,8 @@ public abstract class ZkApplication {
   private final StateContext context = new StateContext();
   private volatile boolean isStarted = false;
 
-  public enum State {
+  public enum State
+  {
     PRESTART,
     DISCONNECTED,
     CONNECTED,
@@ -132,11 +135,12 @@ public abstract class ZkApplication {
 
   // This constructor only exposes the executors for unit testing purposes
   protected ZkApplication(
-    ZkConnectionManager zkConnectionManager,
-    long retryIntervalMillis,
-    ExecutorService watchExecutor,
-    ScheduledExecutorService retryExecutor
-  ) {
+      ZkConnectionManager zkConnectionManager,
+      long retryIntervalMillis,
+      ExecutorService watchExecutor,
+      ScheduledExecutorService retryExecutor
+  )
+  {
     this.zkConnectionManager = zkConnectionManager;
     this.retryIntervalMillis = retryIntervalMillis;
     this.watchExecutor = watchExecutor;
@@ -144,55 +148,62 @@ public abstract class ZkApplication {
   }
 
   protected ZkApplication(
-    ZkConnectionManager zkConnectionManager, long retryIntervalMillis
-  ) {
+      ZkConnectionManager zkConnectionManager, long retryIntervalMillis
+  )
+  {
     this(
-      zkConnectionManager,
-      retryIntervalMillis,
-      Executors.newSingleThreadExecutor(
-        new NamedThreadFactory("ZkApplication-watch")
-      ),
-      Executors.newSingleThreadScheduledExecutor(
-        new NamedThreadFactory("ZkApplication-retry")
-      )
+        zkConnectionManager,
+        retryIntervalMillis,
+        Executors.newSingleThreadExecutor(
+            new NamedThreadFactory("ZkApplication-watch")
+        ),
+        Executors.newSingleThreadScheduledExecutor(
+            new NamedThreadFactory("ZkApplication-retry")
+        )
     );
   }
 
-  protected ZkApplication(ZkConnectionManager zkConnectionManager) {
+  protected ZkApplication(ZkConnectionManager zkConnectionManager)
+  {
     this(zkConnectionManager, 2000);
   }
 
   // Instance must be started before it becomes valid for use
-  public synchronized void start() {
+  public synchronized void start()
+  {
     if (isStarted) {
       throw new IllegalStateException("Should only be started once");
     }
     ZooKeeper.States zkState =
-      zkConnectionManager.registerWatcher(new ConnectionWatcher());
+        zkConnectionManager.registerWatcher(new ConnectionWatcher());
     // Synchronize our application state with ZooKeeper state
     context.start((zkState == ZooKeeper.States.CONNECTED)
-      ? State.CONNECTED
-      : State.DISCONNECTED
+                  ? State.CONNECTED
+                  : State.DISCONNECTED
     );
     isStarted = true;
     // Allow watch signals to pass only after initialization
     initLatch.countDown();
   }
 
-  public boolean isFunctional() {
+  public boolean isFunctional()
+  {
     return context.getState() == State.FUNCTIONAL;
   }
 
-  public boolean isSafeMode() {
+  public boolean isSafeMode()
+  {
     return context.getState() == State.SAFEMODE ||
-      context.getState() == State.SAFEMODE_REPAIR;
+           context.getState() == State.SAFEMODE_REPAIR;
   }
 
-  public boolean isShutdown() {
+  public boolean isShutdown()
+  {
     return context.getState() == State.SHUTDOWN;
   }
 
-  public synchronized void shutdown() {
+  public synchronized void shutdown()
+  {
     if (!isStarted) {
       throw new IllegalStateException("Application not yet started");
     }
@@ -207,6 +218,7 @@ public abstract class ZkApplication {
    * Initializes the application such that it is fully functioning.
    * Implementations should be idempotent, and will be retried repeatedly
    * until it succeeds.
+   *
    * @return true if successfully initialized, false otherwise
    */
   protected abstract boolean initialize();
@@ -215,6 +227,7 @@ public abstract class ZkApplication {
    * Repair the application state to a fully functioning state following
    * a ZooKeeper disconnect. Implementations should be idempotent, and will
    * be retried repeatedly until it succeeds.
+   *
    * @return true if successfully repaired, false otherwise
    */
   protected abstract boolean repair();
@@ -228,15 +241,20 @@ public abstract class ZkApplication {
 
   // Internal helper classes
 
-  private class ConnectionWatcher implements Watcher {
+  private class ConnectionWatcher implements Watcher
+  {
     @Override
-    public void process(final WatchedEvent event) {
-      watchExecutor.execute(new ErrorLoggingRunnable(new Runnable() {
+    public void process(final WatchedEvent event)
+    {
+      watchExecutor.execute(new ErrorLoggingRunnable(new Runnable()
+      {
         @Override
-        public void run() {
+        public void run()
+        {
           try {
             initLatch.await(); // Wait until we have been fully initialized
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             APP_LOG.error("Init latch interrupted, continuing...");
             Thread.currentThread().interrupt();
           }
@@ -246,19 +264,24 @@ public abstract class ZkApplication {
     }
   }
 
-  private interface StateHandler {
+  private interface StateHandler
+  {
     void handleEvent(Watcher.Event.KeeperState event);
+
     void inboundHook();
+
     void outboundHook();
   }
 
-  private class StateContext {
+  private class StateContext
+  {
     private volatile State state = State.PRESTART;
     private final Object transitionLock = new Object();
     private final Map<State, StateHandler> handlerCache =
-      new EnumMap<State, StateHandler>(State.class);
+        new EnumMap<State, StateHandler>(State.class);
 
-    private StateContext() {
+    private StateContext()
+    {
       // Should be one entry per possible state
       handlerCache.put(State.PRESTART, new PreStartStateHandler());
       handlerCache.put(State.DISCONNECTED, new DisconnectedStateHandler());
@@ -270,19 +293,22 @@ public abstract class ZkApplication {
     }
 
     // Instance must be started before it becomes valid for use
-    public void start(State initialState) {
+    public void start(State initialState)
+    {
       synchronized (transitionLock) {
         transition(initialState);
       }
     }
 
-    public void handleEvent(Watcher.Event.KeeperState event) {
+    public void handleEvent(Watcher.Event.KeeperState event)
+    {
       synchronized (transitionLock) {
         getHandler().handleEvent(event);
       }
     }
 
-    public void shutdown() {
+    public void shutdown()
+    {
       synchronized (transitionLock) {
         if (state == State.SHUTDOWN) {
           APP_LOG.warn("Multiple shutdown calls");
@@ -292,18 +318,21 @@ public abstract class ZkApplication {
       }
     }
 
-    public State getState() {
+    public State getState()
+    {
       return state;
     }
 
-    private StateHandler getHandler() {
+    private StateHandler getHandler()
+    {
       return handlerCache.get(state);
     }
 
-    private void transition(State newState) {
+    private void transition(State newState)
+    {
       if (newState == State.SHUTDOWN) {
         throw new IllegalArgumentException(
-          "Set SHUTDOWN state by calling the shutdown method"
+            "Set SHUTDOWN state by calling the shutdown method"
         );
       }
       // Shutdown is a terminal state
@@ -312,7 +341,8 @@ public abstract class ZkApplication {
       }
     }
 
-    private void internalTransition(State newState) {
+    private void internalTransition(State newState)
+    {
       getHandler().outboundHook();
       state = newState;
       getHandler().inboundHook();
@@ -321,23 +351,29 @@ public abstract class ZkApplication {
 
     // StateHandler implementations
 
-    private class PreStartStateHandler implements StateHandler {
+    private class PreStartStateHandler implements StateHandler
+    {
       @Override
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
       }
     }
 
-    private class DisconnectedStateHandler implements StateHandler {
+    private class DisconnectedStateHandler implements StateHandler
+    {
       @Override
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         switch (event) {
           case SyncConnected:
             context.transition(State.CONNECTED);
@@ -350,21 +386,25 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
       }
     }
 
-    private class ConnectedStateHandler implements StateHandler {
+    private class ConnectedStateHandler implements StateHandler
+    {
       private volatile boolean isActive = false;
       private volatile boolean isScheduled = false;
       private final Object scheduleCheckLock = new Object();
 
       @Override
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         switch (event) {
           case SyncConnected:
             break;
@@ -379,16 +419,20 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
         startInitLoop();
       }
 
-      private void startInitLoop() {
+      private void startInitLoop()
+      {
         isActive = true;
         if (scheduleCompareAndSet()) {
-          retryExecutor.execute(new ErrorLoggingRunnable(new Runnable() {
+          retryExecutor.execute(new ErrorLoggingRunnable(new Runnable()
+          {
             @Override
-            public void run() {
+            public void run()
+            {
               try {
                 synchronized (transitionLock) {
                   // Only initialize if we are in the same state
@@ -400,12 +444,13 @@ public abstract class ZkApplication {
                     }
                   }
                 }
-              } finally {
+              }
+              finally {
                 isScheduled = false;
               }
               if (scheduleCompareAndSet()) {
                 retryExecutor.schedule(
-                  this, retryIntervalMillis, TimeUnit.MILLISECONDS
+                    this, retryIntervalMillis, TimeUnit.MILLISECONDS
                 );
               }
             }
@@ -413,7 +458,8 @@ public abstract class ZkApplication {
         }
       }
 
-      private boolean scheduleCompareAndSet() {
+      private boolean scheduleCompareAndSet()
+      {
         synchronized (scheduleCheckLock) {
           if (isActive && !isScheduled) {
             isScheduled = true;
@@ -424,18 +470,22 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
         stopRepairLoop();
       }
 
-      private void stopRepairLoop() {
+      private void stopRepairLoop()
+      {
         isActive = false;
       }
     }
 
-    private class FunctionalStateHandler implements StateHandler {
+    private class FunctionalStateHandler implements StateHandler
+    {
       @Override
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         switch (event) {
           case SyncConnected:
             break;
@@ -450,16 +500,20 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
       }
     }
 
-    private class SafeModeStateHandler implements StateHandler {
-      public void handleEvent(Watcher.Event.KeeperState event) {
+    private class SafeModeStateHandler implements StateHandler
+    {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         switch (event) {
           case SyncConnected:
             context.transition(State.SAFEMODE_REPAIR);
@@ -474,20 +528,24 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
       }
     }
 
-    private class SafeModeRepairStateHandler implements StateHandler {
+    private class SafeModeRepairStateHandler implements StateHandler
+    {
       private volatile boolean isActive = false;
       private volatile boolean isScheduled = false;
       private final Object scheduleCheckLock = new Object();
 
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         switch (event) {
           case SyncConnected:
             break;
@@ -502,16 +560,20 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
         startRepairLoop();
       }
 
-      private void startRepairLoop() {
+      private void startRepairLoop()
+      {
         isActive = true;
         if (scheduleCompareAndSet()) {
-          retryExecutor.execute(new ErrorLoggingRunnable(new Runnable() {
+          retryExecutor.execute(new ErrorLoggingRunnable(new Runnable()
+          {
             @Override
-            public void run() {
+            public void run()
+            {
               try {
                 synchronized (transitionLock) {
                   // Only repair if we are still in the same state
@@ -523,12 +585,13 @@ public abstract class ZkApplication {
                     }
                   }
                 }
-              } finally {
+              }
+              finally {
                 isScheduled = false;
               }
               if (scheduleCompareAndSet()) {
                 retryExecutor.schedule(
-                  this, retryIntervalMillis, TimeUnit.MILLISECONDS
+                    this, retryIntervalMillis, TimeUnit.MILLISECONDS
                 );
               }
             }
@@ -536,7 +599,8 @@ public abstract class ZkApplication {
         }
       }
 
-      private boolean scheduleCompareAndSet() {
+      private boolean scheduleCompareAndSet()
+      {
         synchronized (scheduleCheckLock) {
           if (isActive && !isScheduled) {
             isScheduled = true;
@@ -547,28 +611,34 @@ public abstract class ZkApplication {
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
         stopRepairLoop();
       }
 
-      private void stopRepairLoop() {
+      private void stopRepairLoop()
+      {
         isActive = false;
       }
     }
 
-    private class ShutdownStateHandler implements StateHandler {
+    private class ShutdownStateHandler implements StateHandler
+    {
       @Override
-      public void handleEvent(Watcher.Event.KeeperState event) {
+      public void handleEvent(Watcher.Event.KeeperState event)
+      {
         // Terminal state
       }
 
       @Override
-      public void inboundHook() {
+      public void inboundHook()
+      {
         expire();
       }
 
       @Override
-      public void outboundHook() {
+      public void outboundHook()
+      {
       }
     }
   }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import com.samrash.logging.Logger;
@@ -20,15 +21,18 @@ import com.samrash.logging.LoggerImpl;
 import com.samrash.stats.topk.TopK;
 import com.samrash.stats.topk.TreeBasedIntegerTopK;
 
-public class TestTreeBasedIntegerTopK extends TestIntegerTopK {
+public class TestTreeBasedIntegerTopK extends TestIntegerTopK
+{
   private static final Logger LOG = LoggerImpl.getLogger(TestTreeBasedIntegerTopK.class);
 
-  protected TopK<Integer> getInstance(int keySpaceSize, int k) {
+  protected TopK<Integer> getInstance(int keySpaceSize, int k)
+  {
     return new TreeBasedIntegerTopK(keySpaceSize, k);
   }
 
   @Override
-  protected Logger getLogger() {
+  protected Logger getLogger()
+  {
     return LOG;
   }
 }

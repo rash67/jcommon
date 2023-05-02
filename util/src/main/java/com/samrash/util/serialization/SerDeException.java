@@ -13,30 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.serialization;
 
-public class SerDeException extends Exception {
-  public SerDeException() {
+public class SerDeException extends Exception
+{
+  public SerDeException()
+  {
   }
 
-  public SerDeException(String message) {
+  public SerDeException(String message)
+  {
     super(message);
   }
 
-  public SerDeException(String message, Throwable cause) {
+  public SerDeException(String message, Throwable cause)
+  {
     super(message, cause);
   }
 
-  public SerDeException(Throwable cause) {
+  public SerDeException(Throwable cause)
+  {
     super(cause);
   }
 
   public SerDeException(
-    String message,
-    Throwable cause,
-    boolean enableSuppression,
-    boolean writableStackTrace
-  ) {
+      String message,
+      Throwable cause,
+      boolean enableSuppression,
+      boolean writableStackTrace
+  )
+  {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 }

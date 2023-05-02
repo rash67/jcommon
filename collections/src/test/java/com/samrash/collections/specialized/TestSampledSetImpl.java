@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.util.digest.DigestFunction;
@@ -24,53 +25,57 @@ import org.testng.annotations.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TestSampledSetImpl {
+public class TestSampledSetImpl
+{
 
   private int maxSetSize;
   private SampledSet<Long> integerSet;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     // needs to be a multiple of 4
     maxSetSize = 8;
     DigestFunction<Long> longMurmur3Hash = new LongMurmur3Hash();
     integerSet = new SampledSetImpl<Long>(
-      maxSetSize, longMurmur3Hash, new IntegerHashSetFactory(maxSetSize)
+        maxSetSize, longMurmur3Hash, new IntegerHashSetFactory(maxSetSize)
     );
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     int largeMaxSetSize = 4000;
     IntegerHashSetFactory intHashSetFactory = new IntegerHashSetFactory(largeMaxSetSize);
     SampledSet<Long> largeSet =
-      new SampledSetImpl<Long>(largeMaxSetSize, new LongMurmur3Hash(), intHashSetFactory);
+        new SampledSetImpl<Long>(largeMaxSetSize, new LongMurmur3Hash(), intHashSetFactory);
     int numElements = 2000 * largeMaxSetSize;
 
     for (int i = 0; i < numElements; i++) {
-      largeSet.add((long)i);
+      largeSet.add((long) i);
     }
 
     assertValidMaxSize();
 
     float error =
-      Math.abs(largeSet.getScaledSize() - numElements) / (float) numElements;
+        Math.abs(largeSet.getScaledSize() - numElements) / (float) numElements;
     String message = String.format(
-      "actual: %d estimate: %d error: %f",
-      numElements,
-      largeSet.getScaledSize(),
-      error
+        "actual: %d estimate: %d error: %f",
+        numElements,
+        largeSet.getScaledSize(),
+        error
     );
     // this test case is deterministic and we expect less than 2-3%
     Assert.assertTrue(error < 0.02, message);
   }
 
   @Test(groups = "fast")
-  public void testAddDuplicateKeys() throws Exception {
+  public void testAddDuplicateKeys() throws Exception
+  {
     // add the set to full
     Set<Integer> elements = new HashSet<Integer>(maxSetSize);
     for (int i = 0; i < 100000; i += 2) { // just find 8 elements
-      if (integerSet.add((long)i)) {
+      if (integerSet.add((long) i)) {
         elements.add(i);
 
         if (elements.size() == maxSetSize) {
@@ -95,46 +100,50 @@ public class TestSampledSetImpl {
 //    Assert.assertEquals(integerSet.getScaledSize(), maxSetSize);
   }
 
-  private void assertValidMaxSize() {
+  private void assertValidMaxSize()
+  {
     Assert.assertTrue(
-      integerSet.getSize() <= maxSetSize,
-      String.format(
-        "max size %d exceeded at %d", maxSetSize, integerSet.getSize()
-      )
+        integerSet.getSize() <= maxSetSize,
+        String.format(
+            "max size %d exceeded at %d", maxSetSize, integerSet.getSize()
+        )
     );
   }
 
   @Test(groups = "fast")
-  public void testSetSizeBelowMax() throws Exception {
+  public void testSetSizeBelowMax() throws Exception
+  {
     int numElements = maxSetSize;
 
     for (int i = 0; i < numElements; i++) {
-      integerSet.add((long)i);
+      integerSet.add((long) i);
     }
 
     Assert.assertEquals(integerSet.getScaledSize(), numElements);
   }
 
   @Test(groups = "fast")
-  public void testMaxNeverExceeded() throws Exception {
+  public void testMaxNeverExceeded() throws Exception
+  {
     int numElements = 10 * maxSetSize;
 
     for (int i = 0; i < numElements; i++) {
-      integerSet.add((long)i);
+      integerSet.add((long) i);
       assertValidMaxSize();
     }
   }
 
   @Test(groups = "fast")
-  public void testMerge() throws Exception {
+  public void testMerge() throws Exception
+  {
     IntegerHashSetFactory longHashSetFactory = new IntegerHashSetFactory(maxSetSize);
     SampledSet<Long> otherSet =
-      new SampledSetImpl<Long>(maxSetSize / 4, new LongMurmur3Hash(), longHashSetFactory);
+        new SampledSetImpl<Long>(maxSetSize / 4, new LongMurmur3Hash(), longHashSetFactory);
     int firstSetSize = maxSetSize / 2;
 
     // populate the first set to its max size
     for (int i = 0; i < firstSetSize; i++) {
-      integerSet.add((long)i);
+      integerSet.add((long) i);
     }
 
     Assert.assertEquals(integerSet.getScaledSize(), firstSetSize);
@@ -143,7 +152,7 @@ public class TestSampledSetImpl {
 
     // populate the second set to its max size
     for (int i = 0; i < secondSetSize; i++) {
-      otherSet.add((long)i);
+      otherSet.add((long) i);
     }
 
     Assert.assertEquals(otherSet.getScaledSize(), secondSetSize);
@@ -155,10 +164,10 @@ public class TestSampledSetImpl {
 
     // make sure we take the max of the maxSetSizes
     int maxofMaxSetSize =
-      Math.max(integerSet.getMaxSetSize(), otherSet.getMaxSetSize());
+        Math.max(integerSet.getMaxSetSize(), otherSet.getMaxSetSize());
     Assert.assertEquals(
-      mergeIntoFirst.getMaxSetSize(),
-      maxofMaxSetSize
+        mergeIntoFirst.getMaxSetSize(),
+        maxofMaxSetSize
     );
     Assert.assertTrue(mergeIntoFirst.getSize() < maxofMaxSetSize);
 
@@ -167,14 +176,15 @@ public class TestSampledSetImpl {
   }
 
   @Test(groups = "fast")
-  public void testMergeWithEmpty() throws Exception {
+  public void testMergeWithEmpty() throws Exception
+  {
     IntegerHashSetFactory longHashSetFactory = new IntegerHashSetFactory(4);
     DigestFunction<Long> digestFunction = new LongMurmur3Hash();
 
     SampledSet<Long> set1 =
-      new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
-  	SampledSet<Long> set2 =
-      new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
+        new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
+    SampledSet<Long> set2 =
+        new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
 
     set1.add(1L);
     set1.add(2L);
@@ -188,12 +198,13 @@ public class TestSampledSetImpl {
   }
 
   @Test(groups = "fast")
-  public void testMergeWithDownSample() throws Exception {
+  public void testMergeWithDownSample() throws Exception
+  {
     IntegerHashSetFactory intHashSetFactory = new IntegerHashSetFactory(4);
     SampledSet<Long> set1 =
-      new SampledSetImpl<Long>(2, LongMurmur3Hash.getInstance(), intHashSetFactory);
+        new SampledSetImpl<Long>(2, LongMurmur3Hash.getInstance(), intHashSetFactory);
     SampledSet<Long> set2 =
-      new SampledSetImpl<Long>(3, LongMurmur3Hash.getInstance(), intHashSetFactory);
+        new SampledSetImpl<Long>(3, LongMurmur3Hash.getInstance(), intHashSetFactory);
 
     // set 1 will have 1 element and sample rate of 1
     set1.add(1L);
@@ -217,21 +228,23 @@ public class TestSampledSetImpl {
   }
 
   @Test(groups = "fast")
-  public void testHasChanged() throws Exception {
+  public void testHasChanged() throws Exception
+  {
     // initial set should not indicate it has changed
-  	Assert.assertFalse(integerSet.hasChanged());
+    Assert.assertFalse(integerSet.hasChanged());
     // newly constructed set from merge() should also return false
-  	Assert.assertFalse(integerSet.merge(integerSet).hasChanged());
+    Assert.assertFalse(integerSet.merge(integerSet).hasChanged());
   }
 
   @Test(groups = "fast")
-  public void testProposedSize() throws Exception {
+  public void testProposedSize() throws Exception
+  {
     SampledSet<Long> set1 =
-      new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
     SampledSet<Long> set2 =
-      new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
     SampledSet<Long> set3 =
-      new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
 
     // set 1 will have 4 elements and sample rate of 1
     set1.add(0L);

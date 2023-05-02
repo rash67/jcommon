@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.subprocess;
 
 import com.samrash.tools.ErrorMessage;
@@ -22,14 +23,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-class JavaProcessBuilderWrapper implements ProcessBuilderWrapper {
+class JavaProcessBuilderWrapper implements ProcessBuilderWrapper
+{
   @Override
   public Process createProcess(
-    RedirectErrorsTo redirectErrorsTo,
-    Map<String, String> environmentOverrides,
-    File workingDirectory,
-    List<String> command
-  ) {
+      RedirectErrorsTo redirectErrorsTo,
+      Map<String, String> environmentOverrides,
+      File workingDirectory,
+      List<String> command
+  )
+  {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
 
     if (workingDirectory != null) {
@@ -57,7 +60,8 @@ class JavaProcessBuilderWrapper implements ProcessBuilderWrapper {
 
     try {
       return processBuilder.start();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ErrorMessage(e, "Error running: %s", command);
     }
   }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.base.Preconditions;
@@ -27,10 +28,10 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * Reference implementation of SimpleArray using longs. Attempts to limit memory growth
  * by allowing a small growth factor each resize
- *
  */
 @ThreadSafe
-public class LongArray implements Array<Long> {
+public class LongArray implements Array<Long>
+{
   private static final int DEFAULT_INITIAL_CAPACITY = 3;
   // memory conservative growth amount here
   private static final double MIN_GROWTH_FACTOR = 0.3;
@@ -41,17 +42,20 @@ public class LongArray implements Array<Long> {
   private volatile int nextWritePosition = 0;
   private volatile int size = 0;
 
-  public LongArray(int initialCapacity) {
+  public LongArray(int initialCapacity)
+  {
     data = new long[initialCapacity];
     Arrays.fill(data, EMPTY);
   }
 
-  public LongArray() {
+  public LongArray()
+  {
     this(DEFAULT_INITIAL_CAPACITY);
   }
 
   @Override
-  public synchronized Long get(int i) throws IndexOutOfBoundsException {
+  public synchronized Long get(int i) throws IndexOutOfBoundsException
+  {
     if (i >= size()) {
       throw new ArrayIndexOutOfBoundsException();
     }
@@ -60,17 +64,20 @@ public class LongArray implements Array<Long> {
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return size;
   }
 
   @Override
-  public synchronized int capacity() {
+  public synchronized int capacity()
+  {
     return data.length;
   }
 
   @Override
-  public Long set(int i, Long value) throws ArrayIndexOutOfBoundsException {
+  public Long set(int i, Long value) throws ArrayIndexOutOfBoundsException
+  {
     if (value == null) {
       throw new NullPointerException("null values not allowed");
     }
@@ -78,7 +85,7 @@ public class LongArray implements Array<Long> {
     synchronized (this) {
       if (i >= data.length) {
         throw new ArrayIndexOutOfBoundsException(
-          String.format("tried to set value at index %d, but  max index is %d", i, data.length - 1)
+            String.format("tried to set value at index %d, but  max index is %d", i, data.length - 1)
         );
       }
 
@@ -95,7 +102,8 @@ public class LongArray implements Array<Long> {
   }
 
   @Override
-  public synchronized int append(Long value) {
+  public synchronized int append(Long value)
+  {
     int myWritePosition;
 
     if (nextWritePosition >= data.length) {
@@ -128,7 +136,8 @@ public class LongArray implements Array<Long> {
   }
 
   @Override
-  public synchronized Long remove(int i) throws ArrayIndexOutOfBoundsException {
+  public synchronized Long remove(int i) throws ArrayIndexOutOfBoundsException
+  {
     if (isEmpty(i)) {
       return null;
     } else {
@@ -142,7 +151,8 @@ public class LongArray implements Array<Long> {
   }
 
   @Override
-  public int resize(int sizeHint) {
+  public int resize(int sizeHint)
+  {
     return internalResize(sizeHint);
   }
 
@@ -151,7 +161,8 @@ public class LongArray implements Array<Long> {
    *                 cache alignments as implementations see fit
    * @return actual new size
    */
-  private synchronized int internalResize(int sizeHint) {
+  private synchronized int internalResize(int sizeHint)
+  {
     Preconditions.checkArgument(sizeHint > 0, "sizeHint must be > 0");
 
     // we can use the sizeHint directly. Cases we wouldn't would be to align the array on
@@ -173,7 +184,8 @@ public class LongArray implements Array<Long> {
    * @return
    */
   @Override
-  public Iterator<Long> iterator() {
+  public Iterator<Long> iterator()
+  {
     return new Iter();
   }
 
@@ -184,11 +196,13 @@ public class LongArray implements Array<Long> {
    * @param value input from data
    * @return input if >= 0, else null
    */
-  private Long convertValue(long value) {
+  private Long convertValue(long value)
+  {
     return value >= 0 ? value : null;
   }
 
-  private boolean isEmpty(int position) {
+  private boolean isEmpty(int position)
+  {
     return data[position] < 0;
   }
 
@@ -202,7 +216,8 @@ public class LongArray implements Array<Long> {
    * underlying array is resized. Prefer directly removing an element with
    * {@link #LongSimpleArray.remove(int i)}
    */
-  private class Iter implements Iterator<Long> {
+  private class Iter implements Iterator<Long>
+  {
     // index to iterate through the array.
     private int position = 0;
     // -2 is no read called yet, -1 means remove was calledon this position
@@ -217,7 +232,8 @@ public class LongArray implements Array<Long> {
     private boolean hasNextValue = false;
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNext()
+    {
       synchronized (LongArray.this) {
         if (readNextValue) {
           return hasNextValue;
@@ -252,7 +268,8 @@ public class LongArray implements Array<Long> {
     }
 
     @Override
-    public Long next() {
+    public Long next()
+    {
       synchronized (LongArray.this) {
         if (!hasNext()) {
           throw new NoSuchElementException();
@@ -266,7 +283,8 @@ public class LongArray implements Array<Long> {
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
       synchronized (LongArray.this) {
         if (lastReadPosition == -2) {
           throw new IllegalStateException("next() has not been called yet");

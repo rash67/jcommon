@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
+import com.samrash.testing.AnnotatedRunnable;
+import com.samrash.testing.LoopThread;
+import com.samrash.testing.MockExecutor;
+import com.samrash.testing.TestUtils;
+import com.samrash.testing.ThreadHelper;
 import org.joda.time.DateTimeUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -28,13 +34,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.samrash.testing.AnnotatedRunnable;
-import com.samrash.testing.LoopThread;
-import com.samrash.testing.MockExecutor;
-import com.samrash.testing.TestUtils;
-import com.samrash.testing.ThreadHelper;
-
-public class TestExecutorServiceFront {
+public class TestExecutorServiceFront
+{
   private MockExecutor mockExecutor;
   private ExecutorServiceFront executorFront;
   private ExecutorServiceFront executorFront2;
@@ -46,16 +47,18 @@ public class TestExecutorServiceFront {
   private static final int NUM_THREADS = 10;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     count = new AtomicLong(0);
     offsetTime = new AtomicLong(0);
     countTask = count::incrementAndGet;
     slowTask = () -> {
       try {
         DateTimeUtils.setCurrentMillisOffset(
-          offsetTime.addAndGet(20000)
+            offsetTime.addAndGet(20000)
         );
-      } catch (SecurityException e) {
+      }
+      catch (SecurityException e) {
         throw new RuntimeException("security exception on incrementing the system time!", e);
       }
       count.incrementAndGet();
@@ -63,15 +66,15 @@ public class TestExecutorServiceFront {
     latchTask = LatchTask.createPaused();
     mockExecutor = new MockExecutor();
     executorFront = new ExecutorServiceFront(
-      mockExecutor, 10000, TimeUnit.MILLISECONDS
+        mockExecutor, 10000, TimeUnit.MILLISECONDS
     );
     executorFront2 = new ExecutorServiceFront(
-      new LinkedBlockingQueue<>(),
-      mockExecutor,
-      "fuu",
-      2,
-      10000,
-      TimeUnit.MILLISECONDS
+        new LinkedBlockingQueue<>(),
+        mockExecutor,
+        "fuu",
+        2,
+        10000,
+        TimeUnit.MILLISECONDS
     );
   }
 
@@ -82,7 +85,8 @@ public class TestExecutorServiceFront {
    * 2. running that one task drains our own queue
    */
   @Test(groups = "fast")
-  public void testMaxDrainer() throws Exception {
+  public void testMaxDrainer() throws Exception
+  {
     Assert.assertEquals(mockExecutor.getNumPendingTasks(), 0);
     executorFront.execute(countTask);
     Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);
@@ -100,10 +104,11 @@ public class TestExecutorServiceFront {
    * executor.  This will hang that thread running a task
    */
   @Test(groups = "fast")
-  public void testConcurrentDrainerAndSubmit() throws Exception {
+  public void testConcurrentDrainerAndSubmit() throws Exception
+  {
     // thread will drain the executor backing us
     Thread drainingThread = new Thread(
-      mockExecutor::drain
+        mockExecutor::drain
     );
 
     // submit a task that will hang, and a count task => 1 drainer task
@@ -139,7 +144,8 @@ public class TestExecutorServiceFront {
    * tasks are executed in batch by one drainer.
    */
   @Test(groups = "fast")
-  public void testExpiringSingleDrainer() throws Exception {
+  public void testExpiringSingleDrainer() throws Exception
+  {
     int numTask = 3;
 
     // submit several slow tasks
@@ -177,7 +183,8 @@ public class TestExecutorServiceFront {
    * before and after the expiration.
    */
   @Test(groups = "fast")
-  public void testExpiringDualDrainer() throws Exception {
+  public void testExpiringDualDrainer() throws Exception
+  {
     // submit three tasks
     executorFront2.execute(slowTask);
     executorFront2.execute(countTask);
@@ -210,15 +217,18 @@ public class TestExecutorServiceFront {
   }
 
   @DataProvider(name = "getTestExecutors")
-  public Object[][] getTestExecutors() {
+  public Object[][] getTestExecutors()
+  {
     return new Object[][]{
-      {Executors.newFixedThreadPool(NUM_THREADS)},
-      {new ExecutorServiceFront(
-        new LinkedBlockingQueue<>(),
-        Executors.newFixedThreadPool(NUM_THREADS),
-        "fuu",
-        NUM_THREADS, 1, TimeUnit.MILLISECONDS
-      )}
+        {Executors.newFixedThreadPool(NUM_THREADS)},
+        {
+            new ExecutorServiceFront(
+                new LinkedBlockingQueue<>(),
+                Executors.newFixedThreadPool(NUM_THREADS),
+                "fuu",
+                NUM_THREADS, 1, TimeUnit.MILLISECONDS
+            )
+        }
     };
   }
 
@@ -229,16 +239,17 @@ public class TestExecutorServiceFront {
    * @param executor The test executor
    */
   @Test(groups = "fast", dataProvider = "getTestExecutors")
-  public void testDyingThreads(Executor executor) throws Exception {
+  public void testDyingThreads(Executor executor) throws Exception
+  {
     final int numTasks = NUM_THREADS * 2;
     final CountDownLatch latch = new CountDownLatch(numTasks);
     // kill all the threads
     for (int i = 0; i < numTasks; i++) {
       executor.execute(
-        () -> {
-          latch.countDown();
-          throw new RuntimeException("Expected Failure");
-        }
+          () -> {
+            latch.countDown();
+            throw new RuntimeException("Expected Failure");
+          }
       );
     }
     Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -247,30 +258,31 @@ public class TestExecutorServiceFront {
     // Run tasks to see if they can still run
     for (int i = 0; i < NUM_THREADS; i++) {
       executor.execute(
-        latch2::countDown
+          latch2::countDown
       );
     }
     Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
   }
 
   @Test(groups = "fast")
-  public void testTimeExpirationWithEmptyQueue() throws Exception {
+  public void testTimeExpirationWithEmptyQueue() throws Exception
+  {
     try {
       LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
       final ExecutorServiceFront executorServiceFront = new ExecutorServiceFront(
-        workQueue, mockExecutor, "fuu", 1, 1, TimeUnit.SECONDS
+          workQueue, mockExecutor, "fuu", 1, 1, TimeUnit.SECONDS
       );
       DateTimeUtils.setCurrentMillisFixed(0);
       executorServiceFront.execute(latchTask);
       Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);
 
       Thread t = TestUtils.runInThread(
-        () -> {
-          AnnotatedRunnable drainer = mockExecutor.removeHead();
+          () -> {
+            AnnotatedRunnable drainer = mockExecutor.removeHead();
 
-          drainer.run();
-        },
-        "drainer"
+            drainer.run();
+          },
+          "drainer"
       );
       // once the queue is empty, we know the drainer has taken the task out and is blocked on the
       // latch
@@ -285,16 +297,18 @@ public class TestExecutorServiceFront {
       t.join();
       // our time has expired, and there are no tasks in the queue, no tasks should be in the queue
       Assert.assertEquals(mockExecutor.getNumPendingTasks(), 0);
-    } finally {
+    }
+    finally {
       DateTimeUtils.setCurrentMillisSystem();
     }
   }
 
   @Test(groups = "fast")
-  public void testRenameThread() throws Exception {
+  public void testRenameThread() throws Exception
+  {
     LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     final ExecutorServiceFront executorServiceFront = new ExecutorServiceFront(
-      workQueue, mockExecutor, "custom-name", 1
+        workQueue, mockExecutor, "custom-name", 1
     );
     executorServiceFront.execute(latchTask);
     Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);
@@ -313,10 +327,11 @@ public class TestExecutorServiceFront {
   }
 
   @Test(groups = "fast")
-  public void testCreateManyThreads() throws Exception {
+  public void testCreateManyThreads() throws Exception
+  {
     LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     ExecutorServiceFront executorServiceFront = new ExecutorServiceFront(
-      workQueue, mockExecutor, "custom-name", 2
+        workQueue, mockExecutor, "custom-name", 2
     );
     LatchTask task1 = LatchTask.createPaused();
     LatchTask task2 = LatchTask.createPaused();
@@ -352,32 +367,35 @@ public class TestExecutorServiceFront {
     Assert.assertEquals(drainerThread2.getName(), "drainer");
   }
 
-  private LoopThread createDrainerThread(ThreadHelper threadHelper) {
+  private LoopThread createDrainerThread(ThreadHelper threadHelper)
+  {
     return threadHelper.repeatInThread(
-      () -> {
-        AnnotatedRunnable drainer = mockExecutor.removeHead();
-        if (drainer != null) {
-          drainer.run();
-        } else {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        () -> {
+          AnnotatedRunnable drainer = mockExecutor.removeHead();
+          if (drainer != null) {
+            drainer.run();
+          } else {
+            try {
+              Thread.sleep(10);
+            }
+            catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
           }
-        }
-      },
-      "drainer"
+        },
+        "drainer"
     );
   }
 
-  private Thread createDrainerThread() {
+  private Thread createDrainerThread()
+  {
     return TestUtils.runInThread(
-      () -> {
-        AnnotatedRunnable drainer = mockExecutor.removeHead();
+        () -> {
+          AnnotatedRunnable drainer = mockExecutor.removeHead();
 
-        drainer.run();
-      },
-      "original"
+          drainer.run();
+        },
+        "original"
     );
   }
 }

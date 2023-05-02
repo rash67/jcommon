@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import com.samrash.tools.ErrorMessage;
@@ -22,23 +23,28 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class OneOfConverter implements CliConverter<String> {
+public class OneOfConverter implements CliConverter<String>
+{
   private final Set<String> possibilities;
 
-  public OneOfConverter(Collection<String> possibilities) {
+  public OneOfConverter(Collection<String> possibilities)
+  {
     this.possibilities = new LinkedHashSet<>(possibilities);
   }
 
-  public static OneOfConverter oneOf(Collection<String> posibilities) {
+  public static OneOfConverter oneOf(Collection<String> posibilities)
+  {
     return new OneOfConverter(posibilities);
   }
 
-  public static OneOfConverter oneOf(String... posibilities) {
+  public static OneOfConverter oneOf(String... posibilities)
+  {
     return new OneOfConverter(Arrays.asList(posibilities));
   }
 
   @Override
-  public String convert(String value) throws Exception {
+  public String convert(String value) throws Exception
+  {
     if (!possibilities.contains(value)) {
       throw new ErrorMessage("Expected one of %s, but got %s", possibilities, value);
     }

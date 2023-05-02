@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
-public interface SnapshotProvider<T> {
+public interface SnapshotProvider<T>
+{
   /**
    * Make the latest snapshot.
    *
-   * @return  the latest snapshot of T
+   * @return the latest snapshot of T
    */
   public T makeSnapshot();
 

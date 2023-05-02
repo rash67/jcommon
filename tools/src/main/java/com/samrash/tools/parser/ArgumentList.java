@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.AbstractMap;
@@ -22,11 +23,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-class ArgumentList {
+class ArgumentList
+{
   private final int originalSize;
   private final List<Argument> arguments;
 
-  ArgumentList(List<String> arguments) {
+  ArgumentList(List<String> arguments)
+  {
     this.originalSize = arguments.size();
     this.arguments = new ArrayList<>(arguments.size());
 
@@ -35,15 +38,18 @@ class ArgumentList {
     }
   }
 
-  public List<Map.Entry<String, String>> removeSwitchValues(String switchName) {
+  public List<Map.Entry<String, String>> removeSwitchValues(String switchName)
+  {
     return removeSwitchValues(switchName, false);
   }
 
-  public List<Map.Entry<String, String>> removeFlag(String flagName) {
+  public List<Map.Entry<String, String>> removeFlag(String flagName)
+  {
     return removeSwitchValues(flagName, true);
   }
 
-  public Iterator<String> trailing() {
+  public Iterator<String> trailing()
+  {
     int trailingIndex = arguments.size() - 1;
     int expectedIndex = originalSize - 1;
 
@@ -61,11 +67,13 @@ class ArgumentList {
     return new TrailingIterator(arguments.subList(trailingIndex, arguments.size()).iterator());
   }
 
-  public Iterator<String> remaining() {
+  public Iterator<String> remaining()
+  {
     return new TrailingIterator(arguments.iterator());
   }
 
-  private List<Map.Entry<String, String>> removeSwitchValues(String switchName, boolean flag) {
+  private List<Map.Entry<String, String>> removeSwitchValues(String switchName, boolean flag)
+  {
     Iterator<Argument> iterator = arguments.iterator();
     List<Map.Entry<String, String>> values = new ArrayList<>();
 
@@ -99,35 +107,42 @@ class ArgumentList {
     return values;
   }
 
-  private static class Argument {
+  private static class Argument
+  {
     private final int index;
     private final String value;
 
-    private Argument(int index, String value) {
+    private Argument(int index, String value)
+    {
       this.index = index;
       this.value = value;
     }
   }
 
-  private static class TrailingIterator implements Iterator<String> {
+  private static class TrailingIterator implements Iterator<String>
+  {
     private final Iterator<Argument> delegate;
 
-    private TrailingIterator(Iterator<Argument> delegate) {
+    private TrailingIterator(Iterator<Argument> delegate)
+    {
       this.delegate = delegate;
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNext()
+    {
       return delegate.hasNext();
     }
 
     @Override
-    public String next() {
+    public String next()
+    {
       return delegate.next().value;
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
       delegate.remove();
     }
   }

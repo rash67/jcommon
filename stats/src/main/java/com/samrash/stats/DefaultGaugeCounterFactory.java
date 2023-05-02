@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
 
-public class DefaultGaugeCounterFactory implements GaugeCounterFactory {
+public class DefaultGaugeCounterFactory implements GaugeCounterFactory
+{
   public static GaugeCounterFactory INSTANCE = new DefaultGaugeCounterFactory();
 
   @Override
-  public GaugeCounter create(ReadableDateTime start, ReadableDateTime end) {
+  public GaugeCounter create(ReadableDateTime start, ReadableDateTime end)
+  {
     return new DefaultGaugeCounter(start, end);
   }
 }

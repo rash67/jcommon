@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.ExtSupplier;
+
 import java.util.function.IntFunction;
 
-public interface ExtIntFunction<R, E extends Throwable> {
+public interface ExtIntFunction<R, E extends Throwable>
+{
   R apply(int value) throws E;
 
-  static <R> IntFunction<R> quiet(ExtIntFunction<R, ?> intFunction) {
+  static <R> IntFunction<R> quiet(ExtIntFunction<R, ?> intFunction)
+  {
     return (value) -> ExtSupplier.quiet(() -> intFunction.apply(value)).get();
   }
 }

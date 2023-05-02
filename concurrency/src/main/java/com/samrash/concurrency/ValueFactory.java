@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
-public interface ValueFactory<I, O, E extends Exception> {
+public interface ValueFactory<I, O, E extends Exception>
+{
   /**
    * Given some input of type I, creates an output object of type O, or throws
    * an exception of type E if there was some trouble creating it.
+   *
    * @param input
    * @return
    * @throws E

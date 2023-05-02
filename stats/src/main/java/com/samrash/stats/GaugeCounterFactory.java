@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
@@ -20,6 +21,7 @@ import org.joda.time.ReadableDateTime;
 /**
  * Factory interface for creating new GaugeCounters
  */
-public interface GaugeCounterFactory {
+public interface GaugeCounterFactory
+{
   public GaugeCounter create(ReadableDateTime start, ReadableDateTime end);
 }

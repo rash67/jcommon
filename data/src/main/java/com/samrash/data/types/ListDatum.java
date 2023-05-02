@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import com.samrash.collectionsbase.Lists;
@@ -30,7 +31,7 @@ import java.util.List;
  * represents a list of Datums. Retrieve the list via asRaw();
  * <p/>
  * of the list, but this might lead to confusing issues. Ways to get the List\<Datum\>
- *   <pre>
+ * <pre>
  *     // preferred, though more verbose
  *     void fuu(Datum someDatum) {
  *       if (someDatum.getType() == DatumType.LIST) {
@@ -40,17 +41,17 @@ import java.util.List;
  *     }
  *
  *     // more concise, but asRaw() thus far has a loose contract and is only
-  *     void bar(Datum someDatum) {
-  *       if (someDatum.getType() == DatumType.LIST) {
-  *         List<Datum> datumList = (List<Datum>)someDatum.asRaw();
-  *       }
-  *     }
+ *     void bar(Datum someDatum) {
+ *       if (someDatum.getType() == DatumType.LIST) {
+ *         List<Datum> datumList = (List<Datum>)someDatum.asRaw();
+ *       }
+ *     }
  *
  *
  *   </pre>
- *
  */
-public class ListDatum implements Datum {
+public class ListDatum implements Datum
+{
   private static final int STRING_DATUM_SIZE_ESTIMATE = 8;
   private static final char DEFAULT_SEPARATOR = '\001';
 
@@ -61,8 +62,9 @@ public class ListDatum implements Datum {
   private volatile byte[] cachedBytes = null;
 
   public ListDatum(
-    List<Datum> datumList, char separator
-  ) {
+      List<Datum> datumList, char separator
+  )
+  {
     this.datumList = datumList;
     this.separator = separator;
 
@@ -73,25 +75,30 @@ public class ListDatum implements Datum {
     }
   }
 
-  public ListDatum(List<Datum> datumList) {
+  public ListDatum(List<Datum> datumList)
+  {
     this(datumList, DEFAULT_SEPARATOR);
   }
 
-  char getSeparator() {
+  char getSeparator()
+  {
     return separator;
   }
 
-  List<Datum> getDatumList() {
+  List<Datum> getDatumList()
+  {
     return datumList;
   }
 
   @Override
-  public boolean asBoolean() {
+  public boolean asBoolean()
+  {
     return !datumList.isEmpty();
   }
 
   @Override
-  public byte asByte() {
+  public byte asByte()
+  {
     if (scalarDatum != null) {
       return scalarDatum.asByte();
     } else {
@@ -100,7 +107,8 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public short asShort() {
+  public short asShort()
+  {
     if (scalarDatum != null) {
       return scalarDatum.asShort();
     } else {
@@ -109,7 +117,8 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public int asInteger() {
+  public int asInteger()
+  {
     if (datumList.size() == 1) {
       return scalarDatum.asInteger();
     } else {
@@ -118,7 +127,8 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public long asLong() {
+  public long asLong()
+  {
     if (scalarDatum != null) {
       return scalarDatum.asLong();
     } else {
@@ -127,7 +137,8 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public float asFloat() {
+  public float asFloat()
+  {
     if (scalarDatum != null) {
       return scalarDatum.asFloat();
     } else {
@@ -136,7 +147,8 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public double asDouble() {
+  public double asDouble()
+  {
     if (scalarDatum != null) {
       return scalarDatum.asDouble();
     } else {
@@ -145,11 +157,13 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public byte[] asBytes() {
+  public byte[] asBytes()
+  {
     if (cachedBytes == null) {
       try {
         cachedBytes = asString().getBytes("UTF-8");
-      } catch (UnsupportedEncodingException e) {
+      }
+      catch (UnsupportedEncodingException e) {
         // this shouldn't happen, but it's fatal of it does
         throw new RuntimeException(e);
       }
@@ -159,12 +173,13 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public String asString() {
+  public String asString()
+  {
     if (scalarDatum != null) {
       cachedStringDatum = scalarDatum.asString();
     } else if (cachedStringDatum == null) {
       StringBuilder sb = new StringBuilder(
-        datumList.size() * STRING_DATUM_SIZE_ESTIMATE
+          datumList.size() * STRING_DATUM_SIZE_ESTIMATE
       );
 
       for (Datum datum : datumList) {
@@ -181,18 +196,21 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public boolean isNull() {
+  public boolean isNull()
+  {
     // TODO: is [NulLDatum] == null ?  i say no as does this impl
     return false;
   }
 
   @Override
-  public DatumType getType() {
+  public DatumType getType()
+  {
     return DatumType.LIST;
   }
 
   @Override
-  public Object asRaw() {
+  public Object asRaw()
+  {
     return datumList;
   }
 
@@ -208,17 +226,20 @@ public class ListDatum implements Datum {
    *
    * @return
    */
-  public List<Datum> asList() {
+  public List<Datum> asList()
+  {
     return datumList;
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return asString();
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -236,30 +257,34 @@ public class ListDatum implements Datum {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = datumList != null ? datumList.hashCode() : 0;
     result = 31 * result + (scalarDatum != null ? scalarDatum.hashCode() : 0);
     return result;
   }
 
   @Override
-  public int compareTo(Datum o) {
+  public int compareTo(Datum o)
+  {
     if (o instanceof ListDatum) {
       ListDatum otherListDatum = (ListDatum) o;
 
       return Lists.compareLists(datumList, otherListDatum.datumList);
     } else {
       throw new IllegalArgumentException(
-        String.format(
-          "ListDatum cannot compare to %s", o.getClass()
-        )
+          String.format(
+              "ListDatum cannot compare to %s", o.getClass()
+          )
       );
     }
   }
 
-  public static class SerDeImpl implements SerDe<Datum> {
+  public static class SerDeImpl implements SerDe<Datum>
+  {
     @Override
-    public Datum deserialize(DataInput in) throws SerDeException {
+    public Datum deserialize(DataInput in) throws SerDeException
+    {
       try {
         int numItems = in.readInt();
         List<Datum> datumList = new ArrayList<Datum>(numItems);
@@ -275,14 +300,16 @@ public class ListDatum implements Datum {
         ListDatum listDatum = new ListDatum(datumList);
 
         return listDatum;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new SerDeException(e);
       }
     }
 
     @Override
     public void serialize(Datum value, DataOutput out)
-      throws SerDeException {
+        throws SerDeException
+    {
       if (value instanceof ListDatum) {
         try {
           ListDatum listDatum = (ListDatum) value;
@@ -299,13 +326,14 @@ public class ListDatum implements Datum {
           }
 
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           throw new SerDeException(e);
         }
 
       } else {
         throw new IllegalArgumentException(
-          "ListDatum.SerDeImpl requires ListDatum, not " +
+            "ListDatum.SerDeImpl requires ListDatum, not " +
             value.getClass()
         );
       }

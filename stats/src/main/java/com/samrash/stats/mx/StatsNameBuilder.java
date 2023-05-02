@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
 import javax.management.ObjectName;
@@ -22,17 +23,17 @@ import java.util.Optional;
 /**
  * Decides whether to include MBean attributes in the Stats object, and, if so, what to call them.
  */
-public interface StatsNameBuilder {
+public interface StatsNameBuilder
+{
   /**
    * Gets the name that should be used in the Stats for an attribute.
    *
-   * @param bean the ObjectName of the bean where the attribute was found
+   * @param bean      the ObjectName of the bean where the attribute was found
    * @param attribute the name of the top-level attribute
-   * @param key if the bean's top-level attribute was {@link CompositeData},
-   *             the key used to get from there to the value being named.
-   *
+   * @param key       if the bean's top-level attribute was {@link CompositeData},
+   *                  the key used to get from there to the value being named.
    * @return the name that should be used, or {@link Optional#none()} if it
-   *         should be elided
+   * should be elided
    */
   Optional<String> name(ObjectName bean, String attribute, String key);
 }

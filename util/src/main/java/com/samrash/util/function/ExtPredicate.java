@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public interface ExtPredicate<T, E extends Throwable> {
+public interface ExtPredicate<T, E extends Throwable>
+{
   boolean test(T t) throws E;
 
-  default ExtPredicate<T, E> and(ExtPredicate<? super T, E> other) {
+  default ExtPredicate<T, E> and(ExtPredicate<? super T, E> other)
+  {
     Objects.requireNonNull(other);
     return (t) -> test(t) && other.test(t);
   }
 
-  default ExtPredicate<T, E> negate() {
+  default ExtPredicate<T, E> negate()
+  {
     return (t) -> !test(t);
   }
 
-  default ExtPredicate<T, E> or(ExtPredicate<? super T, E> other) {
+  default ExtPredicate<T, E> or(ExtPredicate<? super T, E> other)
+  {
     Objects.requireNonNull(other);
     return (t) -> test(t) || other.test(t);
   }
 
-  static <T> Predicate<T> quiet(ExtPredicate<T, ?> predicate) {
+  static <T> Predicate<T> quiet(ExtPredicate<T, ?> predicate)
+  {
     return (t) -> ExtBooleanSupplier.quiet(() -> predicate.test(t)).getAsBoolean();
   }
 }

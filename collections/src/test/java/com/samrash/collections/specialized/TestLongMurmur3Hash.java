@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.util.digest.LongMurmur3Hash;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestLongMurmur3Hash {
+public class TestLongMurmur3Hash
+{
 
   @Test(groups = "fast")
-  public void testConsistency() throws Exception {
+  public void testConsistency() throws Exception
+  {
     LongMurmur3Hash longMurmur3Hash1 = new LongMurmur3Hash();
     LongMurmur3Hash longMurmur3Hash2 = new LongMurmur3Hash();
 
     for (long i = 0; i < 1000; i++) {
       Assert.assertEquals(
-        longMurmur3Hash1.computeDigest(i),
-        longMurmur3Hash2.computeDigest(i),
-        String.format("Hashes don't match for %d", i)
+          longMurmur3Hash1.computeDigest(i),
+          longMurmur3Hash2.computeDigest(i),
+          String.format("Hashes don't match for %d", i)
       );
     }
   }

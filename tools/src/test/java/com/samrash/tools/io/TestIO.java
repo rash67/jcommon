@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import org.testng.Assert;
@@ -20,9 +21,11 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-public class TestIO {
+public class TestIO
+{
   @Test(groups = "fast")
-  public void testYes() {
+  public void testYes()
+  {
     for (String yes : Arrays.asList("y", "yes", "Y", "YES", "Yes", "yES", "\n", "")) {
       MockIO io = new MockIO(yes);
       YesNo response = io.ask(YesNo.YES, "Did the %s test pass", yes);
@@ -36,7 +39,8 @@ public class TestIO {
   }
 
   @Test(groups = "fast")
-  public void testNo() {
+  public void testNo()
+  {
     for (String no : Arrays.asList("n", "no", "N", "NO", "No", "nO", "\n", "")) {
       MockIO io = new MockIO(no);
       YesNo response = io.ask(YesNo.NO, "Did the %s test pass", no);
@@ -50,53 +54,60 @@ public class TestIO {
   }
 
   @Test(groups = "fast")
-  public void testReprompt() {
+  public void testReprompt()
+  {
     MockIO io = new MockIO("foo bar\nbaz\nyes\n");
     YesNo response = io.ask(YesNo.NO, "Did the test pass");
 
     Assert.assertEquals(
-      io.getOut(), "Did the test pass [y/N]? Did the test pass [y/N]? Did the test pass [y/N]? "
+        io.getOut(), "Did the test pass [y/N]? Did the test pass [y/N]? Did the test pass [y/N]? "
     );
     Assert.assertEquals(io.getErr(), "");
     Assert.assertEquals(response, YesNo.YES);
   }
 
   @Test(groups = "fast")
-  public void testNotAnnotated() {
+  public void testNotAnnotated()
+  {
     MockIO io = new MockIO();
 
     try {
       io.ask(NotAnnotated.FOO, "Did the test pass");
       Assert.fail("Expected exception");
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       Assert.assertEquals(
-        e.getMessage(),
-        "No fields annotated with @PromptAnswer in class com.samrash.tools.io.TestIO$NotAnnotated"
+          e.getMessage(),
+          "No fields annotated with @PromptAnswer in class com.samrash.tools.io.TestIO$NotAnnotated"
       );
     }
   }
 
   @Test(groups = "fast")
-  public void testUppercaseAnswer() {
+  public void testUppercaseAnswer()
+  {
     MockIO io = new MockIO();
 
     try {
       io.ask(UppercaseAnswer.FOO, "Did the test pass");
       Assert.fail("Expected exception");
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       Assert.assertEquals(
-        e.getMessage(),
-        "Values must be all lower-case, but got Test for " +
+          e.getMessage(),
+          "Values must be all lower-case, but got Test for " +
           "com.samrash.tools.io.TestIO$UppercaseAnswer.FOO"
       );
     }
   }
 
-  private static enum NotAnnotated {
+  private static enum NotAnnotated
+  {
     FOO,
   }
 
-  private static enum UppercaseAnswer {
+  private static enum UppercaseAnswer
+  {
     @Answer("Test")
     FOO,
   }

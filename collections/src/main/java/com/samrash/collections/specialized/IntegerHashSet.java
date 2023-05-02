@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
-import com.samrash.collections.Trackable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.samrash.collections.Trackable;
 import gnu.trove.impl.sync.TSynchronizedIntSet;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.TIntSet;
@@ -33,7 +34,8 @@ import java.util.Set;
 /**
  * making this take a Long for compatibility, but operates on integers
  */
-public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
+public class IntegerHashSet implements SnapshotableSet<Long>, Trackable
+{
   private static final float MAX_LOAD_FACTOR = 2 / 3.0f;
 
   private final TIntSet set;
@@ -43,28 +45,32 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   @GuardedBy("mutex")
   private volatile boolean hasChanged;
 
-  public IntegerHashSet(int initialCapacity, int maxCapacity) {
+  public IntegerHashSet(int initialCapacity, int maxCapacity)
+  {
     Preconditions.checkArgument(
-      initialCapacity <= maxCapacity,
-      "initial capacity of %s cannot be larger than max of %s",
-      initialCapacity,
-      maxCapacity
+        initialCapacity <= maxCapacity,
+        "initial capacity of %s cannot be larger than max of %s",
+        initialCapacity,
+        maxCapacity
     );
     set = new TSynchronizedIntSet(new TIntHashSet(initialCapacity, MAX_LOAD_FACTOR, -1), mutex);
     this.maxCapacity = maxCapacity;
   }
 
-  public IntegerHashSet(int maxCapacity) {
+  public IntegerHashSet(int maxCapacity)
+  {
     this(Math.max(maxCapacity / 16, 1), maxCapacity);
   }
 
-  private IntegerHashSet(IntegerHashSet set) {
+  private IntegerHashSet(IntegerHashSet set)
+  {
     this.set = new TSynchronizedIntSet(new TIntHashSet(set.set), mutex);
     this.maxCapacity = set.maxCapacity;
   }
 
   @Override
-  public boolean contains(Object value) {
+  public boolean contains(Object value)
+  {
     if (value instanceof Integer || value instanceof Long) {
       synchronized (mutex) {
         return set.contains(((Number) value).intValue());
@@ -76,19 +82,21 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @VisibleForTesting
-  boolean add(Integer value) {
+  boolean add(Integer value)
+  {
     return add(value.longValue());
   }
 
   @Override
-  public boolean add(Long value) {
+  public boolean add(Long value)
+  {
     synchronized (mutex) {
       // there must be room for at least one element, even adding duplicates; the point is, no
       // add() should be called once we're maxed out.
       Preconditions.checkState(
-        set.size() < maxCapacity,
-        "set is size %s which means we're full, but someone's calling add. Why?",
-        set.size()
+          set.size() < maxCapacity,
+          "set is size %s which means we're full, but someone's calling add. Why?",
+          set.size()
       );
 
       if (set.add(value.intValue())) {
@@ -102,7 +110,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean remove(Object value) {
+  public boolean remove(Object value)
+  {
     if (value instanceof Integer || value instanceof Long) {
       synchronized (mutex) {
         if (set.remove(((Number) value).intValue())) {
@@ -115,34 +124,41 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return set.size();
   }
 
   @Override
-  public boolean isEmpty() {
+  public boolean isEmpty()
+  {
     return set.isEmpty();
   }
 
   @Override
-  public Iterator<Long> iterator() {
+  public Iterator<Long> iterator()
+  {
     synchronized (mutex) {
-      return new Iterator<Long>() {
+      return new Iterator<Long>()
+      {
         private TIntIterator iterator = set.iterator();
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNext()
+        {
           return iterator.hasNext();
         }
 
         @Override
         @SuppressWarnings("IteratorNextCanNotThrowNoSuchElementException")
-        public Long next() throws NoSuchElementException {
+        public Long next() throws NoSuchElementException
+        {
           return (long) iterator.next();
         }
 
         @Override
-        public void remove() {
+        public void remove()
+        {
           synchronized (mutex) {
             iterator.remove();
             hasChanged = true;
@@ -153,7 +169,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public Object[] toArray() {
+  public Object[] toArray()
+  {
     int[] ints = set.toArray();
     Object[] result = new Object[ints.length];
 
@@ -165,7 +182,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public <T> T[] toArray(T[] result) {
+  public <T> T[] toArray(T[] result)
+  {
     int[] ints = set.toArray();
 
     if (result.length < ints.length) {
@@ -181,19 +199,21 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean containsAll(Collection<?> values) {
+  public boolean containsAll(Collection<?> values)
+  {
     return set.containsAll(values);
   }
 
   @Override
-  public boolean addAll(Collection<? extends Long> values) {
+  public boolean addAll(Collection<? extends Long> values)
+  {
     boolean retVal = false;
 
     for (Long value : values) {
       Preconditions.checkState(
-        set.size() < maxCapacity,
-        "set is size %s which means we're full, but someone's calling add. Why?",
-        set.size()
+          set.size() < maxCapacity,
+          "set is size %s which means we're full, but someone's calling add. Why?",
+          set.size()
       );
       retVal |= set.add(value.intValue());
     }
@@ -202,7 +222,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean retainAll(Collection<?> values) {
+  public boolean retainAll(Collection<?> values)
+  {
     boolean methodHasChanged;
 
     synchronized (mutex) {
@@ -213,7 +234,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean removeAll(Collection<?> values) {
+  public boolean removeAll(Collection<?> values)
+  {
     boolean methodHasChanged;
 
     synchronized (mutex) {
@@ -225,7 +247,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     synchronized (mutex) {
       if (!set.isEmpty()) {
         set.clear();
@@ -235,30 +258,35 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public SnapshotableSet<Long> makeSnapshot() {
+  public SnapshotableSet<Long> makeSnapshot()
+  {
     synchronized (mutex) {
       return new IntegerHashSet(this);
     }
   }
 
   @Override
-  public SnapshotableSet<Long> makeTransientSnapshot() {
+  public SnapshotableSet<Long> makeTransientSnapshot()
+  {
     return makeSnapshot();
   }
 
   @Override
-  public boolean hasChanged() {
+  public boolean hasChanged()
+  {
     synchronized (mutex) {
       try {
         return hasChanged;
-      } finally {
+      }
+      finally {
         hasChanged = false;
       }
     }
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -277,7 +305,8 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = set != null ? set.hashCode() : 0;
     result = 31 * result + (mutex != null ? mutex.hashCode() : 0);
     result = 31 * result + (hasChanged ? 1 : 0);

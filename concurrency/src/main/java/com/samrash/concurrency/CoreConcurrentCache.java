@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
+
+import com.samrash.collections.TranslatingIterator;
+import com.samrash.collectionsbase.Mapper;
+import com.samrash.util.exceptions.ExceptionHandler;
 
 import java.util.AbstractMap;
 import java.util.Iterator;
@@ -23,13 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.samrash.collections.TranslatingIterator;
-import com.samrash.collectionsbase.Mapper;
-import com.samrash.util.exceptions.ExceptionHandler;
-
 @SuppressWarnings({"unchecked"})
 public class CoreConcurrentCache<K, V, E extends Exception>
-  implements ConcurrentCache<K, V, E> {
+    implements ConcurrentCache<K, V, E>
+{
   private final ConcurrentMap<K, Object> cache;
   private final ValueFactory<K, V, E> valueFactory;
   private final ExceptionHandler<E> exceptionHandler;
@@ -39,26 +41,29 @@ public class CoreConcurrentCache<K, V, E extends Exception>
    *
    * @param valueFactory
    * @param exceptionHandler
-   * @param cache - any ConcurrentMap impl will suffice
+   * @param cache            - any ConcurrentMap impl will suffice
    */
   protected CoreConcurrentCache(
-    ValueFactory<K, V, E> valueFactory,
-    ExceptionHandler<E> exceptionHandler,
-    ConcurrentMap<K, Object> cache
-  ) {
+      ValueFactory<K, V, E> valueFactory,
+      ExceptionHandler<E> exceptionHandler,
+      ConcurrentMap<K, Object> cache
+  )
+  {
     this.valueFactory = valueFactory;
     this.exceptionHandler = exceptionHandler;
     this.cache = cache;
   }
 
   public CoreConcurrentCache(
-    ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
-  ) {
+      ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
+  )
+  {
     this(valueFactory, exceptionHandler, new ConcurrentHashMap<>());
   }
 
   @Override
-  public V get(final K key) throws E {
+  public V get(final K key) throws E
+  {
     Object value = cache.get(key);
 
     // if there isn't entry, do a thread-safe insert into the cache,
@@ -66,18 +71,18 @@ public class CoreConcurrentCache<K, V, E extends Exception>
     if (value == null) {
       AtomicReference<Object> valueRef = new AtomicReference<>();
       value = new PrivateFutureHelper<>(
-        () -> {
-          V producedValue = valueFactory.create(key);
+          () -> {
+            V producedValue = valueFactory.create(key);
 
-          // we place our value into the map in place of the factory if and
-          // only if it is still mapped to the same private future helper
-          CoreConcurrentCache.this.cache.replace(
-            key, valueRef.get(), producedValue
-          );
+            // we place our value into the map in place of the factory if and
+            // only if it is still mapped to the same private future helper
+            CoreConcurrentCache.this.cache.replace(
+                key, valueRef.get(), producedValue
+            );
 
-          return producedValue;
-        },
-        exceptionHandler
+            return producedValue;
+          },
+          exceptionHandler
       );
       valueRef.set(value);
 
@@ -94,14 +99,16 @@ public class CoreConcurrentCache<K, V, E extends Exception>
   }
 
   @Override
-  public V put(K key, V value) throws E {
+  public V put(K key, V value) throws E
+  {
     Object existingValue = cache.put(key, value);
 
     return decodeValue(existingValue);
   }
 
   @Override
-  public V remove(K key) throws E {
+  public V remove(K key) throws E
+  {
     Object value = cache.remove(key);
 
     if (value == null) {
@@ -112,13 +119,14 @@ public class CoreConcurrentCache<K, V, E extends Exception>
   }
 
   @Override
-  public boolean removeIfError(K key) {
+  public boolean removeIfError(K key)
+  {
     Object value = cache.get(key);
 
     if (value != null &&
-      value instanceof PrivateFutureHelper &&
-      ((FutureHelper<V, E>)value).isError()
-      ) {
+        value instanceof PrivateFutureHelper &&
+        ((FutureHelper<V, E>) value).isError()
+    ) {
       cache.remove(key, value);
 
       return true;
@@ -128,38 +136,43 @@ public class CoreConcurrentCache<K, V, E extends Exception>
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     cache.clear();
   }
 
   @Override
-  public void prune() {
+  public void prune()
+  {
     // no-op
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return cache.size();
   }
 
   @Override
-  public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator() {
+  public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator()
+  {
     return new TranslatingIterator<>(
-      new ValueMapper(),
-      cache.entrySet().iterator()
+        new ValueMapper(),
+        cache.entrySet().iterator()
     );
   }
 
   @Override
-  public CallableSnapshot<V, E> getIfPresent(K key) {
+  public CallableSnapshot<V, E> getIfPresent(K key)
+  {
     Object value = cache.get(key);
 
     if (value == null) {
       return null;
     } else {
       return new CallableSnapshot<>(
-        new CallableFutureHelper(value),
-        new CastingExceptionHandler<E>()
+          new CallableFutureHelper(value),
+          new CastingExceptionHandler<E>()
       );
     }
   }
@@ -171,37 +184,43 @@ public class CoreConcurrentCache<K, V, E extends Exception>
    * @return actual value in the cache
    * @throws E on error producing the value
    */
-  private V decodeValue(Object value) throws E {
+  private V decodeValue(Object value) throws E
+  {
     if (value instanceof PrivateFutureHelper) {
       return ((FutureHelper<V, E>) value).safeGet();
     } else {
-      return (V)value;
+      return (V) value;
     }
   }
 
   private class ValueMapper implements
-    Mapper<Map.Entry<K, Object>, Map.Entry<K, CallableSnapshot<V, E>>> {
+      Mapper<Map.Entry<K, Object>, Map.Entry<K, CallableSnapshot<V, E>>>
+  {
     @Override
-    public Map.Entry<K, CallableSnapshot<V, E>> map(Map.Entry<K, Object> input) {
+    public Map.Entry<K, CallableSnapshot<V, E>> map(Map.Entry<K, Object> input)
+    {
       return new AbstractMap.SimpleImmutableEntry<>(
-        input.getKey(),
-        new CallableSnapshot<>(
-          new CallableFutureHelper(input.getValue()),
-          new CastingExceptionHandler<E>() // OK to cast b/c know exception type
-        )
+          input.getKey(),
+          new CallableSnapshot<>(
+              new CallableFutureHelper(input.getValue()),
+              new CastingExceptionHandler<E>() // OK to cast b/c know exception type
+          )
       );
     }
   }
 
-  private class CallableFutureHelper implements Callable {
+  private class CallableFutureHelper implements Callable<V>
+  {
     private final Object value;
 
-    private CallableFutureHelper(Object value) {
+    private CallableFutureHelper(Object value)
+    {
       this.value = value;
     }
 
     @Override
-    public V call() throws Exception {
+    public V call() throws Exception
+    {
       return decodeValue(value);
     }
   }
@@ -216,11 +235,13 @@ public class CoreConcurrentCache<K, V, E extends Exception>
    * @param <E2>
    */
   private static class PrivateFutureHelper<V2, E2 extends Exception>
-    extends FutureHelper<V2, E2>{
+      extends FutureHelper<V2, E2>
+  {
     private PrivateFutureHelper(
-      Callable<V2> callable,
-      ExceptionHandler<E2> exceptionHandler
-    ) {
+        Callable<V2> callable,
+        ExceptionHandler<E2> exceptionHandler
+    )
+    {
       super(callable, exceptionHandler);
     }
   }

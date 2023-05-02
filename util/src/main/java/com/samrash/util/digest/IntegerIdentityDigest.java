@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.digest;
 
-public class IntegerIdentityDigest implements DigestFunction<Integer> {
+public class IntegerIdentityDigest implements DigestFunction<Integer>
+{
   @Override
-  public long computeDigest(Integer input) {
+  public long computeDigest(Integer input)
+  {
     return input;
   }
 }

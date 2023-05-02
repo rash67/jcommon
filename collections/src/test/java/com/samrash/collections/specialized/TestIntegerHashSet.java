@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.google.common.collect.ImmutableList;
@@ -24,12 +25,14 @@ import org.testng.annotations.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TestIntegerHashSet {
+public class TestIntegerHashSet
+{
 
   private IntegerHashSet defaultSet;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     defaultSet = new IntegerHashSet(2, Integer.MAX_VALUE);
     defaultSet.add(0);
     defaultSet.add(1);
@@ -39,23 +42,26 @@ public class TestIntegerHashSet {
   }
 
   @Test(groups = "fast")
-  public void testRemove() throws Exception {
+  public void testRemove() throws Exception
+  {
     Assert.assertTrue(defaultSet.remove(0));
     Assert.assertTrue(defaultSet.remove(2L));
   }
 
   @Test(groups = "fast")
-  public void testContains() throws Exception {
+  public void testContains() throws Exception
+  {
     Assert.assertTrue(defaultSet.contains(0));
     Assert.assertTrue(defaultSet.contains(8L));
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*"
   )
-  public void testMaxCapacity() throws Exception {
+  public void testMaxCapacity() throws Exception
+  {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
 
@@ -66,11 +72,12 @@ public class TestIntegerHashSet {
 
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*"
   )
-  public void testMaxCapacityWithAdAll() throws Exception {
+  public void testMaxCapacityWithAdAll() throws Exception
+  {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
     Set<Long> addSet = new HashSet<>();
@@ -83,11 +90,12 @@ public class TestIntegerHashSet {
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*"
   )
-  public void testMaxCapacityHonoredWithAdd() throws Exception {
+  public void testMaxCapacityHonoredWithAdd() throws Exception
+  {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
 
@@ -95,7 +103,8 @@ public class TestIntegerHashSet {
       for (int i = 0; i <= maxCapacity; i++) {
         set.add(i);
       }
-    } catch (IllegalStateException e) {
+    }
+    catch (IllegalStateException e) {
       Assert.assertEquals(set.size(), 23);
 
       throw e;
@@ -103,11 +112,12 @@ public class TestIntegerHashSet {
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*"
   )
-  public void testMaxCapacityHonoredWithAddAll() throws Exception {
+  public void testMaxCapacityHonoredWithAddAll() throws Exception
+  {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
     Set<Long> addSet = new HashSet<>();
@@ -118,7 +128,8 @@ public class TestIntegerHashSet {
       }
 
       set.addAll(addSet);
-    } catch (IllegalStateException e) {
+    }
+    catch (IllegalStateException e) {
       Assert.assertEquals(set.size(), 23);
 
       throw e;
@@ -126,7 +137,8 @@ public class TestIntegerHashSet {
   }
 
   @Test(groups = "fast")
-  public void testResize() {
+  public void testResize()
+  {
     IntegerHashSet set = new IntegerHashSet(2, Integer.MAX_VALUE);
 
     set.add(1);
@@ -137,7 +149,8 @@ public class TestIntegerHashSet {
   }
 
   @Test(groups = "fast")
-  public void testHasChangedRemoveAll() throws Exception {
+  public void testHasChangedRemoveAll() throws Exception
+  {
     ImmutableSet<Object> removeSet = ImmutableSet.builder().add(0).add(1).build();
 
     defaultSet.removeAll(removeSet);
@@ -145,7 +158,8 @@ public class TestIntegerHashSet {
   }
 
   @Test(groups = "fast")
-  public void testHasChangedRetainAll() throws Exception {
+  public void testHasChangedRetainAll() throws Exception
+  {
     ImmutableSet<Object> retainSet = ImmutableSet.builder().add(0).add(1).build();
 
     defaultSet.removeAll(retainSet);
@@ -153,13 +167,15 @@ public class TestIntegerHashSet {
   }
 
   @Test(groups = "fast")
-  public void testHasChangedClear() throws Exception {
+  public void testHasChangedClear() throws Exception
+  {
     defaultSet.clear();
     Assert.assertEquals(defaultSet.hasChanged(), true);
   }
 
   @Test(groups = "fast")
-  public void testZero() {
+  public void testZero()
+  {
     IntegerHashSet set = new IntegerHashSet(1, Integer.MAX_VALUE);
 
     set.add(0L);

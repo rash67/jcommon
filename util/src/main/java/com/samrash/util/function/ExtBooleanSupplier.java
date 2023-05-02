@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import com.samrash.util.exceptions.UncheckedCheckedException;
+
 import java.util.function.BooleanSupplier;
 
-public interface ExtBooleanSupplier<E extends Throwable> {
+public interface ExtBooleanSupplier<E extends Throwable>
+{
   boolean getAsBoolean() throws E;
 
-  static BooleanSupplier quiet(ExtBooleanSupplier<?> booleanSupplier) {
+  static BooleanSupplier quiet(ExtBooleanSupplier<?> booleanSupplier)
+  {
     return () -> {
       try {
         return booleanSupplier.getAsBoolean();
-      } catch (Error | RuntimeException e) {
+      }
+      catch (Error | RuntimeException e) {
         throw e;
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
         throw new UncheckedCheckedException(e);
       }
     };

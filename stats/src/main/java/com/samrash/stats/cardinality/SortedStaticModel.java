@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -25,7 +26,8 @@ import java.util.List;
 
 import static com.samrash.stats.cardinality.StaticModelUtil.weightsToProbabilities;
 
-class SortedStaticModel implements Model {
+class SortedStaticModel implements Model
+{
   private final int[] symbolToIndex;
   private final int[] indexToSymbol;
 
@@ -33,7 +35,8 @@ class SortedStaticModel implements Model {
 
   private final int totalIndex;
 
-  public SortedStaticModel(double[] weights) {
+  public SortedStaticModel(double[] weights)
+  {
     Preconditions.checkNotNull(weights, "weights is null");
 
     Preconditions.checkArgument(weights.length > 1, "weights is empty");
@@ -96,19 +99,22 @@ class SortedStaticModel implements Model {
   }
 
   @Override
-  public SymbolInfo getSymbolInfo(int symbol) {
+  public SymbolInfo getSymbolInfo(int symbol)
+  {
     Preconditions.checkPositionIndex(symbol, symbolToIndex.length, "symbol");
     int symbolIndex = symbolToIndex[symbol];
     return new SymbolInfo(symbol, countsByIndex[symbolIndex], countsByIndex[symbolIndex + 1]);
   }
 
   @Override
-  public int log2MaxCount() {
+  public int log2MaxCount()
+  {
     return StaticModelUtil.COUNT_BITS;
   }
 
   @Override
-  public SymbolInfo countToSymbol(int targetCount) {
+  public SymbolInfo countToSymbol(int targetCount)
+  {
     Preconditions.checkArgument(targetCount >= 0, "targetCount is negative %s", targetCount);
 
     // Since symbols are sorted by probability, simply linearly search for the symbol
@@ -126,7 +132,8 @@ class SortedStaticModel implements Model {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -147,23 +154,27 @@ class SortedStaticModel implements Model {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = Arrays.hashCode(countsByIndex);
     result = 31 * result + totalIndex;
     return result;
   }
 
-  private static class SymbolProbability implements Comparable<SymbolProbability> {
+  private static class SymbolProbability implements Comparable<SymbolProbability>
+  {
     private final int symbol;
     private final double probability;
 
-    private SymbolProbability(int symbol, double probability) {
+    private SymbolProbability(int symbol, double probability)
+    {
       this.symbol = symbol;
       this.probability = probability;
     }
 
     @Override
-    public int compareTo(SymbolProbability o) {
+    public int compareTo(SymbolProbability o)
+    {
       return ComparisonChain
           .start()
           .compare(o.probability, probability)
@@ -172,7 +183,8 @@ class SortedStaticModel implements Model {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
       final StringBuilder sb = new StringBuilder();
       sb.append("SymbolProbability");
       sb.append("{symbol=").append(symbol);
@@ -182,7 +194,8 @@ class SortedStaticModel implements Model {
     }
   }
 
-  private List<SymbolProbability> sortProbabilities(double[] probabilities) {
+  private List<SymbolProbability> sortProbabilities(double[] probabilities)
+  {
     ArrayList<SymbolProbability> symbolProbabilities = new ArrayList<SymbolProbability>();
     for (int symbol = 0; symbol < probabilities.length; symbol++) {
       symbolProbabilities.add(new SymbolProbability(symbol, probabilities[symbol]));

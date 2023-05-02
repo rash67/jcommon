@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
-import com.samrash.collections.Trackable;
-import com.samrash.collectionsbase.Mapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.samrash.collections.Trackable;
+import com.samrash.collectionsbase.Mapper;
 
 import javax.annotation.concurrent.GuardedBy;
 import java.util.Arrays;
@@ -36,12 +37,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * stores a set of non-negative long values using a fixed-size array.
- *
+ * <p>
  * this class is thread-safe, and allows decent parallelism using a
  * ReadWriteLock.  The iterator is thread-safe, but can still throw
  * a ConcurrentModificationException (TODO: can probably fix this)
  */
-public class LongHashSet implements SnapshotableSet<Long>, Trackable {
+public class LongHashSet implements SnapshotableSet<Long>, Trackable
+{
   // these are values for slots
   private static final long INITIAL_EMPTY = -1;
   private static final long REMOVED_EMPTY = -2;
@@ -61,20 +63,22 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   private final int maxCapacity;
 
   public LongHashSet(
-    int initialCapacity, int maxCapacity, Mapper<Long, Integer> hashFunction
-  ) {
+      int initialCapacity, int maxCapacity, Mapper<Long, Integer> hashFunction
+  )
+  {
     Preconditions.checkArgument(
-      initialCapacity <= maxCapacity,
-      "initial capacity of %s cannot be larger than max of %s",
-      initialCapacity,
-      maxCapacity
+        initialCapacity <= maxCapacity,
+        "initial capacity of %s cannot be larger than max of %s",
+        initialCapacity,
+        maxCapacity
     );
     this.maxCapacity = maxCapacity;
     initArrays(initialCapacity);
     this.hashFunction = hashFunction;
   }
 
-  private void initArrays(int capacity) {
+  private void initArrays(int capacity)
+  {
     values = new long[capacity];
     Arrays.fill(values, INITIAL_EMPTY);
   }
@@ -85,25 +89,29 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
    * @param initialCapacity
    * @param maxCapacity
    */
-  public LongHashSet(int initialCapacity, int maxCapacity) {
+  public LongHashSet(int initialCapacity, int maxCapacity)
+  {
     this(
-      initialCapacity,
-      maxCapacity,
-      new Mapper<Long, Integer>() {
-        @Override
-        public Integer map(Long input) {
-          return (int) (input ^ (input >>> 32));
+        initialCapacity,
+        maxCapacity,
+        new Mapper<Long, Integer>()
+        {
+          @Override
+          public Integer map(Long input)
+          {
+            return (int) (input ^ (input >>> 32));
+          }
         }
-      }
     );
   }
 
-  private void resize() {
+  private void resize()
+  {
     if (values.length == maxCapacity) {
       throw new IllegalStateException(
-        String.format(
-          "cannot resize: max capacity of %d already reached", maxCapacity
-        )
+          String.format(
+              "cannot resize: max capacity of %d already reached", maxCapacity
+          )
       );
     }
 
@@ -121,7 +129,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
     }
   }
 
-  private int hashValueOf(Long aLong) {
+  private int hashValueOf(Long aLong)
+  {
     return Math.abs(hashFunction.map(aLong)) % values.length;
   }
 
@@ -131,10 +140,11 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
    *
    * @param aLong
    * @return if aLong is present in the set, returns the index of it; if it
-   *         is not present, returns the index of where it may be placed,
-   *         or FULL_SET(-2) if the set is full
+   * is not present, returns the index of where it may be placed,
+   * or FULL_SET(-2) if the set is full
    */
-  private int findLocationOf(long aLong) {
+  private int findLocationOf(long aLong)
+  {
     int index = hashValueOf(aLong);
     int firstEmptyIndex = -1;
     int total = 0;
@@ -169,32 +179,37 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
     return index;
   }
 
-  private boolean isEmptySlot(int index) {
+  private boolean isEmptySlot(int index)
+  {
     return values[index] < 0;
   }
 
-  private void validateArgument(Long aLong) {
+  private void validateArgument(Long aLong)
+  {
     if (aLong < 0) {
       throw new IllegalArgumentException(
-        String.format(
-          "only non-negative integers are allowed (tried to use %d)", aLong
-        )
+          String.format(
+              "only non-negative integers are allowed (tried to use %d)", aLong
+          )
       );
     }
   }
 
   @Override
-  public int size() {
+  public int size()
+  {
     return size.get();
   }
 
   @Override
-  public boolean isEmpty() {
+  public boolean isEmpty()
+  {
     return size.get() == 0;
   }
 
   @Override
-  public boolean contains(Object o) {
+  public boolean contains(Object o)
+  {
     if (!(o instanceof Long)) {
       throw new IllegalArgumentException("type of long required");
     }
@@ -207,17 +222,20 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       index = findLocationOf((Long) o);
 
       return index != FULL_SET && !isEmptySlot(index);
-    } finally {
+    }
+    finally {
       lock.readLock().unlock();
     }
   }
 
   @Override
-  public Iterator<Long> iterator() {
+  public Iterator<Long> iterator()
+  {
     final AtomicLong snapshotVersion = new AtomicLong(version.get());
     final long sizeSnapshot = size.get();
 
-    return new Iterator<Long>() {
+    return new Iterator<Long>()
+    {
       // invariant: location < values.length. This holds because we
       // require that the set does not change while we iterator. location
       // is only incremented in next() which checks the bound. Remove
@@ -226,7 +244,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       private boolean canRemove = false;
 
       @Override
-      public boolean hasNext() {
+      public boolean hasNext()
+      {
         lock.readLock().lock();
 
         try {
@@ -235,13 +254,15 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
           }
 
           return visited < sizeSnapshot;
-        } finally {
+        }
+        finally {
           lock.readLock().unlock();
         }
       }
 
       @Override
-      public Long next() {
+      public Long next()
+      {
         lock.readLock().lock();
 
         try {
@@ -266,20 +287,22 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
           //noinspection unchecked
           return values[location];
-        } finally {
+        }
+        finally {
           lock.readLock().unlock();
         }
       }
 
       @Override
-      public void remove() {
+      public void remove()
+      {
         lock.writeLock().lock();
 
         try {
           if (!canRemove) {
             // TODO : clean this up?
             throw new IllegalStateException(
-              "repeated remove() calls or next() not called"
+                "repeated remove() calls or next() not called"
             );
           }
 
@@ -295,7 +318,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
           // for changes against
           snapshotVersion.set(version.incrementAndGet());
           canRemove = false;
-        } finally {
+        }
+        finally {
           lock.writeLock().unlock();
         }
       }
@@ -303,12 +327,14 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public Object[] toArray() {
+  public Object[] toArray()
+  {
     return toArray(new Object[size.get()]);
   }
 
   @Override
-  public <T> T[] toArray(T[] a) {
+  public <T> T[] toArray(T[] a)
+  {
     if (!a.getClass().getComponentType().isAssignableFrom(Long.class)) {
       throw new ArrayStoreException("array must be of type Long");
     }
@@ -322,7 +348,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
         result = a;
       } else {
         result = (T[]) java.lang.reflect.Array
-          .newInstance(a.getClass().getComponentType(), size.get());
+            .newInstance(a.getClass().getComponentType(), size.get());
       }
 
       int i = 0;
@@ -330,7 +356,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       for (Object value : this) {
         result[i++] = (T) value;
       }
-    } finally {
+    }
+    finally {
       lock.readLock().unlock();
     }
 
@@ -338,12 +365,14 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @VisibleForTesting
-  boolean add(Integer anInteger) {
+  boolean add(Integer anInteger)
+  {
     return add(anInteger.longValue());
   }
 
   @Override
-  public boolean add(Long aLong) {
+  public boolean add(Long aLong)
+  {
     validateArgument(aLong);
 
     lock.writeLock().lock();
@@ -362,20 +391,22 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       } else {
         return false;
       }
-    } finally {
+    }
+    finally {
       lock.writeLock().unlock();
     }
   }
 
-  private boolean internalAdd(long value) {
+  private boolean internalAdd(long value)
+  {
     int index = findLocationOf(value);
 
     if (index == FULL_SET) {
       throw new IllegalStateException(
-        String.format(
-          "set is full with %d elements, cannot add more",
-          values.length
-        )
+          String.format(
+              "set is full with %d elements, cannot add more",
+              values.length
+          )
       );
     }
 
@@ -390,7 +421,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean remove(Object o) {
+  public boolean remove(Object o)
+  {
     if (!(o instanceof Long)) {
       throw new IllegalArgumentException("type of long required");
     }
@@ -411,13 +443,15 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       }
 
       return false;
-    } finally {
+    }
+    finally {
       lock.writeLock().unlock();
     }
   }
 
   @Override
-  public boolean containsAll(Collection<?> c) {
+  public boolean containsAll(Collection<?> c)
+  {
     // grab the lock since returning true here means that the set contains
     // all the elements at one moment in time
     lock.readLock().lock();
@@ -430,13 +464,15 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       }
 
       return true;
-    } finally {
+    }
+    finally {
       lock.readLock().unlock();
     }
   }
 
   @Override
-  public boolean addAll(Collection<? extends Long> c) {
+  public boolean addAll(Collection<? extends Long> c)
+  {
     boolean changed = false;
 
     //rely on add() holding the writeLock
@@ -450,7 +486,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean retainAll(Collection<?> c) {
+  public boolean retainAll(Collection<?> c)
+  {
     boolean changed = false;
 
     // semantics of this method are that only elements in the collection
@@ -470,7 +507,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
           changed = true;
         }
       }
-    } finally {
+    }
+    finally {
       lock.writeLock().unlock();
     }
 
@@ -478,7 +516,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public boolean removeAll(Collection<?> c)
+  {
     boolean changed = false;
     // simpler to reason about if we lock the set here
     lock.writeLock().lock();
@@ -498,19 +537,22 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       }
 
       return changed;
-    } finally {
+    }
+    finally {
       lock.writeLock().unlock();
     }
   }
 
   @Override
-  public void clear() {
+  public void clear()
+  {
     lock.writeLock().lock();
 
     try {
       internalClear();
       version.incrementAndGet();
-    } finally {
+    }
+    finally {
       lock.writeLock().unlock();
     }
   }
@@ -521,7 +563,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
    * @return deep copy of this set
    */
   @Override
-  public SnapshotableSet<Long> makeSnapshot() {
+  public SnapshotableSet<Long> makeSnapshot()
+  {
     lock.readLock().lock();
 
     try {
@@ -533,26 +576,30 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       System.arraycopy(values, 0, copy.values, 0, values.length);
 
       return copy;
-    } finally {
+    }
+    finally {
       lock.readLock().unlock();
     }
   }
 
   @Override
-  public SnapshotableSet<Long> makeTransientSnapshot() {
+  public SnapshotableSet<Long> makeTransientSnapshot()
+  {
     return new SnapshotableSetImpl<Long>(
-      Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
-      new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>())
+        Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
+        new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>())
     );
   }
 
-  private void internalClear() {
+  private void internalClear()
+  {
     size.set(0);
     Arrays.fill(values, INITIAL_EMPTY);
   }
 
   @Override
-  public synchronized boolean hasChanged() {
+  public synchronized boolean hasChanged()
+  {
     long pastVersion = lastCheckedVersion;
     lastCheckedVersion = version.get();
 
@@ -560,28 +607,33 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
     if (!(o instanceof Set)) {
       return false;
     }
-    @SuppressWarnings("unchecked") Collection<Long> c = (Collection<Long>) o;
+    @SuppressWarnings("unchecked")
+    Collection<Long> c = (Collection<Long>) o;
     if (c.size() != size()) {
       return false;
     }
     try {
       return containsAll(c);
-    } catch (ClassCastException unused) {
+    }
+    catch (ClassCastException unused) {
       return false;
-    } catch (NullPointerException unused) {
+    }
+    catch (NullPointerException unused) {
       return false;
     }
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int h = 0;
     Iterator<Long> i = iterator();
 
@@ -597,7 +649,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     StringBuilder sb = new StringBuilder((int) (size.get() * 8));
     Set<Long> copy = makeSnapshot();
     boolean first = true;

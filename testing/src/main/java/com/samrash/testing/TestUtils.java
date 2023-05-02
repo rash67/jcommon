@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 
@@ -36,15 +37,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.testng.Assert.assertEquals;
 
-public class TestUtils {
-  private TestUtils() {
+public class TestUtils
+{
+  private TestUtils()
+  {
     throw new AssertionError();
   }
 
-  public static <T> Function<T> noOpFunction() {
-    return new Function<T>() {
+  public static <T> Function<T> noOpFunction()
+  {
+    return new Function<T>()
+    {
       @Override
-      public void execute(T argument) {
+      public void execute(T argument)
+      {
         // noting
       }
     };
@@ -52,18 +58,21 @@ public class TestUtils {
 
 
   public static AtomicInteger countCompletedRunnables(
-    int numTasks, Function<Runnable> submissionCallback
-  ) {
+      int numTasks, Function<Runnable> submissionCallback
+  )
+  {
     final AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
-        new Runnable() {
-          @Override
-          public void run() {
-            completed.incrementAndGet();
+          new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              completed.incrementAndGet();
+            }
           }
-        }
       );
     }
 
@@ -71,35 +80,41 @@ public class TestUtils {
   }
 
   public static <V> AtomicInteger countCompletedCallables(
-    int numTasks, Function<Callable<V>> submissionCallback
-  ) {
+      int numTasks, Function<Callable<V>> submissionCallback
+  )
+  {
     final AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
-        new Callable<V>() {
-          @Override
-          public V call() throws Exception {
-            completed.incrementAndGet();
+          new Callable<V>()
+          {
+            @Override
+            public V call() throws Exception
+            {
+              completed.incrementAndGet();
 
-            return null;
+              return null;
+            }
           }
-        }
       );
     }
 
     return completed;
   }
 
-  public static String generateString(int start, int length) {
+  public static String generateString(int start, int length)
+  {
     try {
       return new String(generateSequentialBytes(start, length), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static byte[] generateSequentialBytes(int start, int length) {
+  public static byte[] generateSequentialBytes(int start, int length)
+  {
     byte[] result = new byte[length];
 
     for (int i = 0; i < length; i++) {
@@ -115,7 +130,8 @@ public class TestUtils {
    *
    * @param t thread to wait for
    */
-  public static void waitUntilThreadBlocks(Thread t) {
+  public static void waitUntilThreadBlocks(Thread t)
+  {
     Thread.State state = t.getState();
 
     while (true) {
@@ -133,11 +149,13 @@ public class TestUtils {
     }
   }
 
-  public static Thread runInThread(Runnable runnable) {
+  public static Thread runInThread(Runnable runnable)
+  {
     return runInThread(runnable, null);
   }
 
-  public static Thread runInThread(Runnable runnable, String threadName) {
+  public static Thread runInThread(Runnable runnable, String threadName)
+  {
     Thread t = new Thread(runnable);
 
     if (threadName != null) {
@@ -156,7 +174,8 @@ public class TestUtils {
    * @param count        how many moments to generate
    * @return
    */
-  public static List<DateTime> generateMoments(DateTime baseDateTime, int count) {
+  public static List<DateTime> generateMoments(DateTime baseDateTime, int count)
+  {
     List<DateTime> result = new ArrayList<DateTime>(count);
 
     for (int i = 0; i < count; i++) {
@@ -174,7 +193,8 @@ public class TestUtils {
    * have fixed or non-fixed offsets. However, it's possible that two timezones with non-fixed
    * offsets have different transitions, only one of such timezones will be returned here.
    */
-  public static Collection<DateTimeZone> getDistinctTimeZones() {
+  public static Collection<DateTimeZone> getDistinctTimeZones()
+  {
     Multimap<Integer, DateTimeZone> timeZones = LinkedHashMultimap.create();
     // figure out a set of timezones with unique offsets
     for (Object obj : DateTimeZone.getAvailableIDs()) {
@@ -210,10 +230,11 @@ public class TestUtils {
     return distinctZones;
   }
 
-  public static void assertContains(String haystack, Object needle) {
+  public static void assertContains(String haystack, Object needle)
+  {
     Assert.assertTrue(
-      haystack != null && haystack.contains(String.valueOf(needle)),
-      String.format("Expected to find '%s' in: %s", needle, haystack)
+        haystack != null && haystack.contains(String.valueOf(needle)),
+        String.format("Expected to find '%s' in: %s", needle, haystack)
     );
   }
 
@@ -226,7 +247,8 @@ public class TestUtils {
    * @param actual
    * @param expected
    */
-  public static void assertEqualsWithNiceMessage(Object actual, Object expected) {
+  public static void assertEqualsWithNiceMessage(Object actual, Object expected)
+  {
     assertEqualsWithNiceMessage(actual, expected, null);
   }
 
@@ -240,15 +262,16 @@ public class TestUtils {
    * @param expected expected value
    * @param message  custom message to prepend to default message
    */
-  public static void assertEqualsWithNiceMessage(Object actual, Object expected, String message) {
+  public static void assertEqualsWithNiceMessage(Object actual, Object expected, String message)
+  {
     message = message == null ? "" : (message + " ");
 
     // using the same formatting as Assert.format() makes Idea do nice UI things (e.g., "Click to
     // see difference")
     assertEquals(
-      actual,
-      expected,
-      message + "expected:<" + expected + "> but was:<" + actual + ">"
+        actual,
+        expected,
+        message + "expected:<" + expected + "> but was:<" + actual + ">"
     );
   }
 }

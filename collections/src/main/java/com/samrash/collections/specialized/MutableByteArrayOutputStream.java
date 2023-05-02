@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.ByteArray;
@@ -23,18 +24,22 @@ import java.io.ByteArrayOutputStream;
  * allows direct access to the underlying buffer without a copy
  * also has a higher default size
  */
-public class MutableByteArrayOutputStream extends ByteArrayOutputStream {
+public class MutableByteArrayOutputStream extends ByteArrayOutputStream
+{
 
-  public MutableByteArrayOutputStream() {
+  public MutableByteArrayOutputStream()
+  {
     // use a higher default size
     this(1024);
   }
 
-  public MutableByteArrayOutputStream(int size) {
+  public MutableByteArrayOutputStream(int size)
+  {
     super(size);
   }
 
-  public ByteArray getBytes() {
+  public ByteArray getBytes()
+  {
     return ByteArray.wrap(buf, 0, size());
   }
 }

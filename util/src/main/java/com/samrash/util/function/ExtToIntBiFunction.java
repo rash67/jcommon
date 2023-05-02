@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.ToIntBiFunction;
 
-public interface ExtToIntBiFunction<T, U, E extends Throwable> {
+public interface ExtToIntBiFunction<T, U, E extends Throwable>
+{
   int applyAsInt(T t, U u) throws E;
 
-  static <T, U> ToIntBiFunction<T, U> quiet(ExtToIntBiFunction<T, U, ?> toIntBiFunction) {
+  static <T, U> ToIntBiFunction<T, U> quiet(ExtToIntBiFunction<T, U, ?> toIntBiFunction)
+  {
     return (t, u) -> ExtIntSupplier.quiet(() -> toIntBiFunction.applyAsInt(t, u)).getAsInt();
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.samrash.collectionsbase.Mapper;
@@ -20,8 +21,10 @@ import com.samrash.collectionsbase.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListMapper {
-  public static <X,Y> List<Y> map(List<X> list, Mapper<X, Y> mapper) {
+public class ListMapper
+{
+  public static <X, Y> List<Y> map(List<X> list, Mapper<X, Y> mapper)
+  {
     List<Y> result = new ArrayList<Y>();
 
     for (X item : list) {

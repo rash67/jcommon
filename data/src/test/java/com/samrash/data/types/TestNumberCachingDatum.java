@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestNumberCachingDatum {
+public class TestNumberCachingDatum
+{
 
   private NumberCachingDatum doubleValueAsString;
   private NumberCachingDatum doubleValue;
@@ -30,38 +32,43 @@ public class TestNumberCachingDatum {
   private NumberCachingDatum stringValue;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     intValue = new NumberCachingDatum(DatumFactory.toDatum(100));
     intValueAsString = new NumberCachingDatum(DatumFactory.toDatum("100"));
     longValue = new NumberCachingDatum(DatumFactory.toDatum(Long.MAX_VALUE));
     longValueAsString = new NumberCachingDatum(DatumFactory.toDatum(Long.MAX_VALUE));
     doubleValue = new NumberCachingDatum(DatumFactory.toDatum(Math.PI));
     doubleValueAsString =
-      new NumberCachingDatum(DatumFactory.toDatum(String.format("%s", Math.PI)));
+        new NumberCachingDatum(DatumFactory.toDatum(String.format("%s", Math.PI)));
     stringValue = new NumberCachingDatum(DatumFactory.toDatum("smatchemo"));
   }
 
   @Test(groups = "fast")
-  public void testIntegerLongCompatible() throws Exception {
+  public void testIntegerLongCompatible() throws Exception
+  {
     Assert.assertTrue(DatumType.isLongCompatible(intValue));
     Assert.assertTrue(DatumType.isLongCompatible(intValueAsString));
   }
 
 
   @Test(groups = "fast")
-  public void testLongLongCompatible() throws Exception {
+  public void testLongLongCompatible() throws Exception
+  {
     Assert.assertTrue(DatumType.isLongCompatible(longValue));
     Assert.assertTrue(DatumType.isLongCompatible(longValueAsString));
   }
 
   @Test(groups = "fast")
-  public void testDoubleLongCompatible() throws Exception {
+  public void testDoubleLongCompatible() throws Exception
+  {
     Assert.assertFalse(DatumType.isLongCompatible(doubleValue));
     Assert.assertFalse(DatumType.isLongCompatible(doubleValueAsString));
   }
 
   @Test(groups = "fast")
-  public void testStringLongCompatible() throws Exception {
+  public void testStringLongCompatible() throws Exception
+  {
     Assert.assertFalse(DatumType.isLongCompatible(stringValue));
   }
 }

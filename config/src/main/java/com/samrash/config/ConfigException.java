@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
-public class ConfigException extends RuntimeException {
-  public ConfigException() {
+public class ConfigException extends RuntimeException
+{
+  public ConfigException()
+  {
   }
 
-  public ConfigException(String message) {
+  public ConfigException(String message)
+  {
     super(message);
   }
 
-  public ConfigException(String message, Throwable cause) {
+  public ConfigException(String message, Throwable cause)
+  {
     super(message, cause);
   }
 
-  public ConfigException(Throwable cause) {
+  public ConfigException(Throwable cause)
+  {
     super(cause);
   }
 }

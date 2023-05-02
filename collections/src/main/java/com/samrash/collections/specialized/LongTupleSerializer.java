@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.util.serialization.SerDeException;
@@ -23,18 +24,22 @@ import java.io.IOException;
 
 /**
  * base serializer for all long[](TimestampedLongTuple) types
+ *
  * @param <T>
  */
-public class LongTupleSerializer implements Serializer<long[]> {
+public class LongTupleSerializer implements Serializer<long[]>
+{
   @Override
-  public void serialize(long[] value, DataOutput out) throws SerDeException {
+  public void serialize(long[] value, DataOutput out) throws SerDeException
+  {
     try {
       // don't write length--assumption is SerDe knows what it's writing
       for (long item : value) {
         out.writeLong(item);
       }
 
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new SerDeException(e);
     }
   }

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
-
-
 
 
 import com.samrash.util.serialization.SerDe;
@@ -26,7 +25,8 @@ import java.util.List;
  * general type of a Datum; this can help a caller determine the type
  * of the asRaw() method and is used for serializing Datums
  */
-public enum DatumType {
+public enum DatumType
+{
   NULL(new NullDatum.SerDeImpl(), -1),
   BOOLEAN(new BooleanDatum.SerDeImpl(), 0),
   BYTE(new ByteDatum.SerDeImpl(), 1),
@@ -45,24 +45,29 @@ public enum DatumType {
   private final SerDe<Datum> serDe;
   private final byte typeAsByte;
 
-  DatumType(SerDe<Datum> serDe, byte typeAsByte) {
+  DatumType(SerDe<Datum> serDe, byte typeAsByte)
+  {
     this.serDe = serDe;
     this.typeAsByte = typeAsByte;
   }
 
-  DatumType(SerDe<Datum> serDe, int i) {
+  DatumType(SerDe<Datum> serDe, int i)
+  {
     this(serDe, (byte) i);
   }
 
-  public SerDe<Datum> getSerDe() {
+  public SerDe<Datum> getSerDe()
+  {
     return serDe;
   }
 
-  public byte getTypeAsByte() {
+  public byte getTypeAsByte()
+  {
     return typeAsByte;
   }
 
-  public static DatumType fromByte(byte typeAsByte) {
+  public static DatumType fromByte(byte typeAsByte)
+  {
     if (typeAsByte == NULL.getTypeAsByte()) {
       return NULL;
     } else if (typeAsByte == BOOLEAN.getTypeAsByte()) {
@@ -100,7 +105,8 @@ public enum DatumType {
    * @param datum
    * @return
    */
-  public static boolean isLongCompatible(Datum datum) {
+  public static boolean isLongCompatible(Datum datum)
+  {
     DatumType datumType = datum.getType();
     boolean singleItemType = datumType.compareTo(BOOLEAN) >= 0 && datumType.compareTo(LONG) <= 0;
 

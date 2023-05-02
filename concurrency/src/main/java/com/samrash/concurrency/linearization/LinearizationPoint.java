@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/*
+ * modified by Sam Rash (rash67) 2023
+ */
+
 package com.samrash.concurrency.linearization;
 
 import java.util.concurrent.TimeUnit;
@@ -20,16 +25,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * similar to a write lock, will block other ConcurrentPoints and
  * LinearizationPoints.
- *
+ * <p>
  * * NOTE: use start/complete in a try/finally block the same as Lock
  */
-public interface LinearizationPoint {
-  public void start();
-  public void complete();
-  public void waitForStart() throws InterruptedException;
-  public boolean waitForStart(long timeout, TimeUnit unit)
-    throws InterruptedException;
-  public void waitForCompletion() throws InterruptedException;
-  public boolean waitForCompletion(long timeout, TimeUnit unit)
-    throws InterruptedException;
+public interface LinearizationPoint
+{
+  void start();
+
+  void complete();
+
+  void waitForStart() throws InterruptedException;
+
+  boolean waitForStart(long timeout, TimeUnit unit) throws InterruptedException;
+
+  void waitForCompletion() throws InterruptedException;
+
+  boolean waitForCompletion(long timeout, TimeUnit unit) throws InterruptedException;
 }

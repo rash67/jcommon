@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.json.JSONException;
@@ -20,13 +21,16 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class ExpandedConfFileJSONProvider extends AbstractExpandedConfJSONProvider {
-  public ExpandedConfFileJSONProvider(File root) {
+public class ExpandedConfFileJSONProvider extends AbstractExpandedConfJSONProvider
+{
+  public ExpandedConfFileJSONProvider(File root)
+  {
     super(root.getAbsolutePath());
   }
 
   @Override
-  protected String resolve(String parent, String config) {
+  protected String resolve(String parent, String config)
+  {
     File file = new File(config);
     if (file.isAbsolute() || parent == null) {
       return file.getAbsolutePath();
@@ -40,7 +44,8 @@ public class ExpandedConfFileJSONProvider extends AbstractExpandedConfJSONProvid
   }
 
   @Override
-  protected JSONObject load(String config) throws JSONException {
+  protected JSONObject load(String config) throws JSONException
+  {
     File configFile = new File(config);
 
     return new FileJSONProvider(configFile).get();

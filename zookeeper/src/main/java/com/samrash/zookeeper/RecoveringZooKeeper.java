@@ -13,47 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper.States;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-import org.apache.zookeeper.ZooKeeper.States;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class RecoveringZooKeeper implements ZooKeeperIface {
+public class RecoveringZooKeeper implements ZooKeeperIface
+{
   private static final Logger LOG = LoggerFactory.getLogger(RecoveringZooKeeper.class);
 
   private final ZooKeeperIface zk;
   private final RetryCounterFactory retryCounterFactory;
 
   public RecoveringZooKeeper(
-    ZooKeeperIface zk, int maxRetries, int retryIntervalMillis
-  ) {
+      ZooKeeperIface zk, int maxRetries, int retryIntervalMillis
+  )
+  {
     this.zk = zk;
     this.retryCounterFactory =
-      new RetryCounterFactory(maxRetries, retryIntervalMillis);
+        new RetryCounterFactory(maxRetries, retryIntervalMillis);
   }
 
   @Override
-  public long getSessionId() {
+  public long getSessionId()
+  {
     return zk.getSessionId();
   }
 
   @Override
-  public void close() throws InterruptedException {
+  public void close() throws InterruptedException
+  {
     zk.close();
   }
 
   @Override
   public String create(String path, byte[] data, List<ACL> acl, CreateMode createMode)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     switch (createMode) {
       case EPHEMERAL:
       case PERSISTENT:
@@ -76,13 +82,15 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public void delete(String path, int version)
-    throws InterruptedException, KeeperException {
+      throws InterruptedException, KeeperException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         zk.delete(path, version);
         return;
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case NONODE:
             return; // Delete was successful
@@ -92,7 +100,7 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper delete failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -109,19 +117,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public Stat exists(String path, Watcher watcher)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.exists(path, watcher);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper exists failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -138,19 +148,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public Stat exists(String path, boolean watch)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.exists(path, watch);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper exists failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -167,19 +179,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public byte[] getData(String path, Watcher watcher, Stat stat)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.getData(path, watcher, stat);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper getData failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -196,19 +210,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public byte[] getData(String path, boolean watch, Stat stat)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.getData(path, watch, stat);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper getData failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -225,19 +241,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public Stat setData(String path, byte[] data, int version)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.setData(path, data, version);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper setData failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -254,19 +272,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public List<String> getChildren(String path, Watcher watcher)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.getChildren(path, watcher);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper getChildren failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -283,19 +303,21 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
 
   @Override
   public List<String> getChildren(String path, boolean watch)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.getChildren(path, watch);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper getChildren failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -311,19 +333,22 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
   }
 
   @Override
-  public States getState() {
+  public States getState()
+  {
     return zk.getState();
   }
 
   // ------------------------- Internal Helpers ------------------------ //
 
   private String createNonSequential(String path, byte[] data, List<ACL> acl, CreateMode createMode)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     while (true) {
       try {
         return zk.create(path, data, acl, createMode);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case NODEEXISTS:
             // Non-sequential node was successfully created
@@ -334,7 +359,7 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper create failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -350,7 +375,8 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
   }
 
   private String createEphemeralSequential(String path, byte[] data, List<ACL> acl, CreateMode createMode)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     RetryCounter retryCounter = retryCounterFactory.create();
     boolean first = true;
     while (true) {
@@ -364,14 +390,15 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
         }
         first = false;
         return zk.create(path, data, acl, createMode);
-      } catch (KeeperException e) {
+      }
+      catch (KeeperException e) {
         switch (e.code()) {
           case CONNECTIONLOSS:
           case OPERATIONTIMEOUT:
             LOG.warn("Possibly transient ZooKeeper exception: " + e);
             if (!retryCounter.shouldRetry()) {
               LOG.error("ZooKeeper create failed after "
-                + retryCounter.getMaxRetries() + " retries");
+                        + retryCounter.getMaxRetries() + " retries");
               throw e;
             }
             break;
@@ -387,11 +414,12 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
   }
 
   private String findMyEphemeralSequentialNode(String path)
-    throws KeeperException, InterruptedException {
+      throws KeeperException, InterruptedException
+  {
     int lastSlashIdx = path.lastIndexOf('/');
-    assert(lastSlashIdx != -1);
+    assert (lastSlashIdx != -1);
     String parent = path.substring(0, lastSlashIdx);
-    String nodePrefix = path.substring(lastSlashIdx+1);
+    String nodePrefix = path.substring(lastSlashIdx + 1);
 
     List<String> nodes = zk.getChildren(parent, false);
     List<String> matching = ZkUtil.filterByPrefix(nodes, nodePrefix);
@@ -405,51 +433,60 @@ public class RecoveringZooKeeper implements ZooKeeperIface {
     return null;
   }
 
-  private static class RetryCounterFactory {
+  private static class RetryCounterFactory
+  {
     private final int maxRetries;
     private final int retryIntervalMillis;
 
-    private RetryCounterFactory(int maxRetries, int retryIntervalMillis) {
+    private RetryCounterFactory(int maxRetries, int retryIntervalMillis)
+    {
       this.maxRetries = maxRetries;
       this.retryIntervalMillis = retryIntervalMillis;
     }
 
-    public RetryCounter create() {
+    public RetryCounter create()
+    {
       return
-        new RetryCounter(
-          maxRetries, retryIntervalMillis, TimeUnit.MILLISECONDS
-        );
+          new RetryCounter(
+              maxRetries, retryIntervalMillis, TimeUnit.MILLISECONDS
+          );
     }
   }
 
-  private static class RetryCounter {
+  private static class RetryCounter
+  {
     private final int maxRetries;
     private int retriesRemaining;
     private final int retryIntervalMillis;
     private final TimeUnit timeUnit;
 
     private RetryCounter(
-      int maxRetries, int retryIntervalMillis, TimeUnit timeUnit
-    ) {
+        int maxRetries, int retryIntervalMillis, TimeUnit timeUnit
+    )
+    {
       this.maxRetries = maxRetries;
       this.retriesRemaining = maxRetries;
       this.retryIntervalMillis = retryIntervalMillis;
       this.timeUnit = timeUnit;
     }
 
-    public int getMaxRetries() {
+    public int getMaxRetries()
+    {
       return maxRetries;
     }
 
-    public void sleepUntilNextRetry() throws InterruptedException {
+    public void sleepUntilNextRetry() throws InterruptedException
+    {
       timeUnit.sleep(retryIntervalMillis);
     }
 
-    public boolean shouldRetry() {
+    public boolean shouldRetry()
+    {
       return retriesRemaining > 0;
     }
 
-    public void useRetry() {
+    public void useRetry()
+    {
       retriesRemaining--;
     }
 

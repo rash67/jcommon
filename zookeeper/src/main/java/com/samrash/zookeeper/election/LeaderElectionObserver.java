@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.election;
 
 import org.apache.zookeeper.KeeperException;
 
-public interface LeaderElectionObserver {
+public interface LeaderElectionObserver
+{
   /**
    * Gets the name of the candidate that is currently the leader
+   *
    * @return Name of the leader, or null if there are no candidates
    * @throws InterruptedException
    * @throws org.apache.zookeeper.KeeperException

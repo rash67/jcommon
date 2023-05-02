@@ -13,28 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.parser;
 
 import java.util.List;
 
-public interface CliConverter<T> {
-  public static CliConverter<String> STRING = new CliConverter<String>() {
+public interface CliConverter<T>
+{
+  public static CliConverter<String> STRING = new CliConverter<String>()
+  {
     @Override
-    public String convert(String value) throws Exception {
+    public String convert(String value) throws Exception
+    {
       return value;
     }
   };
-  public static CliConverter<Integer> INT = new CliConverter<Integer>() {
+  public static CliConverter<Integer> INT = new CliConverter<Integer>()
+  {
     @Override
-    public Integer convert(String value) throws Exception {
+    public Integer convert(String value) throws Exception
+    {
       return value == null ? null : Integer.parseInt(value);
     }
   };
   public static CliConverter<List<Integer>> INT_LIST = new RangeListConverter();
   public static CliConverter<List<String>> LIST = new ListConverter<>(STRING);
-  public static CliConverter<Boolean> BOOLEAN = new CliConverter<Boolean>() {
+  public static CliConverter<Boolean> BOOLEAN = new CliConverter<Boolean>()
+  {
     @Override
-    public Boolean convert(String value) throws Exception {
+    public Boolean convert(String value) throws Exception
+    {
       return value == null ? null : Boolean.valueOf(value);
     }
   };

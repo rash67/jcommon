@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import com.samrash.tools.subprocess.SubprocessBuilder;
@@ -52,7 +53,8 @@ import java.util.Map;
  * If non-interactive, no escape codes are inserted, and {@link com.samrash.tools.io.Status}
  * methods do nothing.
  */
-public class IO {
+public class IO
+{
   private static final String WHITE_ON_RED = "\033[1;37;41m";
   private static final String DEFAULT_COLORS = "\033[0m";
 
@@ -61,7 +63,8 @@ public class IO {
   public final Input in;
   public final SubprocessBuilder subprocess;
 
-  public IO(PrintStream out, PrintStream err, Input in, SubprocessBuilder subprocess) {
+  public IO(PrintStream out, PrintStream err, Input in, SubprocessBuilder subprocess)
+  {
     Console console = System.console();
 
     if (console == null) {
@@ -73,15 +76,17 @@ public class IO {
       this.out = new InteractiveStatusPrintStream(out, status, DEFAULT_COLORS);
       this.err = new InteractiveStatusPrintStream(err, status, WHITE_ON_RED);
       Runtime.getRuntime().addShutdownHook(
-        new Thread(
-          new Runnable() {
-            @Override
-            public void run() {
-              // reset console color and erase final status line
-              IO.this.out.print("");
-            }
-          }
-        )
+          new Thread(
+              new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  // reset console color and erase final status line
+                  IO.this.out.print("");
+                }
+              }
+          )
       );
     }
 
@@ -93,18 +98,21 @@ public class IO {
    * Creates a new container using {@link java.lang.System#out}, {@link java.lang.System#err},
    * and {@link java.lang.System#in}.
    */
-  public IO() {
+  public IO()
+  {
     this(System.out, System.err, new InputStreamInput(System.in));
   }
 
-  public IO(PrintStream out, PrintStream err, Input in) {
+  public IO(PrintStream out, PrintStream err, Input in)
+  {
     this(out, err, in, new SubprocessBuilder());
   }
 
   /**
    * Convenience method equivalent to <code>ask(defaultValue, String.format(format, args))</code>.
    */
-  public <T extends Enum> T ask(T defaultValue, String format, Object... args) {
+  public <T extends Enum> T ask(T defaultValue, String format, Object... args)
+  {
     return ask(defaultValue, String.format(format, args));
   }
 
@@ -134,7 +142,8 @@ public class IO {
    * @param prompt       message to show user
    * @return the {@code enum} value corresponding to the user's input
    */
-  public <T extends Enum> T ask(T defaultValue, String prompt) {
+  public <T extends Enum> T ask(T defaultValue, String prompt)
+  {
     Class<T> enumClass = defaultValue.getDeclaringClass();
     Field[] fields = enumClass.getFields();
     Map<String, T> answers = new LinkedHashMap<>();
@@ -147,14 +156,15 @@ public class IO {
         int modifiers = field.getModifiers();
 
         if (enumClass.isAssignableFrom(field.getType()) &&
-          Modifier.isStatic(modifiers) &&
-          Modifier.isPublic(modifiers)) {
+            Modifier.isStatic(modifiers) &&
+            Modifier.isPublic(modifiers)) {
           String fieldName = enumClass.getName() + "." + field.getName();
           T answer;
 
           try {
             answer = (T) field.get(enumClass);
-          } catch (IllegalAccessException | RuntimeException e) {
+          }
+          catch (IllegalAccessException | RuntimeException e) {
             throw new IllegalArgumentException("Error accessing " + fieldName, e);
           }
 
@@ -171,7 +181,7 @@ public class IO {
 
             if (!value.equals(value.trim().toLowerCase())) {
               throw new IllegalArgumentException(
-                String.format("Values must be all lower-case, but got %s for %s", value, fieldName)
+                  String.format("Values must be all lower-case, but got %s for %s", value, fieldName)
               );
             }
 
@@ -179,7 +189,7 @@ public class IO {
 
             if (existing != null) {
               throw new IllegalArgumentException(
-                String.format("Duplicate value %s for %s", value, fieldName)
+                  String.format("Duplicate value %s for %s", value, fieldName)
               );
             }
           }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.logging;
 
 import org.slf4j.LoggerFactory;
@@ -21,20 +22,24 @@ import org.slf4j.LoggerFactory;
  * Logger with efficient var-args support.  Underlying logger is sl4j, but may be swapped to
  * any logger.
  */
-public class LoggerImpl implements Logger {
+public class LoggerImpl implements Logger
+{
   private final org.slf4j.Logger logger;
 
-  public LoggerImpl(org.slf4j.Logger logger) {
+  public LoggerImpl(org.slf4j.Logger logger)
+  {
     this.logger = logger;
   }
 
-  public static Logger getLogger(Class<?> clazz) {
+  public static Logger getLogger(Class<?> clazz)
+  {
     org.slf4j.Logger logger = LoggerFactory.getLogger(clazz);
 
     return new LoggerImpl(logger);
   }
 
-  public static Logger getLogger(String name) {
+  public static Logger getLogger(String name)
+  {
     org.slf4j.Logger logger = LoggerFactory.getLogger(name);
 
     return new LoggerImpl(logger);
@@ -52,7 +57,8 @@ public class LoggerImpl implements Logger {
    *
    * @return a logger for the current scope
    */
-  public static Logger getClassLogger() {
+  public static Logger getClassLogger()
+  {
     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
     StackTraceElement element = stacktrace[2];
     String name = element.getClassName();
@@ -61,46 +67,54 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public boolean isTraceEnabled() {
+  public boolean isTraceEnabled()
+  {
     return logger.isTraceEnabled();
   }
 
   @Override
-  public boolean isDebugEnabled() {
+  public boolean isDebugEnabled()
+  {
     return logger.isDebugEnabled();
   }
 
   @Override
-  public boolean isInfoEnabled() {
+  public boolean isInfoEnabled()
+  {
     return logger.isInfoEnabled();
   }
 
   @Override
-  public boolean isWarnEnabled() {
+  public boolean isWarnEnabled()
+  {
     return logger.isWarnEnabled();
   }
 
   @Override
-  public boolean isErrorEnabled() {
+  public boolean isErrorEnabled()
+  {
     return logger.isErrorEnabled();
   }
 
   @Override
-  public void trace(String format, Object... args) {
+  public void trace(String format, Object... args)
+  {
     if (logger.isTraceEnabled()) {
       logger.trace(formatMessage(format, args));
     }
   }
 
   @Override
-  public void trace(Throwable t, String format, Object... args) {
+  public void trace(Throwable t, String format, Object... args)
+  {
     if (logger.isTraceEnabled()) {
       logger.trace(formatMessage(format, args), t);
     }
   }
 
   @Override
-  public void debug(String format, Object... args) {
+  public void debug(String format, Object... args)
+  {
     if (logger.isDebugEnabled()) {
       String message = formatMessage(format, args);
 
@@ -109,7 +123,8 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public void debug(Throwable t, String format, Object... args) {
+  public void debug(Throwable t, String format, Object... args)
+  {
     if (logger.isDebugEnabled()) {
       String message = formatMessage(format, args);
 
@@ -119,7 +134,8 @@ public class LoggerImpl implements Logger {
 
   @Override
   @Deprecated
-  public void debug(String message, Throwable throwable) {
+  public void debug(String message, Throwable throwable)
+  {
     if (logger.isDebugEnabled()) {
       logger.debug(message, throwable);
     }
@@ -127,7 +143,8 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public void info(String format, Object... args) {
+  public void info(String format, Object... args)
+  {
     if (logger.isInfoEnabled()) {
       String message = formatMessage(format, args);
 
@@ -136,7 +153,8 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public void info(Throwable t, String format, Object... args) {
+  public void info(Throwable t, String format, Object... args)
+  {
     if (logger.isInfoEnabled()) {
       String message = formatMessage(format, args);
 
@@ -146,14 +164,16 @@ public class LoggerImpl implements Logger {
 
   @Override
   @Deprecated
-  public void info(String message, Throwable throwable) {
+  public void info(String message, Throwable throwable)
+  {
     if (logger.isInfoEnabled()) {
       logger.warn(message, throwable);
     }
   }
 
   @Override
-  public void warn(String format, Object... args) {
+  public void warn(String format, Object... args)
+  {
     if (logger.isWarnEnabled()) {
       String message = formatMessage(format, args);
 
@@ -162,7 +182,8 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public void warn(Throwable t, String format, Object... args) {
+  public void warn(Throwable t, String format, Object... args)
+  {
     if (logger.isWarnEnabled()) {
       String message = formatMessage(format, args);
 
@@ -172,14 +193,16 @@ public class LoggerImpl implements Logger {
 
   @Override
   @Deprecated
-  public void warn(String message, Throwable throwable) {
+  public void warn(String message, Throwable throwable)
+  {
     if (logger.isWarnEnabled()) {
       logger.warn(message, throwable);
     }
   }
 
   @Override
-  public void error(String format, Object... args) {
+  public void error(String format, Object... args)
+  {
     if (logger.isErrorEnabled()) {
       String message = formatMessage(format, args);
 
@@ -188,7 +211,8 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
-  public void error(Throwable t, String format, Object... args) {
+  public void error(Throwable t, String format, Object... args)
+  {
     if (logger.isErrorEnabled()) {
       String message = formatMessage(format, args);
 
@@ -198,18 +222,21 @@ public class LoggerImpl implements Logger {
 
   @Override
   @Deprecated
-  public void error(String message, Throwable throwable) {
+  public void error(String message, Throwable throwable)
+  {
     if (logger.isErrorEnabled()) {
       logger.error(message, throwable);
     }
   }
 
   @Override
-  public String getName() {
+  public String getName()
+  {
     return logger.getName();
   }
 
-  private String formatMessage(String format, Object[] args) {
+  private String formatMessage(String format, Object[] args)
+  {
     return args.length == 0 ? format : String.format(format, args);
   }
 }

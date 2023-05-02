@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 
@@ -22,8 +23,10 @@ import java.util.Set;
 
 /**
  * maker interface that is a Set<T> that also implements SnapshotProvider
+ *
  * @param <T>
  */
 public interface SnapshotableSet<T>
-  extends Set<T>, SnapshotProvider<SnapshotableSet<T>> {
+    extends Set<T>, SnapshotProvider<SnapshotableSet<T>>
+{
 }

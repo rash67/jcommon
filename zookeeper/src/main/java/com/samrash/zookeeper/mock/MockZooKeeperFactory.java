@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.mock;
 
 
@@ -27,30 +28,36 @@ import java.io.IOException;
  * MockZooKeeperDataStore. This simulates multiple clients connecting to the
  * same ZooKeeper qorum.
  */
-public class MockZooKeeperFactory implements ZooKeeperFactory {
+public class MockZooKeeperFactory implements ZooKeeperFactory
+{
   private final MockZooKeeperDataStore dataStore;
   private MockZooKeeper lastZk;
   private boolean throwOnNextCreate = false;
   private boolean autoConnect = false;
 
-  public MockZooKeeperFactory(MockZooKeeperDataStore dataStore) {
+  public MockZooKeeperFactory(MockZooKeeperDataStore dataStore)
+  {
     this.dataStore = dataStore;
   }
 
-  public MockZooKeeper getLastZooKeeper() {
+  public MockZooKeeper getLastZooKeeper()
+  {
     return lastZk;
   }
 
-  public void throwOnNextCreate() {
+  public void throwOnNextCreate()
+  {
     throwOnNextCreate = true;
   }
 
-  public void setAutoConnect(boolean autoConnect) {
+  public void setAutoConnect(boolean autoConnect)
+  {
     this.autoConnect = autoConnect;
   }
 
   @Override
-  public ZooKeeperIface create(Watcher watcher) throws IOException {
+  public ZooKeeperIface create(Watcher watcher) throws IOException
+  {
     if (throwOnNextCreate) {
       throwOnNextCreate = false;
       throw new IOException();

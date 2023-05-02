@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.mock;
 
 import com.samrash.zookeeper.ZooKeeperFactory;
@@ -25,37 +26,44 @@ import org.apache.zookeeper.ZooKeeper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockZkConnectionManager implements ZkConnectionManager {
+public class MockZkConnectionManager implements ZkConnectionManager
+{
   private final ZooKeeperFactory zooKeeperFactory;
   private ZooKeeperIface zk;
   private final List<Watcher> watchers = new ArrayList<Watcher>();
   private boolean isShutdown = false;
 
-  public MockZkConnectionManager(ZooKeeperFactory zooKeeperFactory) {
+  public MockZkConnectionManager(ZooKeeperFactory zooKeeperFactory)
+  {
     this.zooKeeperFactory = zooKeeperFactory;
     refreshClient();
   }
 
-  public void refreshClient() {
+  public void refreshClient()
+  {
     try {
       if (zk != null) {
         zk.close();
       }
-      zk = zooKeeperFactory.create(new Watcher() {
+      zk = zooKeeperFactory.create(new Watcher()
+      {
         @Override
-        public void process(WatchedEvent event) {
+        public void process(WatchedEvent event)
+        {
           for (Watcher watcher : watchers) {
             watcher.process(event);
           }
         }
       });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
   @Override
-  public ZooKeeperIface getClient() throws InterruptedException {
+  public ZooKeeperIface getClient() throws InterruptedException
+  {
     if (isShutdown) {
       throw new IllegalStateException("Already shutdown");
     }
@@ -63,13 +71,15 @@ public class MockZkConnectionManager implements ZkConnectionManager {
   }
 
   @Override
-  public ZooKeeper.States registerWatcher(Watcher watcher) {
+  public ZooKeeper.States registerWatcher(Watcher watcher)
+  {
     watchers.add(watcher);
     return zk.getState();
   }
 
   @Override
-  public void shutdown() throws InterruptedException {
+  public void shutdown() throws InterruptedException
+  {
     if (isShutdown) {
       throw new IllegalStateException("Multiple shutdowns");
     }

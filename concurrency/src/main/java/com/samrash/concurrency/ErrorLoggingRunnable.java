@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ErrorLoggingRunnable implements Runnable {
+public class ErrorLoggingRunnable implements Runnable
+{
   private static final Logger LOG = LoggerFactory.getLogger(ErrorLoggingRunnable.class);
   private final Runnable delegate;
 
-  public ErrorLoggingRunnable(Runnable delegate) {
+  public ErrorLoggingRunnable(Runnable delegate)
+  {
     this.delegate = delegate;
   }
 
   @Override
-  public void run() {
+  public void run()
+  {
     try {
       delegate.run();
-    } catch (Throwable t) {
+    }
+    catch (Throwable t) {
       LOG.error("error", t);
     }
   }

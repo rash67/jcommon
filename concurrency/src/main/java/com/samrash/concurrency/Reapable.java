@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
-public interface Reapable<E extends Exception> {
+public interface Reapable<E extends Exception>
+{
   public void shutdown() throws E;
 }

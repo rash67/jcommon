@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.DateTime;
@@ -21,9 +22,10 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
-public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMultiWindowStat {
+public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMultiWindowStat
+{
   private static final ReadableDuration COUNTER_GRANULARITY =
-    Duration.standardSeconds(6);
+      Duration.standardSeconds(6);
 
   private final Object rollLock = new Object();
   private final CompositeMax allTimeCounter;
@@ -33,11 +35,12 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
   private volatile EventCounterIf<EventCounter> currentCounter;
 
   MultiWindowMax(
-    CompositeMax allTimeCounter,
-    CompositeMax hourCounter,
-    CompositeMax tenMinuteCounter,
-    CompositeMax minuteCounter
-  ) {
+      CompositeMax allTimeCounter,
+      CompositeMax hourCounter,
+      CompositeMax tenMinuteCounter,
+      CompositeMax minuteCounter
+  )
+  {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
     this.tenMinuteCounter = tenMinuteCounter;
@@ -45,46 +48,53 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
     currentCounter = addNewCurrentCounter();
   }
 
-  public MultiWindowMax() {
+  public MultiWindowMax()
+  {
     this(
-      new CompositeMax(Duration.standardMinutes(Integer.MAX_VALUE)),
-      new CompositeMax(Duration.standardMinutes(60)),
-      new CompositeMax(Duration.standardMinutes(10)),
-      new CompositeMax(Duration.standardMinutes(1))
+        new CompositeMax(Duration.standardMinutes(Integer.MAX_VALUE)),
+        new CompositeMax(Duration.standardMinutes(60)),
+        new CompositeMax(Duration.standardMinutes(10)),
+        new CompositeMax(Duration.standardMinutes(1))
     );
   }
 
   @Override
-  public void add(long value) {
+  public void add(long value)
+  {
     rollCurrentIfNeeded();
     currentCounter.add(value);
   }
 
   @Override
-  public long getMinuteValue() {
+  public long getMinuteValue()
+  {
     rollCurrentIfNeeded();
     return minuteCounter.getValue();
   }
 
   @Override
-  public long getTenMinuteValue() {
+  public long getTenMinuteValue()
+  {
     rollCurrentIfNeeded();
     return tenMinuteCounter.getValue();
   }
 
   @Override
-  public long getHourValue() {
+  public long getHourValue()
+  {
     rollCurrentIfNeeded();
     return hourCounter.getValue();
   }
 
   @Override
-  public long getAllTimeValue() {
+  public long getAllTimeValue()
+  {
     rollCurrentIfNeeded();
     return allTimeCounter.getValue();
   }
 
-  private void rollCurrentIfNeeded() {
+  private void rollCurrentIfNeeded()
+  {
     //do outside the synchronized block
     long now = DateTimeUtils.currentTimeMillis();
     // this is false for the majority of calls, so skip lock acquisition
@@ -98,12 +108,13 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
     }
   }
 
-  private MaxEventCounter addNewCurrentCounter() {
+  private MaxEventCounter addNewCurrentCounter()
+  {
     ReadableDateTime now = new DateTime();
 
     MaxEventCounter maxEventCounter = new MaxEventCounter(
-      now,
-      now.toDateTime().plus(COUNTER_GRANULARITY)
+        now,
+        now.toDateTime().plus(COUNTER_GRANULARITY)
     );
 
     allTimeCounter.addEventCounter(maxEventCounter);
@@ -114,12 +125,13 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
     return maxEventCounter;
   }
 
-  public MultiWindowMax merge(MultiWindowMax other) {
+  public MultiWindowMax merge(MultiWindowMax other)
+  {
     return new MultiWindowMax(
-      (CompositeMax) allTimeCounter.merge(other.allTimeCounter),
-      (CompositeMax) hourCounter.merge(other.hourCounter),
-      (CompositeMax) tenMinuteCounter.merge(other.tenMinuteCounter),
-      (CompositeMax) minuteCounter.merge(other.minuteCounter)
+        (CompositeMax) allTimeCounter.merge(other.allTimeCounter),
+        (CompositeMax) hourCounter.merge(other.hourCounter),
+        (CompositeMax) tenMinuteCounter.merge(other.tenMinuteCounter),
+        (CompositeMax) minuteCounter.merge(other.minuteCounter)
     );
   }
 }

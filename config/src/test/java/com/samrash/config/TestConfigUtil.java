@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestConfigUtil {
+public class TestConfigUtil
+{
   @Test(groups = "fast")
-  public void testDurationSanity() throws Exception {
+  public void testDurationSanity() throws Exception
+  {
     Assert.assertEquals(ConfigUtil.getDurationMillis("61"), 61);
     Assert.assertEquals(ConfigUtil.getDurationMillis("59ms"), 59);
     Assert.assertEquals(ConfigUtil.getDurationMillis("100s"), 100000);
@@ -33,7 +36,8 @@ public class TestConfigUtil {
   }
 
   @Test(groups = "fast")
-  public void testSizeSanity() throws Exception {
+  public void testSizeSanity() throws Exception
+  {
     Assert.assertEquals(ConfigUtil.getSizeBytes("1001"), 1001);
     Assert.assertEquals(ConfigUtil.getSizeBytes("101b"), 101);
     Assert.assertEquals(ConfigUtil.getSizeBytes("10k"), 10240);

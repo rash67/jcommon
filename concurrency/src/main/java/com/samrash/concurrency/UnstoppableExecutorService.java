@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.Collection;
@@ -28,33 +29,38 @@ import java.util.concurrent.TimeoutException;
  * the idea here is that we want to shield an ExecutorService from any call
  * that might shut it down, while preserving the semantics that any user
  * of this object can still shut it down, await termination, etc
- *  from its perspective
- *
+ * from its perspective
+ * <p>
  * Think of it as a localized view of another executor
  */
-public class UnstoppableExecutorService implements ExecutorService {
+public class UnstoppableExecutorService implements ExecutorService
+{
   private final UnstoppableExecutorServiceCore executorCore;
   private final ExecutorService executor;
 
-  public UnstoppableExecutorService(ExecutorService executor) {
+  public UnstoppableExecutorService(ExecutorService executor)
+  {
     this.executor = executor;
     executorCore = new UnstoppableExecutorServiceCore();
   }
 
   @Override
-  public <T> Future<T> submit(Callable<T> task) {
+  public <T> Future<T> submit(Callable<T> task)
+  {
     return executor.submit(executorCore.registerTask(task));
   }
 
   @Override
-  public <T> Future<T> submit(Runnable task, T result) {
+  public <T> Future<T> submit(Runnable task, T result)
+  {
     TrackedRunnable trackedTask = executorCore.registerTask(task);
 
     return executorCore.trackFuture(executor.submit(trackedTask, result), trackedTask);
   }
 
   @Override
-  public Future<?> submit(Runnable task) {
+  public Future<?> submit(Runnable task)
+  {
     TrackedRunnable trackedTask = executorCore.registerTask(task);
 
     return executorCore.trackFuture(executor.submit(trackedTask), trackedTask);
@@ -62,7 +68,8 @@ public class UnstoppableExecutorService implements ExecutorService {
 
   @Override
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException {
+      throws InterruptedException
+  {
 
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
@@ -71,20 +78,22 @@ public class UnstoppableExecutorService implements ExecutorService {
 
   @Override
   public <T> List<Future<T>> invokeAll(
-    Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
-  ) throws InterruptedException {
+      Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
+  ) throws InterruptedException
+  {
 
     List<TrackedCallable<T>> trackedTaskList =
-      executorCore.registerCallableList(tasks);
+        executorCore.registerCallableList(tasks);
 
     return executorCore.trackFutureList(
-      executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList
+        executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList
     );
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException
+  {
 
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
@@ -94,7 +103,8 @@ public class UnstoppableExecutorService implements ExecutorService {
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-    throws InterruptedException, ExecutionException, TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException
+  {
 
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
@@ -102,33 +112,39 @@ public class UnstoppableExecutorService implements ExecutorService {
   }
 
   @Override
-  public void execute(Runnable command) {
+  public void execute(Runnable command)
+  {
     executor.execute(executorCore.registerTask(command));
   }
 
   // shutdown/termination functions delegate to the UnstoppableExecutorCore
   @Override
-  public void shutdown() {
+  public void shutdown()
+  {
     executorCore.shutdown();
   }
 
   @Override
-  public List<Runnable> shutdownNow() {
+  public List<Runnable> shutdownNow()
+  {
     return executorCore.shutdownNow();
   }
 
   @Override
-  public boolean isShutdown() {
+  public boolean isShutdown()
+  {
     return executorCore.isShutdown();
   }
 
   @Override
-  public boolean isTerminated() {
+  public boolean isTerminated()
+  {
     return executorCore.isTerminated();
   }
 
   @Override
-  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException
+  {
     return executorCore.awaitTermination(timeout, unit);
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.collect.Iterators;
@@ -32,7 +33,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @param <K> key type for the map
  */
-public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
+public class CounterMap<K> implements Iterable<Map.Entry<K, Long>>
+{
   private static final ValueComparableAtomicLong ZERO = new ValueComparableAtomicLong(0);
 
   private final ConcurrentMap<K, ValueComparableAtomicLong> counters = new ConcurrentHashMap<>();
@@ -47,14 +49,16 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
    * @param delta - positive/negative amount to increment a counter
    * @return the new value after updating
    */
-  public long addAndGet(K key, long delta) {
+  public long addAndGet(K key, long delta)
+  {
     long retVal;
 
     // ensure that no key is removed while we are updating the counter
     removalLock.readLock().lock();
     try {
       retVal = getCounter(key).addAndGet(delta);
-    } finally {
+    }
+    finally {
       removalLock.readLock().unlock();
     }
 
@@ -65,7 +69,8 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     return retVal;
   }
 
-  public long size() {
+  public long size()
+  {
     return counters.size();
   }
 
@@ -78,14 +83,16 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
    * @param delta - positive/negative amount to increment a counter
    * @return the old value before updating
    */
-  public long getAndAdd(K key, long delta) {
+  public long getAndAdd(K key, long delta)
+  {
     long retVal;
 
     // ensure that no key is removed while we are updating the counter
     removalLock.readLock().lock();
     try {
       retVal = getCounter(key).getAndAdd(delta);
-    } finally {
+    }
+    finally {
       removalLock.readLock().unlock();
     }
 
@@ -96,7 +103,8 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     return retVal;
   }
 
-  private ValueComparableAtomicLong getCounter(K key) {
+  private ValueComparableAtomicLong getCounter(K key)
+  {
     ValueComparableAtomicLong counter = counters.get(key);
     if (counter == null) {
       ValueComparableAtomicLong newCounter = new ValueComparableAtomicLong(0);
@@ -106,11 +114,13 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     return counter;
   }
 
-  private void tryCleanup(K key) {
+  private void tryCleanup(K key)
+  {
     removalLock.writeLock().lock();
     try {
       counters.remove(key, ZERO);
-    } finally {
+    }
+    finally {
       removalLock.writeLock().unlock();
     }
   }
@@ -119,7 +129,8 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
    * @param key
    * @return value removed if present, null otherwise
    */
-  public AtomicLong remove(K key) {
+  public AtomicLong remove(K key)
+  {
     // no locking, this is an unconditional remove
     ValueComparableAtomicLong removedCounter = counters.remove(key);
     return removedCounter == null ? null : removedCounter.getValue();
@@ -129,7 +140,8 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
    * @param key
    * @return value of a counter.  Returns 0 if not present
    */
-  public long get(K key) {
+  public long get(K key)
+  {
     ValueComparableAtomicLong counter = counters.get(key);
 
     if (counter == null) {
@@ -146,7 +158,8 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
    * @param value
    * @return
    */
-  public long tryInitializeCounter(K key, long value) {
+  public long tryInitializeCounter(K key, long value)
+  {
     removalLock.readLock().lock();
 
     try {
@@ -155,12 +168,14 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
       counter.compareAndSet(0L, value);
 
       return counter.get();
-    } finally {
+    }
+    finally {
       removalLock.readLock().unlock();
     }
   }
 
-  public long trySetCounter(K key, long value) {
+  public long trySetCounter(K key, long value)
+  {
     removalLock.readLock().lock();
 
     try {
@@ -169,72 +184,90 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
       counter.compareAndSet(counter.get(), value);
 
       return counter.get();
-    } finally {
+    }
+    finally {
       removalLock.readLock().unlock();
     }
   }
 
-  public void clear() {
+  public void clear()
+  {
     removalLock.writeLock().lock();
 
     try {
       counters.clear();
-    } finally {
+    }
+    finally {
       removalLock.writeLock().unlock();
     }
   }
 
   @Override
-  public Iterator<Map.Entry<K, Long>> iterator() {
+  public Iterator<Map.Entry<K, Long>> iterator()
+  {
     return Iterators.unmodifiableIterator(
-      new TranslatingIterator<>(
-        input -> new AbstractMap.SimpleImmutableEntry<>(input.getKey(), input.getValue().get()),
-        counters.entrySet().iterator()
-      )
+        new TranslatingIterator<>(
+            input -> new AbstractMap.SimpleImmutableEntry<>(input.getKey(), input.getValue().get()),
+            counters.entrySet().iterator()
+        )
     );
   }
 
-  private static class ValueComparableAtomicLong {
+  private static class ValueComparableAtomicLong
+  {
     private final AtomicLong value;
 
-    private ValueComparableAtomicLong(AtomicLong value) {
+    private ValueComparableAtomicLong(AtomicLong value)
+    {
       this.value = value;
     }
 
-    private ValueComparableAtomicLong(long value) {
+    private ValueComparableAtomicLong(long value)
+    {
       this(new AtomicLong(value));
     }
 
-    private AtomicLong getValue() {
+    private AtomicLong getValue()
+    {
       return value;
     }
 
-    private long get() {
+    private long get()
+    {
       return value.get();
     }
 
-    private long addAndGet(long delta) {
+    private long addAndGet(long delta)
+    {
       return value.addAndGet(delta);
     }
 
-    private long getAndAdd(long delta) {
+    private long getAndAdd(long delta)
+    {
       return value.getAndAdd(delta);
     }
 
-    public boolean compareAndSet(long expect, long update) {
+    public boolean compareAndSet(long expect, long update)
+    {
       return value.compareAndSet(expect, update);
     }
 
     @Override
-    public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o)
+    {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       ValueComparableAtomicLong that = (ValueComparableAtomicLong) o;
       return value.get() == that.value.get();
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
       return Long.hashCode(value.get());
     }
   }

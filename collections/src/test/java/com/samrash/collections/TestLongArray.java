@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import org.testng.Assert;
@@ -21,13 +22,15 @@ import org.testng.annotations.Test;
 
 import java.util.Iterator;
 
-public class TestLongArray {
+public class TestLongArray
+{
   private LongArray arraySize4;
   private LongArray arraySize16;
   private LongArray array;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     array = new LongArray();
     array.append(1L);
     array.append(2L);
@@ -40,7 +43,8 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast")
-  public void testSanity() throws Exception {
+  public void testSanity() throws Exception
+  {
     array.append(1L);
     Assert.assertEquals(array.size(), 7);
     Assert.assertEquals(array.get(0).longValue(), 1L);
@@ -51,13 +55,15 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast", expectedExceptions = ArrayIndexOutOfBoundsException.class)
-  public void testOutOfBounds() throws Exception {
+  public void testOutOfBounds() throws Exception
+  {
     Assert.assertEquals(array.size(), 6);
     Assert.assertEquals(array.get(7).longValue(), 1L);
   }
 
   @Test(groups = "fast")
-  public void testResize() throws Exception {
+  public void testResize() throws Exception
+  {
     Assert.assertEquals(arraySize4.size(), 0);
     Assert.assertEquals(arraySize4.capacity(), 4);
     arraySize4.append(0L);
@@ -75,7 +81,8 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast")
-  public void testSetNoSizeGrowth() throws Exception {
+  public void testSetNoSizeGrowth() throws Exception
+  {
     arraySize16.append(1L);
     arraySize16.append(1L);
     arraySize16.append(1L);
@@ -87,7 +94,8 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast")
-  public void testSetSizeGrowth() throws Exception {
+  public void testSetSizeGrowth() throws Exception
+  {
     arraySize16.append(1L);
     arraySize16.append(1L);
     arraySize16.append(1L);
@@ -99,12 +107,14 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast", expectedExceptions = ArrayIndexOutOfBoundsException.class)
-  public void testSetOutOfBounds() throws Exception {
+  public void testSetOutOfBounds() throws Exception
+  {
     array.set(array.capacity(), 100L);
   }
 
   @Test(groups = "fast")
-  public void testRemove() throws Exception {
+  public void testRemove() throws Exception
+  {
     array.remove(3);
     Assert.assertNull(array.get(3));
     Assert.assertEquals(array.size(), 5);
@@ -112,7 +122,8 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast")
-  public void testIterator() throws Exception {
+  public void testIterator() throws Exception
+  {
     Iterator<Long> iter = array.iterator();
     // hasNext() shouldn't be required
     Assert.assertEquals(iter.next().longValue(), 1L);
@@ -129,22 +140,25 @@ public class TestLongArray {
   }
 
   @Test(groups = "fast", expectedExceptions = IllegalStateException.class)
-  public void testIteratorRemoveNoNext() throws Exception {
+  public void testIteratorRemoveNoNext() throws Exception
+  {
     Iterator<Long> iter = array.iterator();
-  	iter.remove();
+    iter.remove();
   }
 
   @Test(groups = "fast", expectedExceptions = IllegalStateException.class)
-  public void testIteratorRepeatedRemove() throws Exception {
+  public void testIteratorRepeatedRemove() throws Exception
+  {
     Iterator<Long> iter = array.iterator();
-  	iter.next();
+    iter.next();
     iter.remove();
     Assert.assertEquals(iter.next().longValue(), 2L);
     iter.remove();
     iter.remove();
   }
 
-  private void assertArrayIs(LongArray array, long... values) {
+  private void assertArrayIs(LongArray array, long... values)
+  {
     int i = 0;
 
     for (Long arrayValue : array) {

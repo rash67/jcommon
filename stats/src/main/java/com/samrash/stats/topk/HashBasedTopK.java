@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.topk;
 
 import com.google.common.base.Preconditions;
@@ -33,18 +34,21 @@ import java.util.PriorityQueue;
  * Space usage is O(n).
  * (n = keySpaceSize)
  */
-public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
+public class HashBasedTopK<T extends Comparable<T>> implements TopK<T>
+{
   private final int k;
   private final Map<T, Long> counts;
 
-  public HashBasedTopK(int k) {
+  public HashBasedTopK(int k)
+  {
     this.k = k;
     // k is a decent guess to start with
     counts = new HashMap<T, Long>(k);
   }
 
   @Override
-  public synchronized void add(T key, long count) {
+  public synchronized void add(T key, long count)
+  {
     Preconditions.checkNotNull(key, "key can't be null");
     Preconditions.checkArgument(count >= 0, "count to add must be non-negative, got %s", count);
 
@@ -58,9 +62,12 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
   }
 
   @Override
-  public synchronized List<T> getTopK() {
-    Comparator<T> comparator = new Comparator<T>() {
-      public int compare(T key1, T key2) {
+  public synchronized List<T> getTopK()
+  {
+    Comparator<T> comparator = new Comparator<T>()
+    {
+      public int compare(T key1, T key2)
+      {
         return Longs.compare(counts.get(key1), counts.get(key2));
       }
     };

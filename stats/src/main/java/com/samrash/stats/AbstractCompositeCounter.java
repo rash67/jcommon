@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
-import com.samrash.collections.PeekableIterator;
-import com.samrash.stats.mx.StatsUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
+import com.samrash.collections.PeekableIterator;
+import com.samrash.stats.mx.StatsUtil;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
@@ -49,7 +50,8 @@ import static com.google.common.base.Preconditions.checkState;
  * Optimized for write-heavy counters.
  */
 public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
-  implements CompositeEventCounterIf<C> {
+    implements CompositeEventCounterIf<C>
+{
 
   // adds/removes to eventCounters happen only when synchronized on "this"
   @GuardedBy("this")
@@ -65,8 +67,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * individual eventCounters of size maxChunkLength.
    */
   public AbstractCompositeCounter(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
-  ) {
+      ReadableDuration maxLength, ReadableDuration maxChunkLength
+  )
+  {
     this.maxLength = maxLength;
     this.maxChunkLength = maxChunkLength;
 
@@ -76,7 +79,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     end = now;
   }
 
-  public AbstractCompositeCounter(ReadableDuration maxLength) {
+  public AbstractCompositeCounter(ReadableDuration maxLength)
+  {
     this(maxLength, new Duration(maxLength.getMillis() / 10));
   }
 
@@ -105,7 +109,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * to store the value if needed.
    */
   @Override
-  public void add(long delta) {
+  public void add(long delta)
+  {
     DateTime now = new DateTime();
     C last;
 
@@ -121,20 +126,23 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
 
-  public ReadableDateTime getStart() {
+  public ReadableDateTime getStart()
+  {
     trimIfNeeded();
 
     return start;
   }
 
-  public ReadableDateTime getEnd() {
+  public ReadableDateTime getEnd()
+  {
     trimIfNeeded();
 
     return end;
   }
 
   @Override
-  public Duration getLength() {
+  public Duration getLength()
+  {
     trimIfNeeded();
 
     return new Duration(start, end);
@@ -142,8 +150,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
 
   @Override
   public synchronized CompositeEventCounterIf<C> add(
-    long delta, ReadableDateTime start, ReadableDateTime end
-  ) {
+      long delta, ReadableDateTime start, ReadableDateTime end
+  )
+  {
     C counter = nextCounter(start, end);
 
     counter.add(delta);
@@ -152,7 +161,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   @Override
-  public synchronized CompositeEventCounterIf<C> addEventCounter(C eventCounter) {
+  public synchronized CompositeEventCounterIf<C> addEventCounter(C eventCounter)
+  {
     if (eventCounters.size() >= 2) {
       mergeChunksIfNeeded();
     }
@@ -161,10 +171,10 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     // added counter should not be merged until it is not the most recent
     // counter
     Preconditions.checkArgument(
-      eventCounters.isEmpty() || !eventCounters.getLast().getEnd().isAfter(eventCounter.getEnd()),
-      "new counter end , %s, is not past the current end %s",
-      eventCounter.getEnd(),
-      eventCounters.isEmpty() ? "NaN" : eventCounters.getLast().getEnd()
+        eventCounters.isEmpty() || !eventCounters.getLast().getEnd().isAfter(eventCounter.getEnd()),
+        "new counter end , %s, is not past the current end %s",
+        eventCounter.getEnd(),
+        eventCounters.isEmpty() ? "NaN" : eventCounters.getLast().getEnd()
     );
 
     eventCounters.add(eventCounter);
@@ -188,7 +198,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * <p/>
    * ...| counter2 | counter1 |
    */
-  private void mergeChunksIfNeeded() {
+  private void mergeChunksIfNeeded()
+  {
     C counter1 = eventCounters.removeLast();
     C counter2 = eventCounters.getLast();
 
@@ -214,8 +225,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * @return
    */
   protected synchronized <C2 extends CompositeEventCounterIf<C>> C2 internalMerge(
-    Collection<? extends C> otherCounters, C2 mergedCounter
-  ) {
+      Collection<? extends C> otherCounters, C2 mergedCounter
+  )
+  {
     PeekableIterator<C> iter1 = new PeekableIterator<C>(eventCounters.iterator());
     PeekableIterator<C> iter2 = new PeekableIterator<C>(otherCounters.iterator());
 
@@ -244,9 +256,10 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * This should be called by any method that needs to have the most updated
    * view of the current set of counters.
    */
-  protected synchronized void trimIfNeeded() {
+  protected synchronized void trimIfNeeded()
+  {
     Duration delta = new Duration(start, new DateTime())
-      .minus(maxLength);
+        .minus(maxLength);
 
     if (delta.isLongerThan(Duration.ZERO)) {
       start = start.toDateTime().plus(delta);
@@ -282,21 +295,22 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * @param oldestCounter
    * @return fraction [0, 1]
    */
-  protected float getExpiredFraction(EventCounterIf<C> oldestCounter) {
+  protected float getExpiredFraction(EventCounterIf<C> oldestCounter)
+  {
     ReadableDateTime windowStart = getWindowStart();
 
     //counter.getEnd() >= window.getStart()
     checkArgument(
-      !oldestCounter.getEnd().isBefore(windowStart),
-      "counter should have end %s >= window start %s", oldestCounter.getEnd(), windowStart
+        !oldestCounter.getEnd().isBefore(windowStart),
+        "counter should have end %s >= window start %s", oldestCounter.getEnd(), windowStart
     );
 
     ReadableDateTime counterStart = oldestCounter.getStart();
 
     //counter.getstart() < window.getStart()
     checkArgument(
-      counterStart.isBefore(windowStart),
-      "counter should have start %s <= window start %s", counterStart, windowStart
+        counterStart.isBefore(windowStart),
+        "counter should have start %s <= window start %s", counterStart, windowStart
     );
 
     //
@@ -305,9 +319,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     float expiredFraction = expiredPortionMillis / (float) lengthMillis;
 
     checkState(
-      expiredFraction >= 0 && expiredFraction <= 1.0,
-      "%s not in [0, 1]",
-      expiredFraction
+        expiredFraction >= 0 && expiredFraction <= 1.0,
+        "%s not in [0, 1]",
+        expiredFraction
     );
 
     return expiredFraction;
@@ -320,7 +334,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * @deprecated see {@link #getEventCounters()} and make a copy externally if a snapshot is needed
    */
   @Deprecated
-  protected synchronized List<C> getEventCountersCopy() {
+  protected synchronized List<C> getEventCountersCopy()
+  {
     return new ArrayList<C>(eventCounters);
   }
 
@@ -331,7 +346,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    *
    * @return unmodifiable Collection of event counters
    */
-  protected synchronized Collection<C> getEventCounters() {
+  protected synchronized Collection<C> getEventCounters()
+  {
     return Collections.unmodifiableCollection(eventCounters);
   }
 
@@ -340,31 +356,37 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    *
    * @return EventCounter
    */
-  protected synchronized C getMostRecentCounter() {
+  protected synchronized C getMostRecentCounter()
+  {
     return eventCounters.peekLast();
   }
 
   /**
    * @return Unmodifiable iterator across windowed event counters in ascending
-   *         (oldest first) order
+   * (oldest first) order
    */
-  protected Iterator<C> eventCounterIterator() {
+  protected Iterator<C> eventCounterIterator()
+  {
     return Iterators.unmodifiableIterator(eventCounters.iterator());
   }
 
-  protected ReadableDateTime getWindowStart() {
+  protected ReadableDateTime getWindowStart()
+  {
     return start;
   }
 
-  protected ReadableDateTime getWindowEnd() {
+  protected ReadableDateTime getWindowEnd()
+  {
     return end;
   }
 
-  protected ReadableDuration getMaxLength() {
+  protected ReadableDuration getMaxLength()
+  {
     return maxLength;
   }
 
-  protected ReadableDuration getMaxChunkLength() {
+  protected ReadableDuration getMaxChunkLength()
+  {
     return maxChunkLength;
   }
 }

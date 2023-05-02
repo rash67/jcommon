@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -24,13 +25,15 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class HyperLogLogUtil {
+public class HyperLogLogUtil
+{
   private static final HashFunction HASH = Hashing.murmur3_128();
 
-  public static long estimateCardinality(int[] bucketValues) {
+  public static long estimateCardinality(int[] bucketValues)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(bucketValues.length),
-      "number of buckets must be a power of 2"
+        Numbers.isPowerOf2(bucketValues.length),
+        "number of buckets must be a power of 2"
     );
 
     int zeroBuckets = 0;
@@ -56,10 +59,11 @@ public class HyperLogLogUtil {
     return Math.round(result);
   }
 
-  public static int[] generateBuckets(int numberOfBuckets, long cardinality) {
+  public static int[] generateBuckets(int numberOfBuckets, long cardinality)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "number of buckets must be a power of 2"
+        Numbers.isPowerOf2(numberOfBuckets),
+        "number of buckets must be a power of 2"
     );
 
     double[] probabilities = computeProbabilities(numberOfBuckets, cardinality, Byte.MAX_VALUE);
@@ -83,14 +87,16 @@ public class HyperLogLogUtil {
   /**
    * Probability that a bucket has a value <= k
    */
-  private static double cumulativeProbability(int numberOfBuckets, long cardinality, int k) {
+  private static double cumulativeProbability(int numberOfBuckets, long cardinality, int k)
+  {
     return Math.pow(1.0 - 1.0 / ((1L << k) * 1.0 * numberOfBuckets), cardinality);
   }
 
   /**
    * Compute cumulative probabilities for value <= k for all k = 0..maxK
    */
-  private static double[] computeProbabilities(int numberOfBuckets, long cardinality, int maxK) {
+  private static double[] computeProbabilities(int numberOfBuckets, long cardinality, int maxK)
+  {
     double[] result = new double[maxK];
 
     for (int k = 0; k < maxK; ++k) {
@@ -100,14 +106,15 @@ public class HyperLogLogUtil {
     return result;
   }
 
-  public static int[] mergeBuckets(int[] first, int[] second) {
+  public static int[] mergeBuckets(int[] first, int[] second)
+  {
     checkNotNull(first, "first is null");
     checkNotNull(second, "second is null");
     checkArgument(
-      first.length == second.length,
-      "Array sizes must match, found %s vs %s",
-      first.length,
-      second.length
+        first.length == second.length,
+        "Array sizes must match, found %s vs %s",
+        first.length,
+        second.length
     );
 
     int[] result = new int[first.length];
@@ -118,7 +125,8 @@ public class HyperLogLogUtil {
     return result;
   }
 
-  public static double computeAlpha(int numberOfBuckets) {
+  public static double computeAlpha(int numberOfBuckets)
+  {
     double alpha;
     switch (numberOfBuckets) {
       case (1 << 4):
@@ -138,13 +146,14 @@ public class HyperLogLogUtil {
 
   /**
    * Computes a 64-bit hash suitable for adding to a hyperloglog instance.
-   *
+   * <p>
    * The hyperloglog implementation uses bits from least significant to most significant first, so
    * If you need to keep shorter hashes around (e.g., for storage), make sure to drop bits from the
    * most significant side, as the hyperloglog implementation uses bits from least significant
    * to most significant.
    */
-  public static long computeHash(long value) {
+  public static long computeHash(long value)
+  {
     return HASH.hashLong(value).asLong();
   }
 }

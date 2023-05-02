@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import java.util.Iterator;
@@ -24,26 +25,31 @@ import java.util.NoSuchElementException;
  *
  * @param <T> type that the iterator returns on next()
  */
-public class PeekableIterator<T> implements Iterator<T> {
+public class PeekableIterator<T> implements Iterator<T>
+{
   private final Iterator<? extends T> delegate;
   private T value = null;
 
-  public PeekableIterator(Iterator<? extends T> delegate) {
+  public PeekableIterator(Iterator<? extends T> delegate)
+  {
     this.delegate = delegate;
   }
 
   @Override
-  public boolean hasNext() {
+  public boolean hasNext()
+  {
     return delegate.hasNext() || value != null;
   }
 
   /**
    * will use the 'cached' value from a peek if availble
+   *
    * @return
    * @throws NoSuchElementException
    */
   @Override
-  public T next() throws NoSuchElementException {
+  public T next() throws NoSuchElementException
+  {
     T retVal;
 
     if (value == null) {
@@ -57,11 +63,13 @@ public class PeekableIterator<T> implements Iterator<T> {
     return retVal;
   }
 
-  private void internalNext() throws NoSuchElementException {
+  private void internalNext() throws NoSuchElementException
+  {
     value = delegate.next();
   }
 
-  public T peekNext() {
+  public T peekNext()
+  {
     if (value == null) {
       internalNext();
     }
@@ -70,7 +78,8 @@ public class PeekableIterator<T> implements Iterator<T> {
   }
 
   @Override
-  public void remove() {
+  public void remove()
+  {
     throw new UnsupportedOperationException("remove not supported");
   }
 }

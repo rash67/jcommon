@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.mx;
 
-import com.samrash.stats.MultiWindowDistribution;
-import com.samrash.stats.QuantileDigest;
 import com.samrash.util.TimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -33,18 +32,21 @@ import java.util.Map;
  * Helper methods for converting stat objects into key/value pairs that conform to standing
  * naming conventions around <type>.<time_window>
  */
-public class TestStatsUtil {
+public class TestStatsUtil
+{
   private Stats stats;
   private Map<String, Long> countersMap;
 
   @BeforeMethod(alwaysRun = true)
-  public void setUp() throws Exception {
+  public void setUp() throws Exception
+  {
     stats = new Stats();
     countersMap = new HashMap<>();
   }
 
   @Test(groups = "fast")
-  public void testRateAndSum() throws Exception {
+  public void testRateAndSum() throws Exception
+  {
     int expectedRatePerSecond = 10;
     int numHours = 2;
     long totalSeconds = Duration.standardHours(numHours).getStandardSeconds();
@@ -69,13 +71,15 @@ public class TestStatsUtil {
   }
 
   @Test(groups = "fast")
-  public void testCount() throws Exception {
+  public void testCount() throws Exception
+  {
     stats.incrementCounter("count", 1);
     assertCounterValue("count", 1);
   }
 
   @Test(groups = "fast")
-  public void testSpread() throws Exception {
+  public void testSpread() throws Exception
+  {
     stats.incrementSpread("spread", 1);
     stats.incrementSpread("spread", 10);
     assertCounterValue("spread.samples.60", 2);
@@ -96,7 +100,8 @@ public class TestStatsUtil {
     assertCounterValue("spread.max", 10);
   }
 
-  private void assertCounterValue(String key, long value) {
+  private void assertCounterValue(String key, long value)
+  {
     if (countersMap.isEmpty()) {
       stats.exportCounters(countersMap);
     }
@@ -106,7 +111,8 @@ public class TestStatsUtil {
   }
 
   @AfterMethod(alwaysRun = true)
-  public void tearDown() throws Exception {
+  public void tearDown() throws Exception
+  {
     DateTimeUtils.setCurrentMillisSystem();
   }
 }

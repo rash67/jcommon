@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
@@ -25,27 +26,33 @@ import org.joda.time.ReadableDateTime;
  * does the same thing, but avoids encapsulation violation
  */
 @Deprecated
-public class SumEventCounter extends AssociativeAggregationCounter {
+public class SumEventCounter extends AssociativeAggregationCounter
+{
   public static final AssociativeAggregation AGGREGATION =
-    new AssociativeAggregation() {
-      @Override
-      public long combine(long l1, long l2) {
-        return l1 + l2;
-      }
-    };
+      new AssociativeAggregation()
+      {
+        @Override
+        public long combine(long l1, long l2)
+        {
+          return l1 + l2;
+        }
+      };
 
   public SumEventCounter(
-    ReadableDateTime start, ReadableDateTime end, long initialValue
-  ) {
+      ReadableDateTime start, ReadableDateTime end, long initialValue
+  )
+  {
     super(start, end, AGGREGATION, initialValue);
   }
 
-  public SumEventCounter(ReadableDateTime start, ReadableDateTime end) {
+  public SumEventCounter(ReadableDateTime start, ReadableDateTime end)
+  {
     this(start, end, 0L);
   }
 
   @Override
-  public void add(long delta) {
+  public void add(long delta)
+  {
     value.addAndGet(delta);
   }
 }

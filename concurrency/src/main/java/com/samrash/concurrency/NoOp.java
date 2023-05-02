@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
-public class NoOp implements Runnable {
+public class NoOp implements Runnable
+{
   public static final Runnable INSTANCE = new NoOp();
 
-  private NoOp(){}
+  private NoOp()
+  {
+  }
 
   @Override
-  public void run() {
+  public void run()
+  {
   }
 }

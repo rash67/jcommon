@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
@@ -27,7 +28,8 @@ import static com.samrash.stats.cardinality.HyperLogLogUtil.computeHash;
  * http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf
  */
 @NotThreadSafe
-public class HyperLogLog {
+public class HyperLogLog
+{
   private final byte[] buckets;
 
   // The current sum of 1 / (1L << buckets[i]). Updated as new items are added and used for
@@ -35,10 +37,11 @@ public class HyperLogLog {
   private double currentSum;
   private int nonZeroBuckets = 0;
 
-  public HyperLogLog(int numberOfBuckets) {
+  public HyperLogLog(int numberOfBuckets)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
+        Numbers.isPowerOf2(numberOfBuckets),
+        "numberOfBuckets must be a power of 2"
     );
     Preconditions.checkArgument(numberOfBuckets > 0, "numberOfBuckets must be > 0");
 
@@ -46,17 +49,18 @@ public class HyperLogLog {
     currentSum = buckets.length;
   }
 
-  public HyperLogLog(int[] buckets) {
+  public HyperLogLog(int[] buckets)
+  {
     this(buckets.length);
 
     currentSum = 0;
     for (int i = 0; i < buckets.length; i++) {
       int value = buckets[i];
       Preconditions.checkArgument(
-        value >= 0 && value <= Byte.MAX_VALUE,
-        "values must be > 0 and <= %s, found %s",
-        Byte.MAX_VALUE,
-        value
+          value >= 0 && value <= Byte.MAX_VALUE,
+          "values must be > 0 and <= %s, found %s",
+          Byte.MAX_VALUE,
+          value
       );
       this.buckets[i] = (byte) value;
       currentSum += 1.0 / (1 << value);
@@ -66,7 +70,8 @@ public class HyperLogLog {
     }
   }
 
-  public void add(long value) {
+  public void add(long value)
+  {
     BucketAndHash bucketAndHash = BucketAndHash.fromHash(computeHash(value), buckets.length);
     int bucket = bucketAndHash.getBucket();
 
@@ -86,7 +91,8 @@ public class HyperLogLog {
     }
   }
 
-  public long estimate() {
+  public long estimate()
+  {
     double alpha = HyperLogLogUtil.computeAlpha(buckets.length);
     double result = alpha * buckets.length * buckets.length / currentSum;
 
@@ -101,7 +107,8 @@ public class HyperLogLog {
     return Math.round(result);
   }
 
-  public int[] buckets() {
+  public int[] buckets()
+  {
     int[] result = new int[buckets.length];
 
     for (int i = 0; i < buckets.length; i++) {

@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.base.Preconditions;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.samrash.stats.cardinality.BucketAndHash.fromHash;
 import static com.samrash.stats.cardinality.HyperLogLogUtil.computeHash;
-import static com.google.common.base.Preconditions.checkArgument;
 
 @NotThreadSafe
-public class AdaptiveHyperLogLog {
+public class AdaptiveHyperLogLog
+{
   private static final int INSTANCE_SIZE = UnsafeUtil.sizeOf(AdaptiveHyperLogLog.class);
 
   private Estimator estimator;
 
-  public AdaptiveHyperLogLog(int numberOfBuckets) {
+  public AdaptiveHyperLogLog(int numberOfBuckets)
+  {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
+        Numbers.isPowerOf2(numberOfBuckets),
+        "numberOfBuckets must be a power of 2"
     );
 
     this.estimator = new SparseEstimator(numberOfBuckets);
@@ -48,12 +51,13 @@ public class AdaptiveHyperLogLog {
   /**
    * @return true if the estimation was affected by this addition
    */
-  public boolean add(long value) {
+  public boolean add(long value)
+  {
     BucketAndHash bucketAndHash = fromHash(computeHash(value), estimator.getNumberOfBuckets());
     int lowestBitPosition = Long.numberOfTrailingZeros(bucketAndHash.getHash()) + 1;
 
     if (estimator.getClass() == SparseEstimator.class &&
-      (estimator.estimateSizeInBytes() >= DenseEstimator.estimateSizeInBytes(estimator.getNumberOfBuckets())
+        (estimator.estimateSizeInBytes() >= DenseEstimator.estimateSizeInBytes(estimator.getNumberOfBuckets())
          || lowestBitPosition >= SparseEstimator.MAX_BUCKET_VALUE)) {
       estimator = new DenseEstimator(estimator.buckets());
     }
@@ -61,31 +65,38 @@ public class AdaptiveHyperLogLog {
     return estimator.setIfGreater(bucketAndHash.getBucket(), lowestBitPosition);
   }
 
-  public long estimate() {
+  public long estimate()
+  {
     return estimator.estimate();
   }
 
-  public int getSizeInBytes() {
+  public int getSizeInBytes()
+  {
     return estimator.estimateSizeInBytes() + INSTANCE_SIZE;
   }
 
-  public int getNumberOfBuckets() {
+  public int getNumberOfBuckets()
+  {
     return estimator.getNumberOfBuckets();
   }
 
-  public int[] buckets() {
+  public int[] buckets()
+  {
     return estimator.buckets();
   }
 
-  public void merge(AdaptiveHyperLogLog other) {
+  public void merge(AdaptiveHyperLogLog other)
+  {
     estimator = makeEstimator(HyperLogLogUtil.mergeBuckets(this.buckets(), other.buckets()));
   }
 
-  public static AdaptiveHyperLogLog merge(AdaptiveHyperLogLog first, AdaptiveHyperLogLog second) {
+  public static AdaptiveHyperLogLog merge(AdaptiveHyperLogLog first, AdaptiveHyperLogLog second)
+  {
     return new AdaptiveHyperLogLog(HyperLogLogUtil.mergeBuckets(first.buckets(), second.buckets()));
   }
 
-  private static Estimator makeEstimator(int[] buckets) {
+  private static Estimator makeEstimator(int[] buckets)
+  {
     int nonZeroBuckets = 0;
     int maxValue = 0;
     for (int value : buckets) {
@@ -96,10 +107,10 @@ public class AdaptiveHyperLogLog {
     }
 
     if (maxValue < SparseEstimator.MAX_BUCKET_VALUE &&
-      SparseEstimator.estimateSizeInBytes(nonZeroBuckets, buckets.length) < DenseEstimator.estimateSizeInBytes(buckets.length)) {
+        SparseEstimator.estimateSizeInBytes(nonZeroBuckets, buckets.length)
+        < DenseEstimator.estimateSizeInBytes(buckets.length)) {
       return new SparseEstimator(buckets);
-    }
-    else {
+    } else {
       return new DenseEstimator(buckets);
     }
   }

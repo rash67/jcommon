@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 /**
@@ -21,37 +22,44 @@ package com.samrash.stats;
  * 2) gauge - average, rate, sample count
  * 3) max
  */
-public class MultiWindowSpread implements WritableMultiWindowStat {
+public class MultiWindowSpread implements WritableMultiWindowStat
+{
   private final MultiWindowMin min;
   private final MultiWindowGauge gauge;
   private final MultiWindowMax max;
 
-  public MultiWindowSpread() {
+  public MultiWindowSpread()
+  {
     this(DefaultGaugeCounterFactory.INSTANCE);
   }
 
-  public MultiWindowSpread(GaugeCounterFactory gaugeCounterFactory) {
+  public MultiWindowSpread(GaugeCounterFactory gaugeCounterFactory)
+  {
     min = new MultiWindowMin();
     gauge = new MultiWindowGauge(gaugeCounterFactory);
     max = new MultiWindowMax();
   }
 
   @Override
-  public void add(long value) {
+  public void add(long value)
+  {
     min.add(value);
     gauge.add(value);
     max.add(value);
   }
 
-  public ReadableMultiWindowCounter getMin() {
+  public ReadableMultiWindowCounter getMin()
+  {
     return min;
   }
 
-  public ReadableMultiWindowGauge getGauge() {
+  public ReadableMultiWindowGauge getGauge()
+  {
     return gauge;
   }
 
-  public ReadableMultiWindowCounter getMax() {
+  public ReadableMultiWindowCounter getMax()
+  {
     return max;
   }
 }

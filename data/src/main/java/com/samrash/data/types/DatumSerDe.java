@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.data.types;
 
 
@@ -27,22 +28,26 @@ import java.io.IOException;
  * top-level DatumSerDe container class that handles reading/writing the root of
  * all Datum serialization structures.
  */
-public class DatumSerDe implements SerDe<Datum> {
+public class DatumSerDe implements SerDe<Datum>
+{
   @Override
-  public Datum deserialize(DataInput in) throws SerDeException {
+  public Datum deserialize(DataInput in) throws SerDeException
+  {
     try {
       DatumType datumType = DatumType.fromByte(in.readByte());
       SerDe<Datum> serDe = datumType.getSerDe();
 
       // invariant: the SerDe for any Datum will NOT read its own type
       return serDe.deserialize(in);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new SerDeException(e);
     }
   }
 
   @Override
-  public void serialize(Datum value, DataOutput out) throws SerDeException {
+  public void serialize(Datum value, DataOutput out) throws SerDeException
+  {
     DatumType datumType = value.getType();
     SerDe<Datum> serDe = datumType.getSerDe();
 
@@ -50,7 +55,8 @@ public class DatumSerDe implements SerDe<Datum> {
       // invariant: the SerDe for any Datum will NOT write its own type
       out.writeByte(datumType.getTypeAsByte());
       serDe.serialize(value, out);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new SerDeException(e);
     }
   }

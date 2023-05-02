@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import com.samrash.collections.Pair;
@@ -28,42 +29,51 @@ import java.util.concurrent.TimeUnit;
  * a latch to wait on to indicate when all registered tasks have completed.
  * Tasks may be registered with the default executor, or with another executor.
  */
-public class TaskGroup {
+public class TaskGroup
+{
   private final ExecutorService defaultExecutor;
   private final Collection<Pair<ExecutorService, Runnable>> taskPairs =
-    new ArrayList<Pair<ExecutorService, Runnable>>();
+      new ArrayList<Pair<ExecutorService, Runnable>>();
 
-  public TaskGroup(ExecutorService defaultExecutor) {
+  public TaskGroup(ExecutorService defaultExecutor)
+  {
     this.defaultExecutor = defaultExecutor;
   }
 
-  public TaskGroup() {
+  public TaskGroup()
+  {
     this(null);
   }
 
   public synchronized void register(
-    ExecutorService executorService, Runnable task
-  ) {
+      ExecutorService executorService, Runnable task
+  )
+  {
     taskPairs.add(new Pair<ExecutorService, Runnable>(executorService, task));
   }
 
-  public void register(Runnable task) {
+  public void register(Runnable task)
+  {
     if (defaultExecutor == null) {
       throw new IllegalStateException("No default executor specified");
     }
     register(defaultExecutor, task);
   }
 
-  public synchronized FinishLatch execute() {
+  public synchronized FinishLatch execute()
+  {
     final CountDownLatch finishLatch =
-      new CountDownLatch(taskPairs.size());
+        new CountDownLatch(taskPairs.size());
     for (final Pair<ExecutorService, Runnable> taskPair : taskPairs) {
-      taskPair.getFirst().execute(new Runnable() {
+      taskPair.getFirst().execute(new Runnable()
+      {
         @Override
-        public void run() {
+        public void run()
+        {
           try {
             taskPair.getSecond().run();
-          } finally {
+          }
+          finally {
             finishLatch.countDown();
           }
         }
@@ -72,19 +82,23 @@ public class TaskGroup {
     return new FinishLatch(finishLatch);
   }
 
-  public static class FinishLatch {
+  public static class FinishLatch
+  {
     private final CountDownLatch finishLatch;
 
-    private FinishLatch(CountDownLatch finishLatch) {
+    private FinishLatch(CountDownLatch finishLatch)
+    {
       this.finishLatch = finishLatch;
     }
 
     public boolean await(long waitTime, TimeUnit waitTimeUnit)
-      throws InterruptedException {
+        throws InterruptedException
+    {
       return finishLatch.await(waitTime, waitTimeUnit);
     }
 
-    public void await() throws InterruptedException {
+    public void await() throws InterruptedException
+    {
       finishLatch.await();
     }
   }

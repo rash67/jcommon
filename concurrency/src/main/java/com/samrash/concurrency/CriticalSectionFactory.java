@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CriticalSectionFactory {
+public class CriticalSectionFactory
+{
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
-  public Runnable wrap(final Runnable runnable) {
-    return new Runnable() {
+  public Runnable wrap(final Runnable runnable)
+  {
+    return new Runnable()
+    {
       @Override
-      public void run() {
+      public void run()
+      {
         if (isRunning.compareAndSet(false, true)) {
           try {
             runnable.run();

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.config.dynamic;
 
-public interface OptionWatcher<V> {
+public interface OptionWatcher<V>
+{
   public void propertyUpdated(V value) throws Exception;
 }

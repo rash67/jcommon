@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats;
 
 import org.joda.time.ReadableDateTime;
 
-public class MaxEventCounter extends AssociativeAggregationCounter {
+public class MaxEventCounter extends AssociativeAggregationCounter
+{
   public static final AssociativeAggregation AGGREGATION =
-    new AssociativeAggregation() {
-      @Override
-      public long combine(long l1, long l2) {
-        return Math.max(l1, l2);
-      }
-    };
+      new AssociativeAggregation()
+      {
+        @Override
+        public long combine(long l1, long l2)
+        {
+          return Math.max(l1, l2);
+        }
+      };
 
   public MaxEventCounter(
-    ReadableDateTime start, ReadableDateTime end, long initialValue
-  ) {
+      ReadableDateTime start, ReadableDateTime end, long initialValue
+  )
+  {
     super(start, end, AGGREGATION, initialValue);
   }
 
-  public MaxEventCounter(ReadableDateTime start, ReadableDateTime end) {
+  public MaxEventCounter(ReadableDateTime start, ReadableDateTime end)
+  {
     this(start, end, Long.MIN_VALUE);
   }
 }

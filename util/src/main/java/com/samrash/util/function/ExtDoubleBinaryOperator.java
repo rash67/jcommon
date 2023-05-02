@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.DoubleBinaryOperator;
 
-public interface ExtDoubleBinaryOperator<E extends Throwable> {
+public interface ExtDoubleBinaryOperator<E extends Throwable>
+{
   double applyAsDouble(double left, double right) throws E;
 
-  static DoubleBinaryOperator quiet(ExtDoubleBinaryOperator<?> doubleBinaryOperator) {
+  static DoubleBinaryOperator quiet(ExtDoubleBinaryOperator<?> doubleBinaryOperator)
+  {
     return (left, right) ->
         ExtDoubleSupplier.quiet(() -> doubleBinaryOperator.applyAsDouble(left, right)).getAsDouble();
   }

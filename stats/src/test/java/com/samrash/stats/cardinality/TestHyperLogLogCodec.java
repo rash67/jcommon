@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.stats.cardinality;
 
 import com.google.common.io.Closeables;
@@ -28,15 +29,18 @@ import java.io.OutputStream;
 
 import static org.testng.Assert.assertEquals;
 
-public class TestHyperLogLogCodec {
+public class TestHyperLogLogCodec
+{
   @Test
-  public void testHyperLogLogRoundtrip() throws IOException {
+  public void testHyperLogLogRoundtrip() throws IOException
+  {
     testHyperLogLogRoundtrip(1024);
     testHyperLogLogRoundtrip(2048);
     testHyperLogLogRoundtrip(4096);
   }
 
-  private void testHyperLogLogRoundtrip(int buckets) throws IOException {
+  private void testHyperLogLogRoundtrip(int buckets) throws IOException
+  {
     HyperLogLog expected = new HyperLogLog(buckets);
     for (int i = 0; i < 30000; ++i) {
       expected.add(i);
@@ -58,20 +62,23 @@ public class TestHyperLogLogCodec {
   }
 
   @Test
-  public void testAdaptiveHyperLogLogRoundtripLowCardinality() throws IOException {
+  public void testAdaptiveHyperLogLogRoundtripLowCardinality() throws IOException
+  {
     testAdaptiveHyperLogLogRoundtrip(1024, 10);
     testAdaptiveHyperLogLogRoundtrip(2048, 10);
     testAdaptiveHyperLogLogRoundtrip(4096, 10);
   }
 
   @Test
-  public void testAdaptiveHyperLogLogRoundtripHighCardinality() throws IOException {
+  public void testAdaptiveHyperLogLogRoundtripHighCardinality() throws IOException
+  {
     testAdaptiveHyperLogLogRoundtrip(1024, 30000);
     testAdaptiveHyperLogLogRoundtrip(2048, 30000);
     testAdaptiveHyperLogLogRoundtrip(4096, 30000);
   }
 
-  private void testAdaptiveHyperLogLogRoundtrip(int buckets, int cardinality) throws IOException {
+  private void testAdaptiveHyperLogLogRoundtrip(int buckets, int cardinality) throws IOException
+  {
     AdaptiveHyperLogLog expected = new AdaptiveHyperLogLog(buckets);
     for (int i = 0; i < cardinality; ++i) {
       expected.add(i);
@@ -93,7 +100,8 @@ public class TestHyperLogLogCodec {
   }
 
   @Test
-  public void testDeserializationBackwardsCompatibility() throws Exception {
+  public void testDeserializationBackwardsCompatibility() throws Exception
+  {
     HyperLogLogCodec codec = new HyperLogLogCodec();
     for (int cardinality = 10; cardinality <= 100000; cardinality *= 10) {
       for (int bucketCount = 1024; bucketCount <= 4096; bucketCount <<= 1) {
@@ -112,7 +120,8 @@ public class TestHyperLogLogCodec {
             buckets[i] = in.read();
           }
           expected = new AdaptiveHyperLogLog(buckets);
-        } finally {
+        }
+        finally {
           Closeables.close(in, true);
         }
 
@@ -121,7 +130,8 @@ public class TestHyperLogLogCodec {
         in = getClass().getClassLoader().getResourceAsStream(fileBaseName + ".ser");
         try {
           actual = codec.decodeAdaptiveHyperLogLog(in);
-        } finally {
+        }
+        finally {
           Closeables.close(in, true);
         }
 
@@ -135,7 +145,8 @@ public class TestHyperLogLogCodec {
   /**
    * Generate new serialized HyperLogLog files for backwards compatibility test.
    */
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception
+  {
     File directory = new File("src/test/resources/serialization");
     directory.mkdirs();
 
@@ -153,7 +164,8 @@ public class TestHyperLogLogCodec {
         OutputStream out = new FileOutputStream(new File(directory, fileBaseName + ".ser"));
         try {
           codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
-        } finally {
+        }
+        finally {
           Closeables.close(out, true);
         }
 
@@ -163,7 +175,8 @@ public class TestHyperLogLogCodec {
           for (int bucketValue : hyperLogLog.buckets()) {
             out.write(bucketValue);
           }
-        } finally {
+        }
+        finally {
           Closeables.close(out, true);
         }
       }

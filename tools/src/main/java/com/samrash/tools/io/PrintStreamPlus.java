@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.tools.io;
 
 import java.io.OutputStream;
@@ -22,8 +23,10 @@ import java.io.PrintStream;
  * Adds a {@link #printfln(String, Object...)} method to {@link java.io.PrintStream} and removes
  * the {@link java.io.IOException} from {@link #write(byte[])}.
  */
-public abstract class PrintStreamPlus extends PrintStream {
-  protected PrintStreamPlus(OutputStream out) {
+public abstract class PrintStreamPlus extends PrintStream
+{
+  protected PrintStreamPlus(OutputStream out)
+  {
     super(out);
   }
 
@@ -33,7 +36,8 @@ public abstract class PrintStreamPlus extends PrintStream {
   public abstract void printfln(String format, Object... args);
 
   @Override
-  public void write(byte[] buffer) {
+  public void write(byte[] buffer)
+  {
     write(buffer, 0, buffer.length);
   }
 }

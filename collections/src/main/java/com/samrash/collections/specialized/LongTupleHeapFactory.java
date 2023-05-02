@@ -13,28 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 import com.samrash.collections.SimpleHeapFactory;
-import com.samrash.collections.specialized.LongTupleHeap;
 
-public class LongTupleHeapFactory implements SimpleHeapFactory<long[], LongTupleHeap> {
+public class LongTupleHeapFactory implements SimpleHeapFactory<long[], LongTupleHeap>
+{
   private final int tupleSize;
 
-  public LongTupleHeapFactory(int tupleSize) {
+  public LongTupleHeapFactory(int tupleSize)
+  {
     this.tupleSize = tupleSize;
   }
 
   @Override
-  public LongTupleHeap create(int initializeSize) {
+  public LongTupleHeap create(int initializeSize)
+  {
     if (tupleSize == 2) {
       return new LongPairList(initializeSize);
     } else if (tupleSize == 3) {
       return new LongTripleList(initializeSize);
     } else {
       throw new IllegalStateException(
-        String.format(
-          "tuple size of %d attempted. Only 2 and 3 supported", tupleSize)
+          String.format(
+              "tuple size of %d attempted. Only 2 and 3 supported", tupleSize)
       );
     }
 

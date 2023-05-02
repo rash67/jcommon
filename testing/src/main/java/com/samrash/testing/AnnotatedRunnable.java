@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.testing;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class AnnotatedRunnable implements Runnable {
+public class AnnotatedRunnable implements Runnable
+{
   private final long initDelay;
   private final long delay;
   private final TimeUnit unit;
@@ -26,40 +28,48 @@ public class AnnotatedRunnable implements Runnable {
   private ScheduledFuture<?> future;
 
   public AnnotatedRunnable(
-    Runnable delegate, long initDelay, long delay, TimeUnit unit
-  ) {
+      Runnable delegate, long initDelay, long delay, TimeUnit unit
+  )
+  {
     this.delegate = delegate;
     this.initDelay = initDelay;
     this.delay = delay;
     this.unit = unit;
   }
 
-  public AnnotatedRunnable(Runnable delegate) {
+  public AnnotatedRunnable(Runnable delegate)
+  {
     this(delegate, -1, -1, TimeUnit.SECONDS);
   }
 
   @Override
-  public void run() {
+  public void run()
+  {
     delegate.run();
   }
 
-  public long getInitDelay() {
+  public long getInitDelay()
+  {
     return initDelay;
   }
 
-  public long getDelay() {
+  public long getDelay()
+  {
     return delay;
   }
 
-  public TimeUnit getUnit() {
+  public TimeUnit getUnit()
+  {
     return unit;
   }
 
-  public ScheduledFuture<?> getFuture() {
+  public ScheduledFuture<?> getFuture()
+  {
     return future;
   }
 
-  public void setFuture(ScheduledFuture<?> future) {
+  public void setFuture(ScheduledFuture<?> future)
+  {
     this.future = future;
   }
 }

@@ -13,39 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections.specialized;
 
 /**
  * this class represents a snapshot of the elements in a sampled set along
  * with the sample-rate for those elements.  In this way, it's a snapshot of
  * elements that can be used to calculate the scaled size at a moment
- *
+ * <p>
  * in other words, the elements in this set are consistent with the sample
  * rate
- *
  */
-public class SampledSetSnapshot<T> {
+public class SampledSetSnapshot<T>
+{
   private final int sampleRate;
   private final int maxSetSize;
   private final SnapshotableSet<T> elements;
 
   SampledSetSnapshot(
-    int sampleRate, int maxSetSize, SnapshotableSet<T> elements
-  ) {
+      int sampleRate, int maxSetSize, SnapshotableSet<T> elements
+  )
+  {
     this.sampleRate = sampleRate;
     this.maxSetSize = maxSetSize;
     this.elements = elements;
   }
 
-  public int getSampleRate() {
+  public int getSampleRate()
+  {
     return sampleRate;
   }
 
-  public int getMaxSetSize() {
+  public int getMaxSetSize()
+  {
     return maxSetSize;
   }
 
-  public SnapshotableSet<T> getElements() {
+  public SnapshotableSet<T> getElements()
+  {
     return elements;
   }
 }

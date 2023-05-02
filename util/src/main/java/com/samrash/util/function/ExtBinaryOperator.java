@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.util.function;
 
 import java.util.function.BinaryOperator;
 
-public interface ExtBinaryOperator<T, E extends Throwable> extends ExtBiFunction<T, T, T, E> {
-  static <T> BinaryOperator<T> quiet(ExtBinaryOperator<T, ?> binaryOperator) {
+public interface ExtBinaryOperator<T, E extends Throwable> extends ExtBiFunction<T, T, T, E>
+{
+  static <T> BinaryOperator<T> quiet(ExtBinaryOperator<T, ?> binaryOperator)
+  {
     return (a, b) -> ExtBiFunction.quiet(binaryOperator).apply(a, b);
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.zookeeper.path;
 
 import java.util.Collections;
@@ -21,40 +22,48 @@ import java.util.List;
 /**
  * Immutable class representing a ZooKeeper application path
  */
-public class ZkPathCore {
+public class ZkPathCore
+{
   private final String appRoot;
   private final List<String> zNodes;
   private final String pathStr;
 
   // Package-private constructor
-  ZkPathCore(String appRoot, List<String> zNodes) {
+  ZkPathCore(String appRoot, List<String> zNodes)
+  {
     this.appRoot = appRoot;
     this.zNodes = zNodes;
     pathStr = generatePathStr();
   }
 
-  public ZkPathCore(String appRoot) {
+  public ZkPathCore(String appRoot)
+  {
     this(appRoot, Collections.<String>emptyList());
   }
 
-  public ZkPathCore(ZkPathCore pathCore) {
+  public ZkPathCore(ZkPathCore pathCore)
+  {
     this(pathCore.appRoot, pathCore.zNodes);
   }
 
-  public String getAppRoot() {
+  public String getAppRoot()
+  {
     return appRoot;
   }
 
-  public List<String> getZNodes() {
+  public List<String> getZNodes()
+  {
     return Collections.unmodifiableList(zNodes);
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return pathStr;
   }
 
-  private String generatePathStr() {
+  private String generatePathStr()
+  {
     if (zNodes.isEmpty()) {
       return appRoot;
     } else {
@@ -69,7 +78,8 @@ public class ZkPathCore {
     }
   }
 
-  private int computeStringLen() {
+  private int computeStringLen()
+  {
     if (zNodes.isEmpty()) {
       return appRoot.length();
     } else {
@@ -84,7 +94,8 @@ public class ZkPathCore {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(Object o)
+  {
     if (this == o) {
       return true;
     }
@@ -105,7 +116,8 @@ public class ZkPathCore {
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     int result = appRoot.hashCode();
     result = 31 * result + zNodes.hashCode();
     return result;

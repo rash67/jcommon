@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.concurrency;
 
 import java.util.concurrent.Callable;
 
-public class FixedValueCallable<V> implements Callable<V> {
+public class FixedValueCallable<V> implements Callable<V>
+{
   private final V value;
 
-  public FixedValueCallable(V value) {
+  public FixedValueCallable(V value)
+  {
     this.value = value;
   }
 
   @Override
-  public V call() throws Exception {
+  public V call() throws Exception
+  {
     return value;
   }
 }

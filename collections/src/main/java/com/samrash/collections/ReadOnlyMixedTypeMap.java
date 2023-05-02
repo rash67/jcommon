@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.samrash.collections;
 
 import com.google.common.reflect.TypeToken;
 
-public interface ReadOnlyMixedTypeMap<K> {
+public interface ReadOnlyMixedTypeMap<K>
+{
   <V> V get(K id, Class<V> clazz);
 
   <V> V get(K id, TypeToken<V> type);
