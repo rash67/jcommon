@@ -243,7 +243,7 @@ limitations under the License.
       <dependency>
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>3.3.5</version>
+        <version>3.7.2</version>
         <exclusions>
           <exclusion>
             <artifactId>junit</artifactId>
